@@ -1,0 +1,4 @@
+class RadarHead
+{
+    public RadarHead() {}
+}

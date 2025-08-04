@@ -1,0 +1,45 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "F:\\NEA\\vATMS\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{ADA5A701-E019-49DB-9E1A-E4192BD3879C}|vATMS.Server\\vATMS.Server.csproj|f:\\nea\\vatms\\vatms.server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ADA5A701-E019-49DB-9E1A-E4192BD3879C}|vATMS.Server\\vATMS.Server.csproj|solutionrelative:vatms.server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "F:\\NEA\\vATMS\\vATMS.Server\\Program.cs",
+              "RelativeDocumentMoniker": "vATMS.Server\\Program.cs",
+              "ToolTip": "F:\\NEA\\vATMS\\vATMS.Server\\Program.cs",
+              "RelativeToolTip": "vATMS.Server\\Program.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAAEkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-30T19:51:21.29Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
