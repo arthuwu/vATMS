@@ -1,7 +1,9 @@
-class Aircraft
+namespace vATMS.Aircraft;
+
+public class Aircraft
 {
     public RadarTarget? RadarTarget { get; set; }
-    public required FlightPlan FlightPlan { get; set; }
+    public FlightPlan FlightPlan { get; set; }
 
     public DecimalCoordinate Position { get; set; }
 
@@ -11,4 +13,4 @@ class Aircraft
         RadarTarget = new RadarTarget(this);
         FlightPlan = new FlightPlan("ABC123");
     }
-}   
+}

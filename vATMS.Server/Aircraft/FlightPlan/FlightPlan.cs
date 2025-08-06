@@ -1,4 +1,6 @@
-class FlightPlan
+namespace vATMS.Aircraft;
+
+public class FlightPlan
 {
     public string Callsign { get; set; }
 

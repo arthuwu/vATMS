@@ -20,6 +20,10 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddSingleton<RadarScreenManager>(); // Creates a new instance
+builder.Services.AddSingleton<SimulationManager>(); // Creates a new instance
+builder.Services.AddSingleton<RadarScreenUpdater>(); // Creates a new instance
+builder.Services.AddScoped<RadarScreen>();
 builder.WebHost.UseElectron(args);
 
 
@@ -34,7 +38,7 @@ app.UseRouting();
 
 app.UseCors();
 
-app.MapHub<TargetGeneratorHub>("/api/hub");
+app.MapHub<RadarScreenHub>("/api/hub");
 
 app.MapControllerRoute(
     name: "default",
@@ -60,13 +64,15 @@ await app.WaitForShutdownAsync();
 async Task CreateElectronWindow()
 {
     BrowserWindow window = await Electron.WindowManager.CreateWindowAsync(
-        new BrowserWindowOptions {
+        new BrowserWindowOptions
+        {
             Width = 1280,
             Height = 720,
             AutoHideMenuBar = true,
-        WebPreferences = new WebPreferences {
+            WebPreferences = new WebPreferences
+            {
                 NodeIntegration = false, // force node off, otherwise electron won't be able to use eventsource, which breaks signalR entirely
-                ContextIsolation = true, 
+                ContextIsolation = true,
             }
         });
 
