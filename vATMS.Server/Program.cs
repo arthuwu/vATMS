@@ -56,7 +56,9 @@ app.MapFallbackToFile("index.html");
 await app.StartAsync();
 
 if (HybridSupport.IsElectronActive)
+{
     await CreateElectronWindow();
+}
 
 await app.WaitForShutdownAsync();
 

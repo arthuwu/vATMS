@@ -3,7 +3,9 @@
     height: 100vh;
     margin: 0;
     padding: 0;
+    position: absolute;
     overflow: hidden;
+    z-index: 0;
 }
 
 .target-layer {
@@ -12,4 +14,7 @@
     margin: 0;
     padding: 0;
     overflow: hidden;
+    position: absolute;
+    background: transparent;
+    z-index: 5;
 }

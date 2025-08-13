@@ -18,8 +18,8 @@ public class RadarScreenUpdater
         Console.WriteLine("DEBUG: new RadarScreenUpdater instance");
     }
 
-    public async Task UpdateAircraftPosition(Aircraft ac)
+    public async Task UpdateAircraftPosition(List<Aircraft> aircraftList)
     {
-        await _hubContext.Clients.All.SendAsync("AircraftPositionUpdate", ac.FlightPlan.Callsign, ac.Position.Lat, ac.Position.Lon); // maybe use an export-only Aircraft type?
+        await _hubContext.Clients.All.SendAsync("AircraftPositionUpdate", aircraftList); // maybe use an export-only Aircraft type?
     }
 }

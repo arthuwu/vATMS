@@ -1,5 +1,7 @@
 // This is the "point of connection" with React - for ALL clients INBOUND
 
+using ElectronNET.API;
+using ElectronNET.API.Entities;
 using Microsoft.AspNetCore.SignalR;
 
 namespace vATMS.Hubs;
@@ -17,6 +19,8 @@ public class RadarScreenHub : Hub
     /// Constructor of the RadarScreenHub class. Initialises the service provider and the screen manager
     /// </summary>
     /// <param name="serviceProvider"></param>
+    /// <param name="radarScreenManager"></param>
+    /// <param name="simulationManager"></param>
     public RadarScreenHub(IServiceProvider serviceProvider, RadarScreenManager radarScreenManager, SimulationManager simulationManager)
     {
         _serviceProvider = serviceProvider;
@@ -34,6 +38,34 @@ public class RadarScreenHub : Hub
         await Clients.All.SendAsync("testValueIncremented", callsign, value + 1);
     }
 
+    public async Task OpenSelectionWindow(string sectorId)
+    {
+        if (!HybridSupport.IsElectronActive)
+            return;
+
+        BrowserWindow window = await Electron.WindowManager.CreateWindowAsync(
+            new BrowserWindowOptions
+            {
+                Width = 1280,
+                Height = 720,
+                AutoHideMenuBar = true,
+                WebPreferences = new WebPreferences
+                {
+                    NodeIntegration = false, // force node off, otherwise electron won't be able to use eventsource, which breaks signalR entirely
+                    ContextIsolation = true,
+                }
+            }
+        );
+
+        window.LoadURL($"http://localhost:8001/ifacts-selection-window/?sectorId={sectorId}");
+    }
+
+    public async Task SetSectorSelectedAircraftID(string sectorId, string selectedAircraftId)
+    {
+        await Clients.All.SendAsync("sectorSelectedId", sectorId, selectedAircraftId);
+        // TODO: associate selection window with a specific RadarScreen instance s.t. no redundant broadcasting occurs
+    }
+
     /// <summary>
     /// Called when a client connects to the SignalR hub
     /// Creates a new instance of RadarScreen and stores it in _radarScreens
@@ -47,6 +79,8 @@ public class RadarScreenHub : Hub
                                     ?? throw new InvalidOperationException("RadarScreen service did not register.");
 
         _radarScreenManager.AddRadarScreen(connectionId, newRadarScreen);
+
+        // TODO: logic to associate a selection window with a radarScreen instance, instead of being its own instance.
         if (!_simulationManager.IsSimulationStarted())
         {
             _simulationManager.StartSimulation();

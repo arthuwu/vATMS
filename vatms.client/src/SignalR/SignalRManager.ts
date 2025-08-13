@@ -33,7 +33,9 @@ const sendMessage = () => {
 
 class SignalRManager {  // this is a SINGLETON class! becasue i don't want to accidentially create another SignalR connection
     private static instance: SignalRManager;
-    protected connection;
+    protected connection: signalR.HubConnection;
+    private isConnected: boolean = false;
+    private readyCb: (() => void)[] = [];
 
     constructor() {
         this.connection = new signalR.HubConnectionBuilder()
@@ -45,31 +47,51 @@ class SignalRManager {  // this is a SINGLETON class! becasue i don't want to ac
             .build()
     }
 
-    public static getInstance(): SignalRManager { 
+    public static getInstance(): SignalRManager {
         if (!SignalRManager.instance) {
             SignalRManager.instance = new SignalRManager();
         }
         return SignalRManager.instance;
     }
 
+    public onReady(callback: (() => void)) {
+        if (this.isConnected) {
+            callback();
+        } else {
+            this.readyCb.push(callback);
+        }
+    }
+
     public async startConnection() {
         await this.connection.start()
-            .then(() => console.log('SignalR connection started'))
+            .then(() => {
+                console.log('SignalR connection started');
+                this.isConnected = true;
+                this.readyCb.forEach((cb: (() => void)) => cb());
+                this.readyCb = [];
+            })
             .catch((err: any) => console.error('SignalR connection error: ', err));
     }
 
     public async stopConnection() {
         await this.connection.stop()
-            .then(() => console.log('SignalR connection disconnected'))
+            .then(() => {
+                console.log('SignalR connection disconnected')
+                this.isConnected = false;
+            })
             .catch((err: any) => console.error('SignalR disconnection error: ', err));
     }
 
-    public on(eventName: string, callback: () => void) {
+    public on(eventName: string, callback: (...params: any[]) => void) {
         this.connection.on(eventName, callback);
     }
 
-    public send(methodName: string, data: any) {
-        return this.connection.invoke(methodName, data);
+    public off(eventName: string, callback: (...params: any[]) => void) {
+        this.connection.off(eventName, callback);
+    }
+
+    public send(methodName: string, ...data: any[]) {
+        return this.connection.invoke(methodName, ...data);
     }
 }
 

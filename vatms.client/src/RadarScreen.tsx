@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 // import * as signalR from '@microsoft/signalr';
 import BaseMapLayer from './MapLayers/BaseMapLayer';
+import TargetLayer from './MapLayers/TargetLayer';
 import KeyboardManager from '././KeyboardManager/keyboardManager';
+import SignalRManager from './SignalR/SignalRManager';
 import './App.css';
 
 const keybinds = {
@@ -13,13 +15,18 @@ const keybinds = {
     "INCR_RANGE": "Minus"
 }
 
+
 KeyboardManager.getInstance().loadKeybinds(keybinds); // TODO: move this to somewhere appropriate
 
 const RadarScreen = () => {
     const [projectionCenter, setProjectionCenter] = useState<[number, number]>([0, 0]);
     const [zoomLevel, setZoomLevel] = useState<number>(1);
+    const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
 
     const keyboardManager = KeyboardManager.getInstance();
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    const signalRManager: SignalRManager = SignalRManager.getInstance();
 
     useEffect(() => {
         const handleInput = () => {
@@ -42,10 +49,38 @@ const RadarScreen = () => {
         return () => keyboardManager.unsubscribe(handleInput);
     }, []);
 
+    useEffect(() => {
+        const handleUpdateScreenSize = () => {
+            if (containerRef.current) {
+                setScreenSize({ width: containerRef.current.clientWidth, height: containerRef.current.clientHeight })
+            }
+        }
+
+        handleUpdateScreenSize();
+
+        window.addEventListener('resize', handleUpdateScreenSize);
+
+        return () => {
+            window.removeEventListener('resize', handleUpdateScreenSize);
+        };
+    }, [])
+
+    useEffect(() => {
+        // TODO: move this to iFACTS
+        const openSelectionWindow = (sectorId: string) => {
+            signalRManager.onReady(() => {
+                signalRManager.send("OpenSelectionWindow", sectorId);
+            })
+        }
+
+        openSelectionWindow("16");
+    }, [])
+
     return (
-        <>
-            <BaseMapLayer map={null} projectionCenter={projectionCenter} zoom={zoomLevel}></BaseMapLayer>
-        </>
+        <div className='radar-screen-container' ref={containerRef}>
+            <TargetLayer projectionCenter={projectionCenter} zoom={zoomLevel} screenSize={[screenSize.width, screenSize.height]}></TargetLayer>
+            <BaseMapLayer map={null} projectionCenter={projectionCenter} zoom={zoomLevel} screenSize={[screenSize.width, screenSize.height]}></BaseMapLayer>
+        </div>
     )
 }
 

@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=B612+Mono:wght@700&display=swap');
+
+.radar-target-symbol {
+    width: 10px;
+    height: 10px;
+    background-color: #f2d927;
+    transform: translate(-50%, -50%)
+}
+
+.target-data-block {
+    width: 50px;
+    height: 48px;
+    overflow-x: visible;
+    white-space: nowrap;
+    color: #6c986b;
+    font-family: "B612 Mono", monospace;
+    font-weight: 700;
+    font-size: 10px;
+    line-height: 12px;
+    user-select: none;
+}
+
+.target-data-block:hover {
+    background-color: #050081;
+}

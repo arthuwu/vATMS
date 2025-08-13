@@ -1,4 +1,3 @@
-using System.Timers;
 using vATMS.Aircraft;
 
 public class Simulation
@@ -30,9 +29,9 @@ public class Simulation
         {
             // do stuff to aircraft
             // remember to check if it can be displayed using RadarHead, but otherwise
-            Console.WriteLine($"DEBUG: UpdateOnTimerElapsed, {ac.FlightPlan.Callsign} at {ac.Position.Lat}, {ac.Position.Lon}");
-            await _radarScreenUpdater.UpdateAircraftPosition(ac);
-
+            // Console.WriteLine($"DEBUG: UpdateOnTimerElapsed, {ac.FlightPlan.Callsign} at {ac.Position.Lat}, {ac.Position.Lon}");
         }
+
+        await _radarScreenUpdater.UpdateAircraftPosition(_aircraft);
     }
 }
