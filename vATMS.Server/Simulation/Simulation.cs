@@ -34,4 +34,9 @@ public class Simulation
 
         await _radarScreenUpdater.UpdateAircraftPosition(_aircraft);
     }
+
+    public Aircraft? FindAircraft(string selectedAircraftId)
+    {
+        return _aircraft.FirstOrDefault(a => a.FlightPlan.Callsign == selectedAircraftId);
+    }
 }

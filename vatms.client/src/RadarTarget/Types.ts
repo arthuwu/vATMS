@@ -12,12 +12,13 @@ export type FlightPlan = {
     rmk: string,
     rfl: number,
     spd: number,
-    flightPlanAssignedData: {
-        cfl: number,
-        asp: number,
-        ahdg: number,
-        avs: number,
-    },
+    flightPlanAssignedData: FlightPlanAssignedData
     testingValue: number
 }
 
+export type FlightPlanAssignedData = {
+    cfl: number,
+    asp: number,
+    ahdg: number,
+    avs: number,
+}

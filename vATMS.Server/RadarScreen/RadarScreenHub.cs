@@ -66,6 +66,19 @@ public class RadarScreenHub : Hub
         // TODO: associate selection window with a specific RadarScreen instance s.t. no redundant broadcasting occurs
     }
 
+    public async Task SetSelectedAircraftAssignedData(string selectedAircraftId, string data, string value)
+    {
+        if (_simulationManager.IsSimulationStarted())
+        {
+            Simulation simulation = _simulationManager.CurrentSimulation!; // if IsSimulationStarted is true, this will never be null
+            Aircraft.Aircraft? aircraft = simulation.FindAircraft(selectedAircraftId);
+            if (aircraft == null) return;  // and return early if no match
+
+            aircraft.FlightPlan.flightPlanAssignedData.GetType().GetProperty(data)?.SetValue(aircraft.FlightPlan.flightPlanAssignedData, Convert.ToInt32(value));
+        }
+
+    }
+
     /// <summary>
     /// Called when a client connects to the SignalR hub
     /// Creates a new instance of RadarScreen and stores it in _radarScreens

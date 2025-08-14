@@ -5,10 +5,13 @@ public class SimulationManager
     private readonly IServiceProvider _serviceProvider;
     private static Simulation? _simulation = null;
 
+    public Simulation? CurrentSimulation => _simulation; // explicit get operator
+
     public SimulationManager(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
     }
+
     public void StartSimulation()
     {
         if (_simulation == null)
