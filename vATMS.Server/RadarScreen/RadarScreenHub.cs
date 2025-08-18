@@ -28,16 +28,12 @@ public class RadarScreenHub : Hub
         _simulationManager = simulationManager;
     }
 
-    public async Task NewMessage(string username, string message) // Test
-    {
-        await Clients.All.SendAsync("messageReceived", username, message);
-    }
+    // TODO: for everything below: replace sectorId with RadarScreenId, as one RadarScreen may be controlling multiple sectors
 
-    public async Task IncrementTestValue(string callsign, int value) // Test
-    {
-        await Clients.All.SendAsync("testValueIncremented", callsign, value + 1);
-    }
-
+    /// <summary>
+    /// Opens a selection window (SelectionWindow React component displayed in a separate electron window) 
+    /// </summary>
+    /// <param name="sectorId">The sector ID of the logged on sector of the RadarScreen calling the function</param>
     public async Task OpenSelectionWindow(string sectorId)
     {
         if (!HybridSupport.IsElectronActive)
@@ -60,12 +56,26 @@ public class RadarScreenHub : Hub
         window.LoadURL($"http://localhost:8001/ifacts-selection-window/?sectorId={sectorId}");
     }
 
+    /// <summary>
+    /// Called when a RadarScreen's selectedId changes.
+    /// </summary>
+    /// <param name="sectorId">The sector ID of the logged on sector of the RadarScreen calling the function</param>
+    /// <param name="selectedAircraftId"></param>
+    /// <returns></returns>
     public async Task SetSectorSelectedAircraftID(string sectorId, string selectedAircraftId)
     {
         await Clients.All.SendAsync("sectorSelectedId", sectorId, selectedAircraftId);
         // TODO: associate selection window with a specific RadarScreen instance s.t. no redundant broadcasting occurs
     }
 
+
+    /// <summary>
+    /// Called when a RadarScreen/SelectionWindow changes a Aircraft's .FlightPlan.FlightPlanAssignedData
+    /// </summary>
+    /// <param name="selectedAircraftId">The ID of the aircraft currently selected by the RadarScreen calling the function</param>
+    /// <param name="data">The name of the FlightPlanAssignedData item to be changed, e.g. "CFL"</param>
+    /// <param name="value">The new value of the FlightPlanAssignedData</param>
+    /// <returns></returns>
     public async Task SetSelectedAircraftAssignedData(string selectedAircraftId, string data, string value)
     {
         if (_simulationManager.IsSimulationStarted())

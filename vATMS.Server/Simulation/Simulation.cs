@@ -1,5 +1,10 @@
 using vATMS.Aircraft;
 
+/// <summary>
+/// A new Simulation instance is created when SimulationManager.StartSimulation() is called.
+/// SimulationManager is an ASP.NET singleton, so there will always only be one instance of Simulation.
+/// A Simulation instance is responsible for all "refreshes" of data (aircraft position)
+/// </summary>
 public class Simulation
 {
     // int? rate, int? pilotQuality
@@ -10,6 +15,10 @@ public class Simulation
     private List<Aircraft> _aircraft;
     // list<Controllers> controllers;
 
+    /// <summary>
+    /// Constructor for the Simulation instance
+    /// </summary>
+    /// <param name="radarScreenUpdater">The ASP.NET RadarScreenUpdater service</param>
     public Simulation(RadarScreenUpdater radarScreenUpdater)
     {
         _aircraft = new List<Aircraft>();
@@ -30,6 +39,7 @@ public class Simulation
             // do stuff to aircraft
             // remember to check if it can be displayed using RadarHead, but otherwise
             // Console.WriteLine($"DEBUG: UpdateOnTimerElapsed, {ac.FlightPlan.Callsign} at {ac.Position.Lat}, {ac.Position.Lon}");
+            ac.updatePosition();
         }
 
         await _radarScreenUpdater.UpdateAircraftPosition(_aircraft);
