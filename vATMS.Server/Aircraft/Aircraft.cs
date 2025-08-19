@@ -36,7 +36,7 @@ public class Aircraft
         Groundspeed = _indicatedAirspeed;
     }
 
-    private void lateralMovement()
+    private void LateralMovement()
     {
         // TODO: Implement this properly
         // This is TEMPORARY, UNREALISTIC code taken from a 2023 project. 
@@ -86,14 +86,29 @@ public class Aircraft
         Groundspeed = _indicatedAirspeed;
     }
 
-    private void verticalMovement()
+    private void VerticalMovement()
     {
+        // TODO: Implement this properly
+        // This is TEMPORARY, UNREALISTIC code taken from a 2023 project. 
+        // This has been put here only so things can be tested
 
+        double climbRate = (Groundspeed * 5) / 60;
+
+        if (PressureAltitude > FlightPlan.flightPlanAssignedData.CFL)
+        {
+            PressureAltitude = Math.Max(PressureAltitude - climbRate, FlightPlan.flightPlanAssignedData.CFL);
+        }
+        else if (PressureAltitude < FlightPlan.flightPlanAssignedData.CFL)
+        {
+            PressureAltitude = Math.Min(PressureAltitude + climbRate, FlightPlan.flightPlanAssignedData.CFL);
+        }
+
+        Console.WriteLine($"DEBUG: {PressureAltitude}, {FlightPlan.flightPlanAssignedData.CFL}, {climbRate}");
     }
 
     public void updatePosition()
     {
-        lateralMovement();
-        verticalMovement();
+        LateralMovement();
+        VerticalMovement();
     }
 }

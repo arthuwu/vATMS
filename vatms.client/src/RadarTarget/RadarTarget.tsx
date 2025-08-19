@@ -37,8 +37,8 @@ const RadarTarget = ({ flightPlan, aircraft, lat, lon, zoom, projectionCenter, s
                 onClick={onClick}
             >
                 <div>{flightPlan.callsign}</div>
-                <div>{aircraft.pressureAltitude.toString().substring(0, 3)}&nbsp;{flightPlan.flightPlanAssignedData.cfl.toString().substring(0, 2)}</div>
-                <div>{"XX"}&nbsp;&nbsp;G{aircraft.groundspeed.toString().substring(0, 3)}</div>
+                <div>{Math.trunc(aircraft.pressureAltitude).toString().padStart(5, "0").substring(0, 3)}&nbsp;{Math.trunc(flightPlan.flightPlanAssignedData.cfl).toString().padStart(5, "0").substring(0, 2)}</div>
+                <div>{"XX"}&nbsp;&nbsp;G{Math.trunc(aircraft.groundspeed).toString().padStart(3, "0").substring(0, 3)}</div>
                 <div>{flightPlan.rfl.toString().substring(0, 3)}&nbsp;{"XXXXX"}</div>
             </div>
         </>
