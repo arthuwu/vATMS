@@ -1,5 +1,13 @@
+// mappingUtils.ts contains functions used to transform a decimal degree coordinate to a pixel coordinate, and vice versa
+
 import { useState, useLayoutEffect } from 'react';
 
+/**
+ * Converts decimal degrees to cartesian coordinates
+ * @param lat latitude, in decimal degrees
+ * @param lon longitude, in decimal degrees
+ * @returns an array of 3 numbers: [x, y, z] coordinates in cartesian space
+ */
 export function convertDDToCartesian(lat: number, lon: number): [number, number, number] {
     // convert to radians
     lat = lat * (Math.PI / 180);
@@ -12,6 +20,13 @@ export function convertDDToCartesian(lat: number, lon: number): [number, number,
     return [x, y, z];
 }
 
+/**
+ * Rotates the cartesian coordinates by the viewpoint centre 
+ * @param lat latitude of the viewpoint centre, in decimal degrees
+ * @param lon longitude of the viewpoint centre, in decimal degrees
+ * @param cartesianCoords an array of 3 numbers: [x, y, z] coordinates in cartesian space
+ * @returns an array of 3 numbers: [x, y, z] coordinates in cartesian space
+ */
 export function rotateCartesianByCenter(lat: number, lon: number, cartesianCoords: [number, number, number]): [number, number, number] {
     // convert to radians
     lat = lat * (Math.PI / 180);
@@ -40,6 +55,13 @@ export function rotateCartesianByCenter(lat: number, lon: number, cartesianCoord
     return [x_rot, y_rot, z_rot];
 }
 
+/**
+ * Zooms the pixel coordinates by a scalar value
+ * @param x screen x-coordinate
+ * @param y screen y-coordinate
+ * @param zoom scalar zoom level
+ * @returns an array of 2 numbers: [x, y] screen coordinates
+ */
 export function applyZoomToProjected(x: number, y: number, zoom: number): [number, number] {
     const SCALE_FACTOR = 1000; // TODO: adjust this so it is some meaningful value instead of a random one
     x = (x * zoom * SCALE_FACTOR);
@@ -48,6 +70,13 @@ export function applyZoomToProjected(x: number, y: number, zoom: number): [numbe
     return [x, y];
 }
 
+/**
+ * Applies the stereographic projection algorithm
+ * @param x cartesian x-coordinate
+ * @param y cartesian y-coordinate
+ * @param z cartesian z-coordinate
+ * @returns an array of 2 numbers: [x, y] screen coordinates
+ */
 export function stereographicProjection(x: number, y: number, z: number): [number, number] {
     const x_proj = x / (1 - z);
     const y_proj = y / (1 - z);
@@ -55,10 +84,10 @@ export function stereographicProjection(x: number, y: number, z: number): [numbe
     return [y_proj, -x_proj];
 }
 
-export function rotateProjection90Clockwise(x: number, y: number): [number, number] {
-    return [y, -x];
-}
-
+/**
+ * Re-renders the component importing this function when the window is resized
+ * @returns an array of 2 numbers: the new size
+ */
 export function useWindowSize() {
     const [size, setSize] = useState([0, 0]);
     useLayoutEffect(() => {
@@ -72,6 +101,13 @@ export function useWindowSize() {
     return size;
 }
 
+/**
+ * Applies the required stereographic projection
+ * @param coord an array of 2 numbers: [lat, lon] decimal degree coordinates
+ * @param projectionCenter an array of 2 numbers: [lat, lon] decimal degree coordinates
+ * @param zoom a scalar zoom level
+ * @returns an array of 2 numbers: [x, y] screen coordinates
+ */
 export function getProjection(coord: [lat: number, lon: number], projectionCenter: [lat: number, lon: number], zoom: number): [number, number] {
     let [x, y, z] = convertDDToCartesian(coord[0], coord[1]);
     [x, y, z] = rotateCartesianByCenter(projectionCenter[0], projectionCenter[1], [x, y, z]);
