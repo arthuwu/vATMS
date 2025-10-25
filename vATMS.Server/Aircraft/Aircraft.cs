@@ -9,6 +9,7 @@ public class Aircraft
 
     private double _heading;
     private double _indicatedAirspeed;
+    private double _pilotSelectedAlitude;
 
     public double Track { get; private set; }
     public double PressureAltitude { get; private set; }
@@ -16,12 +17,17 @@ public class Aircraft
     public double Groundspeed { get; private set; }
     public int VerticalSpeed { get; private set; }
 
+    public double FinalApchSpeed { get; init; }
+    public double MinimumCleanSpeed { get; init; }
+
     public Aircraft(
         FlightPlan flightPlan,
         DecimalCoordinate position,
         int track,
         int pressureAltitude,
-        int indicatedAirspeed
+        int indicatedAirspeed,
+        int finalApchSpeed,
+        int minimumCleanSpeed
         )
     {
         // TODO: TESTING - force creation of radar target with no radar head
@@ -32,8 +38,27 @@ public class Aircraft
         PressureAltitude = pressureAltitude;
         _indicatedAirspeed = indicatedAirspeed;
 
+        FinalApchSpeed = finalApchSpeed;
+        MinimumCleanSpeed = minimumCleanSpeed;
+
         // TODO: TESTING - implement this properly
         Groundspeed = _indicatedAirspeed;
+    }
+
+    // Getting values
+    public double GetMaximumForwardSpeed()
+    {
+        return 320.0d;
+    }
+
+    public double GetMaximumMachNumber()
+    {
+        return 0.8d;
+    }
+
+    public double GetMachNumber()
+    {
+        return 0.0d;
     }
 
     private void LateralMovement()
@@ -93,6 +118,8 @@ public class Aircraft
         // This has been put here only so things can be tested
 
         double climbRate = (Groundspeed * 5) / 60;
+
+        _pilotSelectedAlitude = FlightPlan.flightPlanAssignedData.CFL;
 
         if (PressureAltitude > FlightPlan.flightPlanAssignedData.CFL)
         {

@@ -40,7 +40,9 @@ class TargetGenerator
             position: SpawnPoints[0].Coordinate,
             track: SpawnPoints[0].InitialTrack,
             pressureAltitude: SpawnPoints[0].getSpawnLevel(),
-            indicatedAirspeed: 260
+            indicatedAirspeed: 260,
+            finalApchSpeed: 120,
+            minimumCleanSpeed: 230
         ));
 
         Console.WriteLine("DEBUG: new TargetGenerator");

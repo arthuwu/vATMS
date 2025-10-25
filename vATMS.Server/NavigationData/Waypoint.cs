@@ -1,10 +1,10 @@
-class Waypoint
+public class Waypoint
 {
-    public DecimalCoordinate Coordinate;
+    public DecimalCoordinate? Coordinate; //workaround
     public string Name;
-    public Waypoint(double lat, double lon, string name)
+    public Waypoint(DecimalCoordinate? coord, string name)
     {
-        Coordinate = new DecimalCoordinate(lat, lon);
+        Coordinate = coord;
 
         Name = name;
     }
