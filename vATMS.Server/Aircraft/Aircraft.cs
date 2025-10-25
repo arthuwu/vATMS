@@ -6,6 +6,7 @@ public class Aircraft
     public FlightPlan FlightPlan { get; set; }
 
     public DecimalCoordinate Position { get; set; }
+    public PredictedTrajectory Trajectory { get; set; }
 
     private double _heading;
     private double _indicatedAirspeed;
@@ -40,6 +41,8 @@ public class Aircraft
 
         FinalApchSpeed = finalApchSpeed;
         MinimumCleanSpeed = minimumCleanSpeed;
+
+        Trajectory = new();
 
         // TODO: TESTING - implement this properly
         Groundspeed = _indicatedAirspeed;
@@ -137,5 +140,10 @@ public class Aircraft
     {
         LateralMovement();
         VerticalMovement();
+    }
+
+    public void predictTrajectory()
+    {
+        Trajectory.Update();
     }
 }

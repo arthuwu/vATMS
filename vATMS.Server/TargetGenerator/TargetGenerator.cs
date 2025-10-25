@@ -8,7 +8,7 @@ class TargetGenerator
     public SpawnPoint[] SpawnPoints { get; set; }
     private List<Aircraft> _aircraft;
 
-    public TargetGenerator(int rate, int pilotQuality, List<Aircraft> aircraft)
+    public TargetGenerator(int rate, int pilotQuality, List<Aircraft> aircraft, NavigationData navData)
     {
         Rate = rate;
         PilotQuality = pilotQuality;
@@ -32,7 +32,8 @@ class TargetGenerator
             altn: "EHAM",
             rmk: "",
             rfl: 34000,
-            spd: 543
+            spd: 543,
+            route: navData.ParseRoute("LOGAN SABER BRASO WESUL LAM")
         );
 
         _aircraft.Add(new Aircraft(

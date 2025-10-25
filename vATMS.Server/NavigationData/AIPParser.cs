@@ -2,10 +2,11 @@ using System.Xml;
 using System.Linq;
 using System.Xml.Serialization;
 using System.Xml.Linq;
+using Microsoft.AspNetCore.Mvc;
 
 public static class AIPParser
 {
-    public static List<Waypoint> ParseDesignatedPoints()
+    public static Dictionary<string, Waypoint> ParseDesignatedPoints()
     {
         XDocument doc = XDocument.Load("./EG_AIP_DS_FULL.xml");
         XNamespace aixm = "http://www.aixm.aero/schema/5.1";
@@ -29,7 +30,7 @@ public static class AIPParser
             Console.WriteLine(wp.Name);
         }
 
-        return dpData.ToList();
+        return dpData.ToDictionary(item => item.Name, item => item);
     }
 
     public static DecimalCoordinate? parseSingleCoordinate(XElement location)
@@ -37,7 +38,7 @@ public static class AIPParser
         XNamespace gml = "http://www.opengis.net/gml/3.2";
 
         var node = location.Element(gml + "pos");
-        string val = node.Value;
+        string val = node!.Value;
         DecimalCoordinate? coord = TryParseCoordinates(val);
 
         if (coord != null)
@@ -75,10 +76,12 @@ public static class AIPParser
                           upperLimit: Convert.ToInt32(airspaceVolume?.Element(aixm + "upperLimit")?.Value) * 100
                       );
 
+        /*
         foreach (AirspaceVolume av in aipData)
         {
             Console.WriteLine($"Name: {av.Name}\nCoordinates:{string.Join("\n", av.Polygon)}\nVertical limits: {av.LowerLimit} - {av.UpperLimit}");
         }
+        */
 
         return aipData.ToList();
     }

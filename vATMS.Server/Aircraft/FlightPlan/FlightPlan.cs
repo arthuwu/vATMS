@@ -19,7 +19,7 @@ public class FlightPlan
     public int RFL { get; set; }
     public int SPD { get; set; }
 
-    // and then the custom route string stuff
+    public List<Waypoint> Route { get; set; }
 
     public FlightPlanAssignedData flightPlanAssignedData { get; }
 
@@ -39,7 +39,8 @@ public class FlightPlan
         string altn,
         string rmk,
         int rfl,
-        int spd
+        int spd,
+        List<Waypoint> route
     )
     {
         Callsign = callsign;
@@ -57,6 +58,7 @@ public class FlightPlan
         RFL = rfl;
         SPD = spd;
 
+        Route = route;
         flightPlanAssignedData = new(this);
     }
 }

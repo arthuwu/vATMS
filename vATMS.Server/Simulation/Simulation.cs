@@ -11,6 +11,7 @@ public class Simulation
     private readonly System.Threading.Timer _timer;
     private readonly TargetGenerator _targetGenerator;
     private readonly RadarScreenUpdater _radarScreenUpdater;
+    private readonly NavigationData _navigationData;
 
     private List<Aircraft> _aircraft;
     // list<Controllers> controllers;
@@ -22,8 +23,9 @@ public class Simulation
     public Simulation(RadarScreenUpdater radarScreenUpdater)
     {
         _aircraft = new List<Aircraft>();
+        _navigationData = new NavigationData();
 
-        _targetGenerator = new TargetGenerator(1, 1, _aircraft); // TODO: test, demo values
+        _targetGenerator = new TargetGenerator(1, 1, _aircraft, _navigationData); // TODO: test, demo values
         _radarScreenUpdater = radarScreenUpdater;
 
         _timer = new System.Threading.Timer(UpdateOnTimerElapsed, null, 0, 1000); // every second
