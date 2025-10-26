@@ -8,6 +8,17 @@
     z-index: 0;
 }
 
+.sector-map-layer {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    position: absolute;
+    background: transparent;
+    z-index: 1;
+}
+
 .target-layer {
     width: 100vw;
     height: 100vh;

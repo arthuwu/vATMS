@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 // import * as signalR from '@microsoft/signalr';
 import BaseMapLayer from './MapLayers/BaseMapLayer';
 import TargetLayer from './MapLayers/TargetLayer';
+import SectorMapLayer from './MapLayers/SectorMapLayer';
 import KeyboardManager from '././KeyboardManager/keyboardManager';
 import SignalRManager from './SignalR/SignalRManager';
 import './App.css';
@@ -79,6 +80,7 @@ const RadarScreen = () => {
     return (
         <div className='radar-screen-container' ref={containerRef}>
             <TargetLayer projectionCenter={projectionCenter} zoom={zoomLevel} screenSize={[screenSize.width, screenSize.height]}></TargetLayer>
+            <SectorMapLayer projectionCenter={projectionCenter} zoom={zoomLevel} screenSize={[screenSize.width, screenSize.height]}></SectorMapLayer>
             <BaseMapLayer map={null} projectionCenter={projectionCenter} zoom={zoomLevel} screenSize={[screenSize.width, screenSize.height]}></BaseMapLayer>
         </div>
     )

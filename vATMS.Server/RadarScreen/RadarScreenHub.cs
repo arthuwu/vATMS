@@ -70,7 +70,7 @@ public class RadarScreenHub : Hub
 
 
     /// <summary>
-    /// Called when a RadarScreen/SelectionWindow changes a Aircraft's .FlightPlan.FlightPlanAssignedData
+    /// Called when a RadarScreen/SelectionWindow changes an Aircraft's .FlightPlan.FlightPlanAssignedData
     /// </summary>
     /// <param name="selectedAircraftId">The ID of the aircraft currently selected by the RadarScreen calling the function</param>
     /// <param name="data">The name of the FlightPlanAssignedData item to be changed, e.g. "CFL"</param>
@@ -98,7 +98,7 @@ public class RadarScreenHub : Hub
     {
         string connectionId = Context.ConnectionId;
         Console.WriteLine($"DEBUG: new connectionId {connectionId}");
-        RadarScreen newRadarScreen = _serviceProvider.GetService<RadarScreen>()
+        RadarScreen newRadarScreen = ActivatorUtilities.CreateInstance<RadarScreen>(_serviceProvider, connectionId)
                                     ?? throw new InvalidOperationException("RadarScreen service did not register.");
 
         _radarScreenManager.AddRadarScreen(connectionId, newRadarScreen);
