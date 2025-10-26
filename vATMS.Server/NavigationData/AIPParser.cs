@@ -8,7 +8,7 @@ public static class AIPParser
 {
     public static Dictionary<string, Waypoint> ParseDesignatedPoints()
     {
-        XDocument doc = XDocument.Load("./EG_AIP_DS_FULL.xml");
+        XDocument doc = XDocument.Load(Path.Combine(AppContext.BaseDirectory, "NavigationData\\EG_AIP_DS_FULL.xml"));
         XNamespace aixm = "http://www.aixm.aero/schema/5.1";
 
         var dpNodes = doc.Descendants(aixm + "DesignatedPoint");
@@ -25,12 +25,39 @@ public static class AIPParser
                         coord: parseSingleCoordinate(location)
                      );
 
-        foreach (Waypoint wp in dpData)
+        var dpDict = dpData.DistinctBy(item => item.Name).ToDictionary(item => item.Name, item => item);
+
+        var naNodes = doc.Descendants(aixm + "Navaid");
+
+        var naData = from na in naNodes
+                     let timeSliceNode = na.Element(aixm + "timeSlice")
+                     let dpTimeSliceNode = timeSliceNode?.Element(aixm + "NavaidTimeSlice")
+                     let name = dpTimeSliceNode?.Element(aixm + "designator")?.Value
+                     let location = dpTimeSliceNode?.Element(aixm + "location")?.Element(aixm + "ElevatedPoint")
+
+                     where location != null
+
+                     select new Waypoint
+                     (
+                        name: name,
+                        coord: parseSingleCoordinate(location)
+                     );
+
+        var naDict = naData.DistinctBy(item => item.Name).ToDictionary(item => item.Name, item => item);
+
+        foreach (KeyValuePair<string, Waypoint> point in naDict)
         {
-            Console.WriteLine(wp.Name);
+            if (dpDict.ContainsKey(point.Key))
+            {
+                continue;
+            }
+            else
+            {
+                dpDict[point.Key] = point.Value;
+            }
         }
 
-        return dpData.ToDictionary(item => item.Name, item => item);
+        return dpDict;
     }
 
     public static DecimalCoordinate? parseSingleCoordinate(XElement location)
@@ -49,7 +76,7 @@ public static class AIPParser
 
     public static List<AirspaceVolume> ParseAIPAirspace()
     {
-        XDocument doc = XDocument.Load("./EG_AIP_DS_FULL.xml");
+        XDocument doc = XDocument.Load(Path.Combine(AppContext.BaseDirectory, "NavigationData\\EG_AIP_DS_FULL.xml"));
         XNamespace aixm = "http://www.aixm.aero/schema/5.1";
 
         string[] airspaceTypes = ["UIR", "FIR", "TMA", "CTA", "CTR"];
@@ -87,7 +114,7 @@ public static class AIPParser
     }
     public static List<AirspaceVolume> ParseXMLSectors()
     {
-        XDocument doc = XDocument.Load("./EG_LAC_PC_SECTOR.xml");
+        XDocument doc = XDocument.Load(Path.Combine(AppContext.BaseDirectory, "NavigationData\\EG_LAC_PC_SECTOR.xml"));
         XNamespace aixm = "http://www.aixm.aero/schema/5.1";
 
         var airspaceNodes = doc.Descendants(aixm + "Airspace");
