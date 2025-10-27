@@ -14,15 +14,15 @@ public class NavigationData
         WpList = AIPParser.ParseDesignatedPoints();
     }
 
-    public List<Waypoint> ParseRoute(string route)
+    public Queue<Waypoint> ParseRoute(string route)
     {
-        List<Waypoint> parsedRoute = new();
+        Queue<Waypoint> parsedRoute = new();
 
         foreach (string wp in route.Split(' '))
         {
             try
             {
-                parsedRoute.Add(WpList[wp]);
+                parsedRoute.Enqueue(WpList[wp]);
             }
             catch (Exception)
             {

@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace vATMS.Aircraft;
 
 public class Aircraft
@@ -21,6 +23,11 @@ public class Aircraft
     public double FinalApchSpeed { get; init; }
     public double MinimumCleanSpeed { get; init; }
 
+    public bool IsOnOwnNavigation { get; set; }
+    public Waypoint NextWaypoint { get; set; }
+
+    public bool IsOnNormalSpeed { get; set; }
+
     public Aircraft(
         FlightPlan flightPlan,
         DecimalCoordinate position,
@@ -41,6 +48,9 @@ public class Aircraft
 
         FinalApchSpeed = finalApchSpeed;
         MinimumCleanSpeed = minimumCleanSpeed;
+
+        IsOnOwnNavigation = false;
+        NextWaypoint = flightPlan.Route.Peek();
 
         Trajectory = new();
 
@@ -64,6 +74,11 @@ public class Aircraft
         return 0.0d;
     }
 
+    private double DetermineAppropriateSpeed()
+    {
+        return 220.0d;
+    }
+
     private void LateralMovement()
     {
         // TODO: Implement this properly
@@ -73,30 +88,22 @@ public class Aircraft
         // Speed changes
         // acceleration/deceleration always 2kt s^-1
 
-        if (_indicatedAirspeed > FlightPlan.flightPlanAssignedData.ASP)
+        if (IsOnNormalSpeed != true && _indicatedAirspeed != FlightPlan.flightPlanAssignedData.ASP)
         {
-            // decelerate
-            _indicatedAirspeed = Math.Max(_indicatedAirspeed - 2, FlightPlan.flightPlanAssignedData.ASP);
+            FlySpeed(FlightPlan.flightPlanAssignedData.ASP);
         }
-        else if (_indicatedAirspeed < FlightPlan.flightPlanAssignedData.ASP)
+        else
         {
-            // accelerate
-            _indicatedAirspeed = Math.Min(_indicatedAirspeed + 2, FlightPlan.flightPlanAssignedData.ASP);
+
         }
 
-        double G = 9.81;
-
-        // Turning
-        double turnRate = G * Math.Tan((Math.PI / 180) * 22) / (_indicatedAirspeed * 0.514444);
-        turnRate = turnRate * (180 / Math.PI);
-
-        if (_heading != FlightPlan.flightPlanAssignedData.AHDG)
+        if (IsOnOwnNavigation != true && _heading != FlightPlan.flightPlanAssignedData.AHDG)
         {
-            double diff = (FlightPlan.flightPlanAssignedData.AHDG - _heading + 360) % 360;
-            int turnDir = (diff > 180) ? -1 : 1;
+            TurnToHeading(FlightPlan.flightPlanAssignedData.AHDG);
+        }
+        else
+        {
 
-            double step = Math.Min(turnRate, (turnDir == 1 ? diff : 360 - diff));
-            _heading = (_heading + turnDir * step + 360) % 360;
         }
 
         DecimalCoordinate positionOffset = new()
@@ -112,6 +119,56 @@ public class Aircraft
 
         // TEMP:
         Groundspeed = _indicatedAirspeed;
+    }
+
+    private void TurnToHeading(double newHeading)
+    {
+        const double G = 9.81;
+
+        double turnRate = G * Math.Tan((Math.PI / 180) * 22) / (_indicatedAirspeed * 0.514444);
+        turnRate = turnRate * (180 / Math.PI);
+
+        double diff = (newHeading - _heading + 360) % 360;
+        int turnDir = (diff > 180) ? -1 : 1;
+
+        double step = Math.Min(turnRate, (turnDir == 1 ? diff : 360 - diff));
+        _heading = (_heading + turnDir * step + 360) % 360;
+    }
+
+    private bool HasFlownOverCoordinate(DecimalCoordinate coordinate)
+    {
+        return false;
+    }
+
+    private void TurnDirectToCoordinate()
+    {
+
+    }
+
+    private void TurnViaRoute()
+    {
+        // here, the "next" point is the one we are currently going towards, which would become the previous point
+        DecimalCoordinate prev = NextWaypoint.Coordinate;
+        DecimalCoordinate next = FlightPlan.Route.ElementAt(1).Coordinate;
+
+        // heading for the leg (between previous point and next point) using haversine formula
+        double brng = NavTools.BearingBetweenTwoPoints(prev, next);
+        double dist = NavTools.DistanceBetweenTwoPoints(prev, next);
+
+    }
+
+    private void FlySpeed(double newSpeed)
+    {
+        if (_indicatedAirspeed > newSpeed)
+        {
+            // decelerate
+            _indicatedAirspeed = Math.Max(_indicatedAirspeed - 2, newSpeed);
+        }
+        else if (_indicatedAirspeed < newSpeed)
+        {
+            // accelerate
+            _indicatedAirspeed = Math.Min(_indicatedAirspeed + 2, newSpeed);
+        }
     }
 
     private void VerticalMovement()

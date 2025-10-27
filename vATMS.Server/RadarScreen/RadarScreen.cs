@@ -26,8 +26,6 @@ public class RadarScreen
     public void SetupMaps()
     {
         string sectorMaps = File.ReadAllText("Maps\\EG_LAC_PC_SECTOR.geojson");
-
-        Console.WriteLine(sectorMaps);
         _hubContext.Clients.Client(ConnectionId).SendAsync("SetupMap", sectorMaps);
     }
 

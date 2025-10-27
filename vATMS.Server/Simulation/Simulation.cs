@@ -30,7 +30,6 @@ public class Simulation
 
         _timer = new System.Threading.Timer(UpdateOnTimerElapsed, null, 0, 1000); // every second
 
-
         Console.WriteLine("DEBUG: new Simulation instance");
     }
 
@@ -40,6 +39,7 @@ public class Simulation
         {
             // do stuff to aircraft
             // remember to check if it can be displayed using RadarHead, but otherwise
+            //despawn if too far from centre
             // Console.WriteLine($"DEBUG: UpdateOnTimerElapsed, {ac.FlightPlan.Callsign} at {ac.Position.Lat}, {ac.Position.Lon}");
             ac.updatePosition();
         }

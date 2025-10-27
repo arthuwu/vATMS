@@ -60,18 +60,21 @@ public static class AIPParser
         return dpDict;
     }
 
-    public static DecimalCoordinate? parseSingleCoordinate(XElement location)
+    public static DecimalCoordinate parseSingleCoordinate(XElement location)
     {
         XNamespace gml = "http://www.opengis.net/gml/3.2";
 
         var node = location.Element(gml + "pos");
         string val = node!.Value;
+
         DecimalCoordinate? coord = TryParseCoordinates(val);
 
         if (coord != null)
-            return coord;
-
-        return null;
+            return (DecimalCoordinate)coord;
+        else
+        {
+            throw new FormatException("Invalid coordinate");
+        }
     }
 
     public static List<AirspaceVolume> ParseAIPAirspace()

@@ -19,7 +19,7 @@ public class FlightPlan
     public int RFL { get; set; }
     public int SPD { get; set; }
 
-    public List<Waypoint> Route { get; set; }
+    public Queue<Waypoint> Route { get; set; }
 
     public FlightPlanAssignedData flightPlanAssignedData { get; }
 
@@ -40,7 +40,7 @@ public class FlightPlan
         string rmk,
         int rfl,
         int spd,
-        List<Waypoint> route
+        Queue<Waypoint> route
     )
     {
         Callsign = callsign;
