@@ -6,7 +6,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddElectron();
-builder.Services.AddSignalR();
+builder.Services.AddSignalR()
+    .AddJsonProtocol(options =>
+    {
+        options.PayloadSerializerOptions.WriteIndented = true;
+        options.PayloadSerializerOptions.IncludeFields = true;
+    })
+;
 
 builder.Services.AddCors(options =>
 {

@@ -10,6 +10,8 @@ public class Aircraft
     public DecimalCoordinate Position { get; set; }
     public PredictedTrajectory Trajectory { get; set; }
 
+    private NavigationData _navigationData;
+
     private double _heading;
     private double _indicatedAirspeed;
     private double _pilotSelectedAlitude;
@@ -35,9 +37,11 @@ public class Aircraft
         int pressureAltitude,
         int indicatedAirspeed,
         int finalApchSpeed,
-        int minimumCleanSpeed
+        int minimumCleanSpeed,
+        NavigationData navigationData
         )
     {
+        _navigationData = navigationData;
         // TODO: TESTING - force creation of radar target with no radar head
         RadarTarget = new RadarTarget();
         FlightPlan = flightPlan;
@@ -97,28 +101,40 @@ public class Aircraft
 
         }
 
-        if (IsOnOwnNavigation != true && _heading != FlightPlan.flightPlanAssignedData.AHDG)
+        if (IsOnOwnNavigation != true && FlightPlan.flightPlanAssignedData.AHDG != null) // isonownnav broken
         {
-            TurnToHeading(FlightPlan.flightPlanAssignedData.AHDG);
+            if (_heading != FlightPlan.flightPlanAssignedData.AHDG)
+                TurnToHeading((double)FlightPlan.flightPlanAssignedData.AHDG!);
+        }
+        else if (FlightPlan.flightPlanAssignedData.DirectToPoint != null)
+        {
+            IsOnOwnNavigation = true;
+            TurnViaDirect(_navigationData.WpList[FlightPlan.flightPlanAssignedData.DirectToPoint!].Coordinate);
         }
         else
         {
-
+            IsOnOwnNavigation = true;
+            TurnViaRoute();
         }
-
-        DecimalCoordinate positionOffset = new()
-        {
-            Lat = (Math.Cos((Math.PI / 180) * _heading) * _indicatedAirspeed * 0.514444) / 111320.0,
-            Lon = (Math.Sin((Math.PI / 180) * _heading) * _indicatedAirspeed * 0.514444) / 111320.0 * Math.Cos(Position.Lat * Math.PI / 180),
-        };
-
-        // Position += positionOffset; 
-        // TODO: make this possible
-
-        Position = new() { Lat = Position.Lat + positionOffset.Lat, Lon = Position.Lon + positionOffset.Lon };
+        // user input limitations will prevent directing to unknown waypoints
 
         // TEMP:
         Groundspeed = _indicatedAirspeed;
+
+        const double KNOT_TO_MS = 0.514444;
+        const double R = 6371e+003;
+
+        double old_lat = Position.Lat * Math.PI / 180;
+        double old_lon = Position.Lon * Math.PI / 180;
+        double brng = _heading * Math.PI / 180; // rad
+        double magnitude = Groundspeed * KNOT_TO_MS; // ms^-1
+
+        double new_lat = Math.Asin(Math.Sin(old_lat) * Math.Cos(magnitude / R) + Math.Cos(old_lat) * Math.Sin(magnitude / R) * Math.Cos(brng));
+        double new_lon = old_lon + Math.Atan2(Math.Sin(brng) * Math.Sin(magnitude / R) * Math.Cos(old_lat), Math.Cos(magnitude / R) - Math.Sin(old_lat) * Math.Sin(new_lat));
+
+
+        Position = new() { Lat = new_lat * 180 / Math.PI, Lon = new_lon * 180 / Math.PI };
+
     }
 
     private void TurnToHeading(double newHeading)
@@ -140,9 +156,36 @@ public class Aircraft
         return false;
     }
 
-    private void TurnDirectToCoordinate()
+    private void TurnDirectToCoordinate(DecimalCoordinate coordinate)
     {
+        Console.WriteLine($"DEBUG: TURNING TO {coordinate.Lat}, {coordinate.Lon}");
+        double brng = NavTools.BearingBetweenTwoPoints(Position, coordinate);
 
+        // TODO: track instead of heading
+        if (_heading != brng)
+        {
+            TurnToHeading(brng);
+        }
+    }
+
+    private void TurnViaDirect(DecimalCoordinate coordinate)
+    {
+        // TODO: first check if direct is possible
+
+        Console.WriteLine($"DEBUG: TURNING TO {coordinate.Lat}, {coordinate.Lon}");
+
+
+        double brng = NavTools.BearingBetweenTwoPoints(Position, coordinate);
+        Console.WriteLine($"DEBUG: HEADING REQUIRED {brng}, ACTUAL {_heading}");
+
+        // TODO: track instead of heading
+
+        TurnToHeading(brng);
+
+        if (_heading == brng)
+        {
+            FlightPlan.flightPlanAssignedData.DirectToPoint = null;
+        }
     }
 
     private void TurnViaRoute()

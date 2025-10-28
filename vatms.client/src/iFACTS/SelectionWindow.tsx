@@ -40,6 +40,19 @@ const SelectionWindow = () => {
         signalRManager.send("SetSelectedAircraftAssignedData", aircraftId, data, value)
     }
 
+    const getRoute = (aircraft: any) => {
+        if (aircraft) {
+            let routeString: string = "";
+            let routeQueue: any = aircraft.flightPlan.route;
+            routeQueue.forEach((e: any) => {
+                routeString += ` ${e.name}`;
+            });
+            console.log(aircraft);
+            return routeString;
+        }
+        return ""
+    }
+
     return (
         <>
             <div>Selection Window</div>
@@ -88,6 +101,21 @@ const SelectionWindow = () => {
                         handleSelectedAircraftAssignedDataChange(
                             selectedAircraftID,
                             "ASP",
+                            e.currentTarget.value
+                        );
+                        e.currentTarget.value = ""; //temp reset anyways
+                    }
+                }}
+            />
+            <div>Route: {getRoute(getSelectedAircraft())}</div>
+            <input
+                type="text"
+                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleSelectedAircraftAssignedDataChange(
+                            selectedAircraftID,
+                            "DirectToPoint",
                             e.currentTarget.value
                         );
                         e.currentTarget.value = ""; //temp reset anyways

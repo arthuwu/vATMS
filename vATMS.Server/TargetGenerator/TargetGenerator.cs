@@ -43,7 +43,8 @@ class TargetGenerator
             pressureAltitude: SpawnPoints[0].getSpawnLevel(),
             indicatedAirspeed: 260,
             finalApchSpeed: 120,
-            minimumCleanSpeed: 230
+            minimumCleanSpeed: 230,
+            navigationData: navData
         ));
 
         Console.WriteLine("DEBUG: new TargetGenerator");

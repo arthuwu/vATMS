@@ -15,6 +15,7 @@ public class FlightPlan
     public int EET { get; set; }
     public string ALTN { get; set; }
     public string RMK { get; set; }
+    private string? _intentionCode;
 
     public int RFL { get; set; }
     public int SPD { get; set; }
@@ -59,6 +60,31 @@ public class FlightPlan
         SPD = spd;
 
         Route = route;
-        flightPlanAssignedData = new(this);
+        flightPlanAssignedData = new();
+    }
+
+    public string getIntentionCode()
+    {
+        // TODO: Convert to JSON-able rules
+        // TODO: implement this properly
+        if (_intentionCode == null)
+        {
+            return DEST.Substring(DEST.Length - 2); // TEMP: get last two chars
+        }
+        else
+        {
+            return _intentionCode;
+        }
+    }
+
+    public void resolveDirectRoute()
+    {
+        if (Route.Any(wp => wp.Name == flightPlanAssignedData.DirectToPoint))
+        {
+            while (Route.Count > 0 && !(Route.Peek().Name == flightPlanAssignedData.DirectToPoint))
+            {
+                Route.Dequeue();
+            }
+        }
     }
 }
