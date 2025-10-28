@@ -67,20 +67,6 @@ const BaseMapLayer = ({ projectionCenter, zoom, screenSize }: MapProps) => {
                 }
             }
         }
-
-        // let [x, y, z] = convertDDToCartesian(projectionCenter[0], projectionCenter[1]);
-        // [x, y, z] = rotateCartesianByCenter(projectionCenter[0], projectionCenter[1], [x, y, z]);
-        // [x, y] = stereographicProjection(x, y, z);
-        // [x, y] = applyZoomToProjected(x, y, zoom);
-
-        let [x_c, y_c] = getProjection(projectionCenter, projectionCenter, zoom)
-
-        const radius = 4;
-
-        ctx.beginPath();
-        ctx.arc(x_c, y_c, radius, 0, Math.PI * 2);
-        ctx.fillStyle = "red";
-        ctx.fill();
     };
 
     useEffect(() => {

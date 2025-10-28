@@ -20,8 +20,8 @@ const keybinds = {
 KeyboardManager.getInstance().loadKeybinds(keybinds); // TODO: move this to somewhere appropriate
 
 const RadarScreen = () => {
-    const [projectionCenter, setProjectionCenter] = useState<[number, number]>([0, 0]);
-    const [zoomLevel, setZoomLevel] = useState<number>(1);
+    const [projectionCenter, setProjectionCenter] = useState<[number, number]>([51.4775, -0.461389]);
+    const [zoomLevel, setZoomLevel] = useState<number>(60);
     const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
 
     const keyboardManager = KeyboardManager.getInstance();
@@ -32,13 +32,13 @@ const RadarScreen = () => {
     useEffect(() => {
         const handleInput = () => {
             if (keyboardManager.isActionPressed("PAN_RIGHT")) {
-                setProjectionCenter(([lat, lon]) => [lat, lon + 1])
+                setProjectionCenter(([lat, lon]) => [lat, lon + 0.01])
             } else if (keyboardManager.isActionPressed("PAN_LEFT")) {
-                setProjectionCenter(([lat, lon]) => [lat, lon - 1])
+                setProjectionCenter(([lat, lon]) => [lat, lon - 0.01])
             } else if (keyboardManager.isActionPressed("PAN_UP")) {
-                setProjectionCenter(([lat, lon]) => [lat + 1, lon])
+                setProjectionCenter(([lat, lon]) => [lat + 0.01, lon])
             } else if (keyboardManager.isActionPressed("PAN_DOWN")) {
-                setProjectionCenter(([lat, lon]) => [lat - 1, lon])
+                setProjectionCenter(([lat, lon]) => [lat - 0.01, lon])
             } else if (keyboardManager.isActionPressed("DECR_RANGE")) {
                 setZoomLevel((zl) => zl + 0.2)
             } else if (keyboardManager.isActionPressed("INCR_RANGE")) {
