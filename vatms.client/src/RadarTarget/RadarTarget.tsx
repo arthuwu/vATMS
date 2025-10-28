@@ -14,22 +14,48 @@ interface RadarTargetProps extends MapPropsInterface {
 
 const RadarTarget = ({ flightPlan, aircraft, lat, lon, zoom, projectionCenter, screenSize, onClick }: RadarTargetProps) => {
     const [datablockOffset, setDatablockOffset] = useState<[x: number, y: number]>([0, 0]);
+    const [radarTrail, setRadarTrail] = useState<[lat: number | null, lon: number | null][]>([[null, null]]);
 
-    let [left_coord, top_coord]: [number, number] = getProjection([lat, lon], projectionCenter, zoom);
-    left_coord += screenSize[0] / 2;
-    top_coord += screenSize[1] / 2;
+    const calculatePixelCoordinate = ([point_lat, point_lon]: [number, number]) => {
+        let [left_coord, top_coord]: [number, number] = getProjection([point_lat, point_lon], projectionCenter, zoom);
+        left_coord += screenSize[0] / 2;
+        top_coord += screenSize[1] / 2;
+
+        return [left_coord, top_coord];
+    }
+
+    var [t_left_coord, t_top_coord] = calculatePixelCoordinate([lat, lon]);
+
+    // this only rerenders every time the aircraft moves, or the screen is moved
+    // so we need to check if the last saved position is the current position before adding to the trail
+    // TODO: parameter for radar trail length
+
+    if (radarTrail.length > 0) {
+        console.log(`lat: ${lat}, ${radarTrail[radarTrail.length - 1][0]} and lon: ${lon}, ${radarTrail[radarTrail.length - 1][1]}`)
+        if (lat != radarTrail[radarTrail.length - 1][0] || lon != radarTrail[radarTrail.length - 1][1]) {
+            let newCoord: [lat: number | null, lon: number | null] = [lat, lon];
+            let newTrail = [...radarTrail, newCoord];
+
+            if (radarTrail.length > (5 * 10))
+                newTrail.shift();
+
+            console.log(newTrail);
+
+            setRadarTrail(newTrail);
+        }
+    }
 
     const handleDatablockDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
-        setDatablockOffset([e.clientX - left_coord, e.clientY - top_coord])
+        setDatablockOffset([e.clientX - t_left_coord, e.clientY - t_top_coord])
     }
 
     return (
         <>
             <div className={"radar-target-symbol"}
-                style={{ position: "relative", top: top_coord, left: left_coord }}></div>
+                style={{ position: "absolute", top: t_top_coord, left: t_left_coord }}></div>
             <div className={"target-data-block"}
-                style={{ position: "relative", top: top_coord + datablockOffset[1], left: left_coord + datablockOffset[0] }}
+                style={{ position: "absolute", top: t_top_coord + datablockOffset[1], left: t_left_coord + datablockOffset[0] }}
                 draggable="true"
                 onDragEnd={handleDatablockDragEnd}
                 onDragEnter={(e: React.DragEvent<HTMLDivElement>) => { e.preventDefault() }}
@@ -41,6 +67,16 @@ const RadarTarget = ({ flightPlan, aircraft, lat, lon, zoom, projectionCenter, s
                 <div>{"XX"}&nbsp;&nbsp;G{Math.trunc(aircraft.groundspeed).toString().padStart(3, "0").substring(0, 3)}</div>
                 <div>{flightPlan.rfl.toString().substring(0, 3)}&nbsp;{"XXXXX"}</div>
             </div>
+            {
+                radarTrail.map(([lat, lon], i) =>
+                    i % 10 == 0 ?
+                        <div className="radar-trail" style={{ position: "absolute", top: calculatePixelCoordinate([lat!, lon!])[1], left: calculatePixelCoordinate([lat!, lon!])[0] }}>
+                            ⟋
+                        </div>
+                        :
+                        null
+                )
+            }
         </>
     )
 }
@@ -48,4 +84,3 @@ const RadarTarget = ({ flightPlan, aircraft, lat, lon, zoom, projectionCenter, s
 export default RadarTarget;
 
 // TODO: line between tag and target - to be done with other visuals
-

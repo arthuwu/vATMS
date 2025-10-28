@@ -23,3 +23,9 @@
 .target-data-block:hover {
     background-color: #050081;
 }
+
+.radar-trail {
+    z-index: 2;
+    color: #f2d927;
+    transform: translate(-50%, -50%)
+}
