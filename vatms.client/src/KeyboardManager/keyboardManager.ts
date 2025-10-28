@@ -15,7 +15,7 @@ class KeyboardManager { // this is a SINGLETON class! becasue i don't want to us
         window.addEventListener("keyup", this.handleKeyUp);
     }
 
-    public static getInstance(): KeyboardManager { 
+    public static getInstance(): KeyboardManager {
         if (!KeyboardManager.instance) {
             KeyboardManager.instance = new KeyboardManager();
         }
@@ -25,7 +25,7 @@ class KeyboardManager { // this is a SINGLETON class! becasue i don't want to us
     public loadKeybinds(bindings: keyBind) {
         this.keyBinds = bindings;
     }
-    
+
     private handleKeyDown(event: KeyboardEvent) {
         this.keyState.add(event.code);
         this.notify();

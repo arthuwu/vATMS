@@ -23,6 +23,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddSingleton<RadarScreenManager>(); // Creates a new instance
 builder.Services.AddSingleton<SimulationManager>(); // Creates a new instance
 builder.Services.AddSingleton<RadarScreenUpdater>(); // Creates a new instance
+builder.Services.AddSingleton<NavigationData>(); // Creates a new instance
 builder.Services.AddScoped<RadarScreen>();
 builder.WebHost.UseElectron(args);
 

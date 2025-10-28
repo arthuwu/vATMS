@@ -20,10 +20,10 @@ public class Simulation
     /// Constructor for the Simulation instance
     /// </summary>
     /// <param name="radarScreenUpdater">The ASP.NET RadarScreenUpdater service</param>
-    public Simulation(RadarScreenUpdater radarScreenUpdater)
+    public Simulation(RadarScreenUpdater radarScreenUpdater, NavigationData navigationData)
     {
         _aircraft = new List<Aircraft>();
-        _navigationData = new NavigationData();
+        _navigationData = navigationData;
 
         _targetGenerator = new TargetGenerator(1, 1, _aircraft, _navigationData); // TODO: test, demo values
         _radarScreenUpdater = radarScreenUpdater;

@@ -1,17 +1,20 @@
 public class NavigationData
 {
+    private readonly IWebHostEnvironment _webEnv;
     public List<AirspaceVolume> AirspaceList { get; set; }
     public List<AirspaceVolume> AIPAirspaceList { get; set; }
     public Dictionary<string, Waypoint> WpList { get; set; }
 
 
-    public NavigationData()
+    public NavigationData(IWebHostEnvironment webEnv)
     {
-        AirspaceList = AIPParser.ParseXMLSectors();
+        _webEnv = webEnv;
 
-        AIPAirspaceList = AIPParser.ParseAIPAirspace();
+        AirspaceList = AIPParser.ParseXMLSectors(webEnv);
 
-        WpList = AIPParser.ParseDesignatedPoints();
+        AIPAirspaceList = AIPParser.ParseAIPAirspace(webEnv);
+
+        WpList = AIPParser.ParseDesignatedPoints(webEnv);
     }
 
     public Queue<Waypoint> ParseRoute(string route)

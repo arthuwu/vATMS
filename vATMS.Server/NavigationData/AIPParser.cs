@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 public static class AIPParser
 {
-    public static Dictionary<string, Waypoint> ParseDesignatedPoints()
+    public static Dictionary<string, Waypoint> ParseDesignatedPoints(IWebHostEnvironment webEnv)
     {
-        XDocument doc = XDocument.Load(Path.Combine(AppContext.BaseDirectory, "NavigationData\\EG_AIP_DS_FULL.xml"));
+        XDocument doc = XDocument.Load(Path.Combine(webEnv.WebRootPath, "NavigationData\\EG_AIP_DS_FULL.xml"));
         XNamespace aixm = "http://www.aixm.aero/schema/5.1";
 
         var dpNodes = doc.Descendants(aixm + "DesignatedPoint");
@@ -77,9 +77,9 @@ public static class AIPParser
         }
     }
 
-    public static List<AirspaceVolume> ParseAIPAirspace()
+    public static List<AirspaceVolume> ParseAIPAirspace(IWebHostEnvironment webEnv)
     {
-        XDocument doc = XDocument.Load(Path.Combine(AppContext.BaseDirectory, "NavigationData\\EG_AIP_DS_FULL.xml"));
+        XDocument doc = XDocument.Load(Path.Combine(webEnv.WebRootPath, "NavigationData\\EG_AIP_DS_FULL.xml"));
         XNamespace aixm = "http://www.aixm.aero/schema/5.1";
 
         string[] airspaceTypes = ["UIR", "FIR", "TMA", "CTA", "CTR"];
@@ -115,9 +115,9 @@ public static class AIPParser
 
         return aipData.ToList();
     }
-    public static List<AirspaceVolume> ParseXMLSectors()
+    public static List<AirspaceVolume> ParseXMLSectors(IWebHostEnvironment webEnv)
     {
-        XDocument doc = XDocument.Load(Path.Combine(AppContext.BaseDirectory, "NavigationData\\EG_LAC_PC_SECTOR.xml"));
+        XDocument doc = XDocument.Load(Path.Combine(webEnv.WebRootPath, "NavigationData\\EG_LAC_PC_SECTOR.xml"));
         XNamespace aixm = "http://www.aixm.aero/schema/5.1";
 
         var airspaceNodes = doc.Descendants(aixm + "Airspace");

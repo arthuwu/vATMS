@@ -10,11 +10,13 @@ using vATMS.Hubs;
 public class RadarScreen
 {
     private readonly IHubContext<RadarScreenHub> _hubContext;
+    private readonly IWebHostEnvironment _webEnv;
     public string ConnectionId { get; init; }
 
-    public RadarScreen(IHubContext<RadarScreenHub> hubContext, string connectionId)
+    public RadarScreen(IHubContext<RadarScreenHub> hubContext, IWebHostEnvironment webEnv, string connectionId)
     {
         _hubContext = hubContext;
+        _webEnv = webEnv;
         ConnectionId = connectionId;
 
         Console.WriteLine(connectionId);
@@ -25,8 +27,11 @@ public class RadarScreen
 
     public void SetupMaps()
     {
-        string sectorMaps = File.ReadAllText("Maps\\EG_LAC_PC_SECTOR.geojson");
-        _hubContext.Clients.Client(ConnectionId).SendAsync("SetupMap", sectorMaps);
+        using (var fs = new FileStream(Path.Combine(_webEnv.WebRootPath, "Maps\\EG_LAC_PC_SECTOR.geojson"), FileMode.Open, FileAccess.Read, FileShare.Read))
+        using (var sr = new StreamReader(fs))
+        {
+            string sectorMaps = sr.ReadToEnd();
+            _hubContext.Clients.Client(ConnectionId).SendAsync("SetupMap", sectorMaps);
+        }
     }
-
 }
