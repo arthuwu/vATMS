@@ -163,19 +163,6 @@ public class Aircraft
         return false;
     }
 
-    private void TurnDirectToCoordinate(DecimalCoordinate coordinate)
-    {
-        Console.WriteLine($"DEBUG: TURNING TO {coordinate.Lat}, {coordinate.Lon}");
-        double brng = NavTools.BearingBetweenTwoPoints(Position, coordinate);
-        Console.WriteLine($"DEBUG: HEADING REQUIRED {brng}, ACTUAL {_heading}");
-
-        // TODO: track instead of heading
-        if (_heading != brng)
-        {
-            TurnToHeading(brng);
-        }
-    }
-
     private void TurnViaDirect(DecimalCoordinate coordinate)
     {
         // TODO: first check if direct is possible - DO THIS IN THE MENU
@@ -202,46 +189,54 @@ public class Aircraft
         const double M_TO_NM = 0.000539957;
         const double KNOT_TO_MS = 0.514444;
 
-        // here, the "prev" point is the one we are currently going towards, which would become the previous point
-        DecimalCoordinate prev = FlightPlan.Route.ElementAt(0).Coordinate;
-        // check element 1 actually exists first!!!!!!
-        DecimalCoordinate next = FlightPlan.Route.ElementAt(1).Coordinate;
-
-        // heading for the leg (between previous point and next point) using haversine formula
-        double currBrng = NavTools.BearingBetweenTwoPoints(Position, prev);
-        double nextBrng = NavTools.BearingBetweenTwoPoints(prev, next);
-
-        double dist = NavTools.DistanceBetweenTwoPoints(Position, prev);
-
-        Console.WriteLine($"DEBUG: TURNING TO {prev.Lat}, {prev.Lon}");
-        Console.WriteLine($"DEBUG: HEADING REQUIRED {currBrng}, ACTUAL {_heading}");
-
-        TurnToHeading(currBrng);
-
-        if (_heading == currBrng)
+        if (FlightPlan.Route.Count() > 1)
         {
-            Console.WriteLine("DEBUG: Established on track");
+            // here, the "prev" point is the one we are currently going towards, which would become the previous point
+            DecimalCoordinate prev = FlightPlan.Route.ElementAt(0).Coordinate;
+            DecimalCoordinate next = FlightPlan.Route.ElementAt(1).Coordinate;
 
-            int bankAngle = _indicatedAirspeed > 300 ? 20 : 25;
-            double turnRadius = Math.Pow(_indicatedAirspeed * KNOT_TO_MS, 2) / (G * Math.Tan(bankAngle * Math.PI / 180));
-            Console.WriteLine(turnRadius);
+            // heading for the leg (between previous point and next point) using haversine formula
+            double currBrng = NavTools.BearingBetweenTwoPoints(Position, prev);
+            double nextBrng = NavTools.BearingBetweenTwoPoints(prev, next);
 
-            double turnAngle = (Math.Abs(nextBrng - (currBrng + 180)) + 360) % 360;
-            if (turnAngle > 180)
+            double dist = NavTools.DistanceBetweenTwoPoints(Position, prev);
+
+            Console.WriteLine($"DEBUG: TURNING TO {prev.Lat}, {prev.Lon}");
+            Console.WriteLine($"DEBUG: HEADING REQUIRED {currBrng}, ACTUAL {_heading}");
+
+            TurnToHeading(currBrng);
+
+            if (_heading == currBrng)
             {
-                turnAngle = 360 - turnAngle;
-            }
+                Console.WriteLine("DEBUG: Established on track");
 
-            double distanceRequired = turnRadius / Math.Tan(turnAngle * Math.PI / 180 / 2) * M_TO_NM;
+                int bankAngle = _indicatedAirspeed > 300 ? 20 : 25;
+                double turnRadius = Math.Pow(_indicatedAirspeed * KNOT_TO_MS, 2) / (G * Math.Tan(bankAngle * Math.PI / 180));
+                Console.WriteLine(turnRadius);
 
-            Console.WriteLine($"DEBUG: distanceRequired: {distanceRequired}, dist = {dist}, to turn from {_heading} to {nextBrng}");
+                double turnAngle = (Math.Abs(nextBrng - (currBrng + 180)) + 360) % 360;
+                if (turnAngle > 180)
+                {
+                    turnAngle = 360 - turnAngle;
+                }
 
-            if (dist <= distanceRequired)
-            {
-                Console.WriteLine($"DEBUG: dequeuing {FlightPlan.Route.ElementAt(0).Name}");
-                FlightPlan.Route.Dequeue();
+                double distanceRequired = turnRadius / Math.Tan(turnAngle * Math.PI / 180 / 2) * M_TO_NM;
+
+                Console.WriteLine($"DEBUG: distanceRequired: {distanceRequired}, dist = {dist}, to turn from {_heading} to {nextBrng}");
+
+                if (dist <= distanceRequired)
+                {
+                    Console.WriteLine($"DEBUG: dequeuing {FlightPlan.Route.ElementAt(0).Name}");
+                    FlightPlan.Route.Dequeue();
+                }
             }
         }
+        else
+        {
+            TurnViaDirect(FlightPlan.Route.ElementAt(0).Coordinate); // holds at last waypoint
+            // TODO: Delete here?
+        }
+
 
         // must calculate first in case there is no straight segment
         // then we decide whether we want to turn or not
