@@ -33,7 +33,7 @@ class TargetGenerator
             rmk: "",
             rfl: 34000,
             spd: 543,
-            route: navData.ParseRoute("LOGAN SABER BRASO WESUL LAM")
+            route: navData.ParseRoute("ULTIB BNN UTAVA BKY LAM")
         );
 
         _aircraft.Add(new Aircraft(

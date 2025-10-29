@@ -22,6 +22,7 @@ public static class NavTools
     {
         //haversine formula, again
         const double R = 6371e+003;
+        const double M_TO_NM = 0.000539957;
 
         double lat1 = prev.Lat * Math.PI / 180;
         double lat2 = next.Lat * Math.PI / 180;
@@ -33,6 +34,6 @@ public static class NavTools
 
         double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
 
-        return R * c;
+        return R * c * M_TO_NM;
     }
 }

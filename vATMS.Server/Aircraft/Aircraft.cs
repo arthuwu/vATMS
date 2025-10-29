@@ -1,3 +1,4 @@
+using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
 
 namespace vATMS.Aircraft;
@@ -25,11 +26,6 @@ public class Aircraft
     public double FinalApchSpeed { get; init; }
     public double MinimumCleanSpeed { get; init; }
 
-    public bool IsOnOwnNavigation { get; set; }
-    public Waypoint NextWaypoint { get; set; }
-
-    public bool IsOnNormalSpeed { get; set; }
-
     public Aircraft(
         FlightPlan flightPlan,
         DecimalCoordinate position,
@@ -52,9 +48,6 @@ public class Aircraft
 
         FinalApchSpeed = finalApchSpeed;
         MinimumCleanSpeed = minimumCleanSpeed;
-
-        IsOnOwnNavigation = false;
-        NextWaypoint = flightPlan.Route.Peek();
 
         Trajectory = new();
 
@@ -92,28 +85,40 @@ public class Aircraft
         // Speed changes
         // acceleration/deceleration always 2kt s^-1
 
-        if (IsOnNormalSpeed != true && _indicatedAirspeed != FlightPlan.flightPlanAssignedData.ASP)
+        if (FlightPlan.flightPlanAssignedData.ASP != null)
         {
-            FlySpeed(FlightPlan.flightPlanAssignedData.ASP);
+            if (_indicatedAirspeed != FlightPlan.flightPlanAssignedData.ASP)
+            {
+                FlySpeed((double)FlightPlan.flightPlanAssignedData.ASP);
+            }
         }
         else
         {
 
         }
 
-        if (IsOnOwnNavigation != true && FlightPlan.flightPlanAssignedData.AHDG != null) // isonownnav broken
+        if (FlightPlan.flightPlanAssignedData.AHDG != null) // isonownnav broken
         {
             if (_heading != FlightPlan.flightPlanAssignedData.AHDG)
                 TurnToHeading((double)FlightPlan.flightPlanAssignedData.AHDG!);
         }
         else if (FlightPlan.flightPlanAssignedData.DirectToPoint != null)
         {
-            IsOnOwnNavigation = true;
-            TurnViaDirect(_navigationData.WpList[FlightPlan.flightPlanAssignedData.DirectToPoint!].Coordinate);
+            // can only direct to fix on route
+            if (FlightPlan.Route.Any(wp => wp.Name == FlightPlan.flightPlanAssignedData.DirectToPoint))
+            {
+                FlightPlan.resolveDirectRoute();
+                TurnViaRoute();
+            }
+            else
+            {
+                TurnViaDirect(_navigationData.WpList[FlightPlan.flightPlanAssignedData.DirectToPoint!].Coordinate);
+                // this is for testing ONLY
+                // TODO: replace with resetting to null
+            }
         }
         else
         {
-            IsOnOwnNavigation = true;
             TurnViaRoute();
         }
         // user input limitations will prevent directing to unknown waypoints
@@ -140,9 +145,11 @@ public class Aircraft
     private void TurnToHeading(double newHeading)
     {
         const double G = 9.81;
+        const double KNOT_TO_MS = 0.514444;
 
-        double turnRate = G * Math.Tan((Math.PI / 180) * 22) / (_indicatedAirspeed * 0.514444);
-        turnRate = turnRate * (180 / Math.PI);
+        int bankAngle = _indicatedAirspeed > 300 ? 20 : 25; // TODO: make this not instantaneous, and compensate with margin
+        double turnRate = G * Math.Tan(bankAngle * Math.PI / 180) / (_indicatedAirspeed * KNOT_TO_MS);
+        turnRate = turnRate * 180 / Math.PI;
 
         double diff = (newHeading - _heading + 360) % 360;
         int turnDir = (diff > 180) ? -1 : 1;
@@ -151,7 +158,7 @@ public class Aircraft
         _heading = (_heading + turnDir * step + 360) % 360;
     }
 
-    private bool HasFlownOverCoordinate(DecimalCoordinate coordinate)
+    private bool IsDirectPossible(DecimalCoordinate coordinate)
     {
         return false;
     }
@@ -160,6 +167,7 @@ public class Aircraft
     {
         Console.WriteLine($"DEBUG: TURNING TO {coordinate.Lat}, {coordinate.Lon}");
         double brng = NavTools.BearingBetweenTwoPoints(Position, coordinate);
+        Console.WriteLine($"DEBUG: HEADING REQUIRED {brng}, ACTUAL {_heading}");
 
         // TODO: track instead of heading
         if (_heading != brng)
@@ -170,7 +178,7 @@ public class Aircraft
 
     private void TurnViaDirect(DecimalCoordinate coordinate)
     {
-        // TODO: first check if direct is possible
+        // TODO: first check if direct is possible - DO THIS IN THE MENU
 
         Console.WriteLine($"DEBUG: TURNING TO {coordinate.Lat}, {coordinate.Lon}");
 
@@ -190,13 +198,60 @@ public class Aircraft
 
     private void TurnViaRoute()
     {
-        // here, the "next" point is the one we are currently going towards, which would become the previous point
-        DecimalCoordinate prev = NextWaypoint.Coordinate;
+        const double G = 9.81;
+        const double M_TO_NM = 0.000539957;
+        const double KNOT_TO_MS = 0.514444;
+
+        // here, the "prev" point is the one we are currently going towards, which would become the previous point
+        DecimalCoordinate prev = FlightPlan.Route.ElementAt(0).Coordinate;
+        // check element 1 actually exists first!!!!!!
         DecimalCoordinate next = FlightPlan.Route.ElementAt(1).Coordinate;
 
         // heading for the leg (between previous point and next point) using haversine formula
-        double brng = NavTools.BearingBetweenTwoPoints(prev, next);
-        double dist = NavTools.DistanceBetweenTwoPoints(prev, next);
+        double currBrng = NavTools.BearingBetweenTwoPoints(Position, prev);
+        double nextBrng = NavTools.BearingBetweenTwoPoints(prev, next);
+
+        double dist = NavTools.DistanceBetweenTwoPoints(Position, prev);
+
+        Console.WriteLine($"DEBUG: TURNING TO {prev.Lat}, {prev.Lon}");
+        Console.WriteLine($"DEBUG: HEADING REQUIRED {currBrng}, ACTUAL {_heading}");
+
+        TurnToHeading(currBrng);
+
+        if (_heading == currBrng)
+        {
+            Console.WriteLine("DEBUG: Established on track");
+
+            int bankAngle = _indicatedAirspeed > 300 ? 20 : 25;
+            double turnRadius = Math.Pow(_indicatedAirspeed * KNOT_TO_MS, 2) / (G * Math.Tan(bankAngle * Math.PI / 180));
+            Console.WriteLine(turnRadius);
+
+            double turnAngle = (Math.Abs(nextBrng - (currBrng + 180)) + 360) % 360;
+            if (turnAngle > 180)
+            {
+                turnAngle = 360 - turnAngle;
+            }
+
+            double distanceRequired = turnRadius / Math.Tan(turnAngle * Math.PI / 180 / 2) * M_TO_NM;
+
+            Console.WriteLine($"DEBUG: distanceRequired: {distanceRequired}, dist = {dist}, to turn from {_heading} to {nextBrng}");
+
+            if (dist <= distanceRequired)
+            {
+                Console.WriteLine($"DEBUG: dequeuing {FlightPlan.Route.ElementAt(0).Name}");
+                FlightPlan.Route.Dequeue();
+            }
+        }
+
+        // must calculate first in case there is no straight segment
+        // then we decide whether we want to turn or not
+
+        // TODO: track instead of heading
+
+        //if (_heading != nextBrng)
+        //{
+        //    TurnDirectToCoordinate(next);
+        //}
 
     }
 

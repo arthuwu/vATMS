@@ -79,12 +79,10 @@ public class FlightPlan
 
     public void resolveDirectRoute()
     {
-        if (Route.Any(wp => wp.Name == flightPlanAssignedData.DirectToPoint))
+        // condition checked in Aircraft.cs
+        while (Route.Count > 0 && !(Route.Peek().Name == flightPlanAssignedData.DirectToPoint))
         {
-            while (Route.Count > 0 && !(Route.Peek().Name == flightPlanAssignedData.DirectToPoint))
-            {
-                Route.Dequeue();
-            }
+            Route.Dequeue();
         }
     }
 }

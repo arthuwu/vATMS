@@ -67,6 +67,35 @@ const BaseMapLayer = ({ projectionCenter, zoom, screenSize }: MapProps) => {
                 }
             }
         }
+
+        const arrayOfFun = [[51.6598806, -0.27875278],
+        [51.7261639, -0.54975],
+        [51.9796972, -0.0718861],
+        [51.9897694, 0.0619083],
+        [51.646025, 0.1517028]]
+
+        const points: [number, number][] = [];
+
+        arrayOfFun.forEach((coord: number[]) => {
+            let [x, y] = getProjection([coord[0], coord[1]], projectionCenter, zoom)
+            points.push([x, y]);
+        })
+
+        if (points.length > 1) {
+            ctx.beginPath();
+            const [startX, startY] = points[0];
+            ctx.moveTo(startX, startY);
+
+            for (let i = 1; i < points.length; i++) {
+                const [x, y] = points[i];
+                ctx.lineTo(x, y);
+            }
+
+            ctx.closePath();
+            ctx.strokeStyle = "#ff0000ff";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
     };
 
     useEffect(() => {
