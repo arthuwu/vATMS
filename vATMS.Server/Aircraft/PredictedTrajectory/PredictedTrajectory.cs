@@ -1,9 +1,11 @@
 public class PredictedTrajectory
 {
-    public List<(DecimalCoordinate coord, DateTime timestamp)> PredictedPoints;
+    public List<TrajectoryPoint> PredictedPoints { get; private set; } // generate and render this
+    public List<TrajectorySegments> PredictedSegments { get; private set; } // sort this
     public PredictedTrajectory()
     {
         PredictedPoints = new();
+        PredictedSegments = new();
     }
 
     public void Update()
