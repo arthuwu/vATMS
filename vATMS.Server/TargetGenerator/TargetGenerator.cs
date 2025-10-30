@@ -79,6 +79,34 @@ class TargetGenerator
             navigationData: navData
         ));
 
+        FlightPlan fp3 = new FlightPlan(
+            callsign: "SHT3N",
+            flightrules: "I",
+            atyp: "A21N",
+            wtc: "M",
+            equipment: "SABDE2E3GHIJ1J2J3J4J5LM1OP2RVWXYZ/LB1D1G1",
+            dep: "VHHH",
+            dest: "EGLL",
+            eobt: 0655,
+            eet: 1245,
+            altn: "EHAM",
+            rmk: "",
+            rfl: 34000,
+            spd: 543,
+            route: navData.ParseRoute("UMLAT WOBUN DTY SILVA")
+        );
+
+        _aircraft.Add(new Aircraft(
+            flightPlan: fp3,
+            position: SpawnPoints[1].Coordinate,
+            track: SpawnPoints[1].InitialTrack,
+            pressureAltitude: SpawnPoints[1].getSpawnLevel(),
+            indicatedAirspeed: 260,
+            finalApchSpeed: 120,
+            minimumCleanSpeed: 230,
+            navigationData: navData
+        ));
+
         Console.WriteLine("DEBUG: new TargetGenerator");
     }
 

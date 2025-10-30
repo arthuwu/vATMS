@@ -53,6 +53,9 @@ public class Aircraft
 
         // TODO: TESTING - implement this properly
         Groundspeed = _indicatedAirspeed;
+
+        // TEMP: TESTING (obviously)
+        PredictTrajectory();
     }
 
     // Getting values
@@ -286,14 +289,20 @@ public class Aircraft
         Console.WriteLine($"DEBUG: {PressureAltitude}, {FlightPlan.flightPlanAssignedData.CFL}, {climbRate}");
     }
 
-    public void updatePosition()
+    public void UpdatePosition()
     {
         LateralMovement();
         VerticalMovement();
     }
 
-    public void predictTrajectory()
+    public void PredictTrajectory()
     {
-        Trajectory.Update();
+        Trajectory = new() { };
+        Trajectory.PredictedPoints = new() {
+            new TrajectoryPoint(DateTime.Now, new(51.67213889, -0.69425556)),
+            new TrajectoryPoint(DateTime.Now.Add(new(0, 1, 0)), new(52.0195194, -0.7333333)),
+            new TrajectoryPoint(DateTime.Now.Add(new(0, 2, 0)), new(52.1801417, -1.1137889)),
+            new TrajectoryPoint(DateTime.Now.Add(new(0, 3, 0)), new(51.8475944, -1.0053889))
+        };
     }
 }

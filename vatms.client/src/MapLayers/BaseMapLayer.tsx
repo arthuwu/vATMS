@@ -68,6 +68,8 @@ const BaseMapLayer = ({ projectionCenter, zoom, screenSize }: MapProps) => {
             }
         }
 
+        /*
+
         const arrayOfFun = [[51.6598806, -0.27875278],
         [51.7261639, -0.54975],
         [51.9796972, -0.0718861],
@@ -96,6 +98,7 @@ const BaseMapLayer = ({ projectionCenter, zoom, screenSize }: MapProps) => {
             ctx.lineWidth = 1;
             ctx.stroke();
         }
+        */
     };
 
     useEffect(() => {

@@ -41,7 +41,7 @@ public class Simulation
             // remember to check if it can be displayed using RadarHead, but otherwise
             //despawn if too far from centre
             // Console.WriteLine($"DEBUG: UpdateOnTimerElapsed, {ac.FlightPlan.Callsign} at {ac.Position.Lat}, {ac.Position.Lon}");
-            ac.updatePosition();
+            ac.UpdatePosition();
         }
 
         await _radarScreenUpdater.UpdateAircraftPosition(_aircraft);

@@ -13,7 +13,8 @@ const keybinds = {
     "PAN_UP": "ArrowUp",
     "PAN_DOWN": "ArrowDown",
     "DECR_RANGE": "Equal", // TOOD: Change this to numpad add/subtract; for my testing purposes this is INCORRECT because i use a 60% 
-    "INCR_RANGE": "Minus"
+    "INCR_RANGE": "Minus",
+    "ROUTE_DRAW": "KeyR",
 }
 
 
@@ -23,6 +24,7 @@ const RadarScreen = () => {
     const [projectionCenter, setProjectionCenter] = useState<[number, number]>([51.4775, -0.461389]);
     const [zoomLevel, setZoomLevel] = useState<number>(60);
     const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
+    const [routeDraw, setRouteDraw] = useState<boolean>(false);
 
     const keyboardManager = KeyboardManager.getInstance();
     const containerRef = useRef<HTMLDivElement>(null);
@@ -43,6 +45,9 @@ const RadarScreen = () => {
                 setZoomLevel((zl) => zl + 0.2)
             } else if (keyboardManager.isActionPressed("INCR_RANGE")) {
                 setZoomLevel((zl) => zl - 0.2)
+            } else if (keyboardManager.isActionPressed("ROUTE_DRAW")) {
+                setRouteDraw(prev => !prev);
+                console.log(routeDraw);
             }
         };
 
@@ -79,7 +84,7 @@ const RadarScreen = () => {
 
     return (
         <div className='radar-screen-container' ref={containerRef}>
-            <TargetLayer projectionCenter={projectionCenter} zoom={zoomLevel} screenSize={[screenSize.width, screenSize.height]}></TargetLayer>
+            <TargetLayer projectionCenter={projectionCenter} zoom={zoomLevel} screenSize={[screenSize.width, screenSize.height]} routeDraw={routeDraw}></TargetLayer>
             <SectorMapLayer projectionCenter={projectionCenter} zoom={zoomLevel} screenSize={[screenSize.width, screenSize.height]}></SectorMapLayer>
             <BaseMapLayer map={null} projectionCenter={projectionCenter} zoom={zoomLevel} screenSize={[screenSize.width, screenSize.height]}></BaseMapLayer>
         </div>
