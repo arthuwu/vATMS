@@ -14,7 +14,7 @@ interface TargetLayerMapProps extends MapPropsInterface {
 
 const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw }: TargetLayerMapProps) => {
     const [targetList, setTargetList] = useState<any>();
-    const [selectedAircraft, setSelectedAircraft] = useState<any>();
+    const [selectedAircraftID, setSelectedAircraftID] = useState<any>();
 
     const signalRManager: SignalRManager = SignalRManager.getInstance();
 
@@ -31,15 +31,14 @@ const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw }: TargetLa
     }, [signalRManager])
 
     useEffect(() => {
-        if (selectedAircraft)
-            signalRManager.send("SetSectorSelectedAircraftID", "sector", selectedAircraft.flightPlan.callsign); // TODO: replace sector with the actual sector string once sectorisation logic is in place
-    }, [selectedAircraft])
+        if (selectedAircraftID)
+            signalRManager.send("SetSectorSelectedAircraftID", "sector", selectedAircraftID); // TODO: replace sector with the actual sector string once sectorisation logic is in place
+    }, [selectedAircraftID])
 
     useEffect(() => {
         signalRManager.on("sectorSelectedId", (sectorId: string, selectedAircraftId: string) => {
-            let ac = targetList.find((ac: any) => ac.flightPlan.callsign === selectedAircraftId);
-            if (sectorId && ac)
-                setSelectedAircraft(ac);
+            if (sectorId)
+                setSelectedAircraftID(selectedAircraftId);
         })
     }, [signalRManager])
 
@@ -62,11 +61,13 @@ const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw }: TargetLa
                         projectionCenter={projectionCenter}
                         zoom={zoom}
                         screenSize={screenSize}
-                        onClick={() => { setSelectedAircraft(target) }}
+                        onClick={() => { setSelectedAircraftID(target.flightPlan.callsign) }}
                     ></RadarTarget>
                 ))}
             </div>
-            <RouteDrawLayer projectionCenter={projectionCenter} zoom={zoom} screenSize={[screenSize[0], screenSize[1]]} selectedAircraft={selectedAircraft} routeDraw={routeDraw}></RouteDrawLayer >
+            <RouteDrawLayer projectionCenter={projectionCenter} zoom={zoom} screenSize={[screenSize[0], screenSize[1]]}
+                selectedAircraft={targetList ? targetList.find((ac: any) => ac.flightPlan.callsign === selectedAircraftID) : null}
+                routeDraw={routeDraw}></RouteDrawLayer >
         </>
     )
 }

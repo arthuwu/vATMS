@@ -98,9 +98,9 @@ class TargetGenerator
 
         _aircraft.Add(new Aircraft(
             flightPlan: fp3,
-            position: SpawnPoints[1].Coordinate,
-            track: SpawnPoints[1].InitialTrack,
-            pressureAltitude: SpawnPoints[1].getSpawnLevel(),
+            position: SpawnPoints[0].Coordinate,
+            track: SpawnPoints[0].InitialTrack,
+            pressureAltitude: SpawnPoints[0].getSpawnLevel(),
             indicatedAirspeed: 260,
             finalApchSpeed: 120,
             minimumCleanSpeed: 230,

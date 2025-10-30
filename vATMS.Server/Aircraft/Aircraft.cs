@@ -53,9 +53,6 @@ public class Aircraft
 
         // TODO: TESTING - implement this properly
         Groundspeed = _indicatedAirspeed;
-
-        // TEMP: TESTING (obviously)
-        PredictTrajectory();
     }
 
     // Getting values
@@ -129,19 +126,7 @@ public class Aircraft
         // TEMP:
         Groundspeed = _indicatedAirspeed;
 
-        const double KNOT_TO_MS = 0.514444;
-        const double R = 6371e+003;
-
-        double old_lat = Position.Lat * Math.PI / 180;
-        double old_lon = Position.Lon * Math.PI / 180;
-        double brng = _heading * Math.PI / 180; // rad
-        double magnitude = Groundspeed * KNOT_TO_MS; // ms^-1
-
-        double new_lat = Math.Asin(Math.Sin(old_lat) * Math.Cos(magnitude / R) + Math.Cos(old_lat) * Math.Sin(magnitude / R) * Math.Cos(brng));
-        double new_lon = old_lon + Math.Atan2(Math.Sin(brng) * Math.Sin(magnitude / R) * Math.Cos(old_lat), Math.Cos(magnitude / R) - Math.Sin(old_lat) * Math.Sin(new_lat));
-
-
-        Position = new() { Lat = new_lat * 180 / Math.PI, Lon = new_lon * 180 / Math.PI };
+        Position = NavTools.TranslatePoint(Position, _heading, Groundspeed / 3600);
 
     }
 
@@ -170,11 +155,11 @@ public class Aircraft
     {
         // TODO: first check if direct is possible - DO THIS IN THE MENU
 
-        Console.WriteLine($"DEBUG: TURNING TO {coordinate.Lat}, {coordinate.Lon}");
+        //Console.WriteLine($"DEBUG: TURNING TO {coordinate.Lat}, {coordinate.Lon}");
 
 
         double brng = NavTools.BearingBetweenTwoPoints(Position, coordinate);
-        Console.WriteLine($"DEBUG: HEADING REQUIRED {brng}, ACTUAL {_heading}");
+        //Console.WriteLine($"DEBUG: HEADING REQUIRED {brng}, ACTUAL {_heading}");
 
         // TODO: track instead of heading
 
@@ -188,10 +173,6 @@ public class Aircraft
 
     private void TurnViaRoute()
     {
-        const double G = 9.81;
-        const double M_TO_NM = 0.000539957;
-        const double KNOT_TO_MS = 0.514444;
-
         if (FlightPlan.Route.Count() > 1)
         {
             // here, the "prev" point is the one we are currently going towards, which would become the previous point
@@ -204,18 +185,21 @@ public class Aircraft
 
             double dist = NavTools.DistanceBetweenTwoPoints(Position, prev);
 
-            Console.WriteLine($"DEBUG: TURNING TO {prev.Lat}, {prev.Lon}");
-            Console.WriteLine($"DEBUG: HEADING REQUIRED {currBrng}, ACTUAL {_heading}");
+            //Console.WriteLine($"DEBUG: TURNING TO {prev.Lat}, {prev.Lon}");
+            //Console.WriteLine($"DEBUG: HEADING REQUIRED {currBrng}, ACTUAL {_heading}");
 
             TurnToHeading(currBrng);
 
             if (_heading == currBrng)
             {
-                Console.WriteLine("DEBUG: Established on track");
+                //Console.WriteLine("DEBUG: Established on track");
+
+                const double G = 9.81;
+                const double M_TO_NM = 0.000539957;
+                const double KNOT_TO_MS = 0.514444;
 
                 int bankAngle = _indicatedAirspeed > 300 ? 20 : 25;
                 double turnRadius = Math.Pow(_indicatedAirspeed * KNOT_TO_MS, 2) / (G * Math.Tan(bankAngle * Math.PI / 180));
-                Console.WriteLine(turnRadius);
 
                 double turnAngle = (Math.Abs(nextBrng - (currBrng + 180)) + 360) % 360;
                 if (turnAngle > 180)
@@ -225,11 +209,11 @@ public class Aircraft
 
                 double distanceRequired = turnRadius / Math.Tan(turnAngle * Math.PI / 180 / 2) * M_TO_NM;
 
-                Console.WriteLine($"DEBUG: distanceRequired: {distanceRequired}, dist = {dist}, to turn from {_heading} to {nextBrng}");
+                //Console.WriteLine($"DEBUG: distanceRequired: {distanceRequired}, dist = {dist}, to turn from {_heading} to {nextBrng}");
 
                 if (dist <= distanceRequired)
                 {
-                    Console.WriteLine($"DEBUG: dequeuing {FlightPlan.Route.ElementAt(0).Name}");
+                    //Console.WriteLine($"DEBUG: dequeuing {FlightPlan.Route.ElementAt(0).Name}");
                     FlightPlan.Route.Dequeue();
                 }
             }
@@ -286,7 +270,7 @@ public class Aircraft
             PressureAltitude = Math.Min(PressureAltitude + climbRate, FlightPlan.flightPlanAssignedData.CFL);
         }
 
-        Console.WriteLine($"DEBUG: {PressureAltitude}, {FlightPlan.flightPlanAssignedData.CFL}, {climbRate}");
+        //Console.WriteLine($"DEBUG: {PressureAltitude}, {FlightPlan.flightPlanAssignedData.CFL}, {climbRate}");
     }
 
     public void UpdatePosition()
@@ -297,12 +281,105 @@ public class Aircraft
 
     public void PredictTrajectory()
     {
-        Trajectory = new() { };
-        Trajectory.PredictedPoints = new() {
-            new TrajectoryPoint(DateTime.Now, new(51.67213889, -0.69425556)),
-            new TrajectoryPoint(DateTime.Now.Add(new(0, 1, 0)), new(52.0195194, -0.7333333)),
-            new TrajectoryPoint(DateTime.Now.Add(new(0, 2, 0)), new(52.1801417, -1.1137889)),
-            new TrajectoryPoint(DateTime.Now.Add(new(0, 3, 0)), new(51.8475944, -1.0053889))
-        };
+        const double G = 9.81;
+        const double M_TO_NM = 0.000539957;
+        const double KNOT_TO_MS = 0.514444;
+
+        // TODO: perhaps get some sort of energy profile in. But it's not important, as it doesn't really affect the actual CD
+        DecimalCoordinate currentPosition = Position;
+        Queue<Waypoint> currentRoute = new(FlightPlan.Route);
+        bool turnComplete = true;
+
+        Trajectory.PredictedPoints.Clear();
+
+        for (int t = 0; t < 30; t++)
+        {
+            if (currentRoute.Count() > 1)
+            {
+                foreach (Waypoint wp in currentRoute)
+                {
+                    Console.WriteLine(wp.Name);
+                }
+                // here, the "prev" point is the one we are currently going towards, which would become the previous point
+                DecimalCoordinate prev = currentRoute.ElementAt(0).Coordinate;
+                DecimalCoordinate next = currentRoute.ElementAt(1).Coordinate;
+
+                double segmentDistance = Groundspeed * KNOT_TO_MS * 30 * M_TO_NM; // s = ut; t = 30 seconds
+                double currentLegDist = NavTools.DistanceBetweenTwoPoints(currentPosition, prev);
+
+                double currBrng = NavTools.BearingBetweenTwoPoints(currentPosition, prev);
+                double nextBrng = NavTools.BearingBetweenTwoPoints(prev, next);
+
+                int bankAngle = _indicatedAirspeed > 300 ? 20 : 25;
+                double turnRadius = Math.Pow(_indicatedAirspeed * KNOT_TO_MS, 2) / (G * Math.Tan(bankAngle * Math.PI / 180));
+
+                double turnAngle;
+
+                if (_heading != currBrng)
+                {
+                    turnAngle = (Math.Abs(nextBrng - (_heading + 180)) + 360) % 360;
+                }
+                else
+                {
+                    turnAngle = (Math.Abs(nextBrng - (currBrng + 180)) + 360) % 360;
+                }
+
+                if (turnAngle > 180)
+                {
+                    turnAngle = 360 - turnAngle;
+                }
+
+                double turnInDistance = turnRadius / Math.Tan(turnAngle * Math.PI / 180 / 2) * M_TO_NM; // this is repeated from TurnViaRoute(), but I need the variables inside for the chord and I'd rather not risk the compiler computing it twice
+
+                while (segmentDistance > 0)
+                {
+                    if (segmentDistance > (currentLegDist - turnInDistance)) // leg contains turn
+                    {
+                        Console.WriteLine("leg contains turn");
+                        currentPosition = NavTools.TranslatePoint(currentPosition, currBrng, (currentLegDist - turnInDistance));
+                        segmentDistance -= (currentLegDist - turnInDistance);
+
+                        turnComplete = false;
+                    }
+                    else // leg doesn't contain turn
+                    {
+                        currentPosition = NavTools.TranslatePoint(currentPosition, currBrng, segmentDistance);
+                        segmentDistance = 0;
+                        continue;
+                    }
+
+                    if (_heading != currBrng || turnComplete == false) // currently in turn
+                    {
+                        double turnArcLength = turnRadius * (180 - 90 - (turnAngle / 2)) * 2 * Math.PI / 180;
+
+                        if (segmentDistance > turnArcLength) // contains straight after turn
+                        {
+                            Console.WriteLine("1st case");
+                            double chordLength = 2 * turnRadius * Math.Sin(turnArcLength * Math.PI / 180 / (2 * turnRadius));
+                            double turnBrng = 90 - (180 - 90 - (turnAngle / (2 * turnRadius))) + currBrng;
+
+                            currentPosition = NavTools.TranslatePoint(currentPosition, turnBrng, chordLength);
+                            segmentDistance -= turnArcLength;
+                        }
+                        else // segement ends in the turn
+                        {
+                            Console.WriteLine("2nd case");
+                            turnComplete = false;
+
+                            double chordLength = 2 * turnRadius * Math.Sin(segmentDistance * Math.PI / 180 / (2 * turnRadius));
+                            double turnBrng = 90 - (180 - 90 - (segmentDistance * Math.PI / 180 / (2 * turnRadius)));
+
+                            currentPosition = NavTools.TranslatePoint(currentPosition, turnBrng + currBrng, chordLength);
+                            segmentDistance = 0;
+                        }
+
+                        currentRoute.Dequeue();
+                    }
+                    //Console.WriteLine($"{currentPosition.Lat}, {currentPosition.Lon}");
+                }
+
+                Trajectory.PredictedPoints.Add(new TrajectoryPoint(DateTime.UtcNow.Add(new(0, 0, 30 * t)), currentPosition));
+            }
+        }
     }
 }

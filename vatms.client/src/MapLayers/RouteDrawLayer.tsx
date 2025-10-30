@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect } from 'react'
 import { getProjection } from './mappingUtils';
 import type { MapPropsInterface } from './MapInterface';
 import './maps.css'
@@ -10,8 +10,6 @@ interface RouteDrawMapProps extends MapPropsInterface {
 
 const RouteDrawLayer = ({ projectionCenter, zoom, screenSize, selectedAircraft, routeDraw }: RouteDrawMapProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [predictedPoints, setPredictedPoints] = useState<any>([]);
-    const [routePoints, setRoutePoints] = useState<any>([]);
 
     const calculatePixelCoordinate = ([point_lat, point_lon]: [number, number]) => {
         let [left_coord, top_coord]: [number, number] = getProjection([point_lat, point_lon], projectionCenter, zoom);
@@ -39,7 +37,7 @@ const RouteDrawLayer = ({ projectionCenter, zoom, screenSize, selectedAircraft, 
 
         var points: [number, number][] = [];
 
-        predictedPoints.forEach((point: any) => {
+        selectedAircraft.trajectory.predictedPoints.forEach((point: any) => {
             let [x, y] = getProjection([point.position.lat, point.position.lon], projectionCenter, zoom)
             points.push([x, y]);
         });
@@ -54,21 +52,11 @@ const RouteDrawLayer = ({ projectionCenter, zoom, screenSize, selectedAircraft, 
                 ctx.lineTo(x, y);
             }
 
-            ctx.closePath();
             ctx.strokeStyle = "#2da32dff";
             ctx.lineWidth = 1;
             ctx.stroke();
         }
     };
-
-    useEffect(() => {
-        if (selectedAircraft) {
-            setPredictedPoints(selectedAircraft.trajectory.predictedPoints);
-            setRoutePoints(selectedAircraft.flightPlan.route);
-            console.log(predictedPoints);
-            console.log(routePoints);
-        }
-    })
 
     useEffect(() => {
         DrawMap();
@@ -86,12 +74,11 @@ const RouteDrawLayer = ({ projectionCenter, zoom, screenSize, selectedAircraft, 
 
 
     if (routeDraw) {
-        console.log("drawing route");
         return (
             <>
                 <canvas className="route-draw-layer" ref={canvasRef} />
                 <div className="route-draw-text-layer">
-                    {routePoints.map((point: any) => (
+                    {selectedAircraft.flightPlan.route.map((point: any) => (
                         <div style={{ position: "absolute", top: calculatePixelCoordinate([point.coordinate.lat, point.coordinate.lon])[1], left: calculatePixelCoordinate([point.coordinate.lat, point.coordinate.lon])[0] }}>
                             {point.name}
                         </div>

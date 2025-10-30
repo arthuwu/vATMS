@@ -9,6 +9,7 @@ public class Simulation
 {
     // int? rate, int? pilotQuality
     private readonly System.Threading.Timer _timer;
+    private readonly System.Threading.Timer _trajTimer;
     private readonly TargetGenerator _targetGenerator;
     private readonly RadarScreenUpdater _radarScreenUpdater;
     private readonly NavigationData _navigationData;
@@ -29,6 +30,7 @@ public class Simulation
         _radarScreenUpdater = radarScreenUpdater;
 
         _timer = new System.Threading.Timer(UpdateOnTimerElapsed, null, 0, 1000); // every second
+        //_trajTimer = new System.Threading.Timer(UpdateOnTrajTimerElapsed, null, 0, 15000); // every 15 seconds
 
         Console.WriteLine("DEBUG: new Simulation instance");
     }
@@ -42,6 +44,7 @@ public class Simulation
             //despawn if too far from centre
             // Console.WriteLine($"DEBUG: UpdateOnTimerElapsed, {ac.FlightPlan.Callsign} at {ac.Position.Lat}, {ac.Position.Lon}");
             ac.UpdatePosition();
+            ac.PredictTrajectory();
         }
 
         await _radarScreenUpdater.UpdateAircraftPosition(_aircraft);

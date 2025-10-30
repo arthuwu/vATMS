@@ -36,4 +36,21 @@ public static class NavTools
 
         return R * c * M_TO_NM;
     }
+
+    public static DecimalCoordinate TranslatePoint(DecimalCoordinate position, double direction, double distance)
+    {
+        const double NM_TO_M = 1852;
+        const double R = 6371e+003;
+
+        double old_lat = position.Lat * Math.PI / 180;
+        double old_lon = position.Lon * Math.PI / 180;
+        double brng = direction * Math.PI / 180; // rad
+        double magnitude = distance * NM_TO_M; // ms^-1
+
+        double new_lat = Math.Asin(Math.Sin(old_lat) * Math.Cos(magnitude / R) + Math.Cos(old_lat) * Math.Sin(magnitude / R) * Math.Cos(brng));
+        double new_lon = old_lon + Math.Atan2(Math.Sin(brng) * Math.Sin(magnitude / R) * Math.Cos(old_lat), Math.Cos(magnitude / R) - Math.Sin(old_lat) * Math.Sin(new_lat));
+
+
+        return new() { Lat = new_lat * 180 / Math.PI, Lon = new_lon * 180 / Math.PI };
+    }
 }

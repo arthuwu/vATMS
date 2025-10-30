@@ -1,4 +1,4 @@
-public class Waypoint
+public struct Waypoint
 {
     public DecimalCoordinate Coordinate; //workaround
     public string Name;

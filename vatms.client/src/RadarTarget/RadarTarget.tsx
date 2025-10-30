@@ -31,15 +31,13 @@ const RadarTarget = ({ flightPlan, aircraft, lat, lon, zoom, projectionCenter, s
     // TODO: parameter for radar trail length
 
     if (radarTrail.length > 0) {
-        console.log(`lat: ${lat}, ${radarTrail[radarTrail.length - 1][0]} and lon: ${lon}, ${radarTrail[radarTrail.length - 1][1]}`)
+        //console.log(`lat: ${lat}, ${radarTrail[radarTrail.length - 1][0]} and lon: ${lon}, ${radarTrail[radarTrail.length - 1][1]}`)
         if (lat != radarTrail[radarTrail.length - 1][0] || lon != radarTrail[radarTrail.length - 1][1]) {
             let newCoord: [lat: number | null, lon: number | null] = [lat, lon];
             let newTrail = [...radarTrail, newCoord];
 
             if (radarTrail.length > (5 * 10))
                 newTrail.shift();
-
-            console.log(newTrail);
 
             setRadarTrail(newTrail);
         }
