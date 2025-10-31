@@ -286,100 +286,69 @@ public class Aircraft
         const double KNOT_TO_MS = 0.514444;
 
         // TODO: perhaps get some sort of energy profile in. But it's not important, as it doesn't really affect the actual CD
-        DecimalCoordinate currentPosition = Position;
-        Queue<Waypoint> currentRoute = new(FlightPlan.Route);
-        bool turnComplete = true;
+        DecimalCoordinate simPosition = Position;
+        Queue<Waypoint> simRoute = new(FlightPlan.Route);
+        double simHeading = _heading;
 
         Trajectory.PredictedPoints.Clear();
 
         for (int t = 0; t < 30; t++)
         {
-            if (currentRoute.Count() > 1)
+            // advance in chunks of 30 seconds each
+            // otherwise treat exactly the same as a real plane
+            if (simRoute.Count < 2) return;
+
+            double segmentDistance = Groundspeed * KNOT_TO_MS * 30 * M_TO_NM; // s = ut; t = 30 seconds; in nm
+            int bankAngle = _indicatedAirspeed > 300 ? 20 : 25;
+            double turnRadius = Math.Pow(_indicatedAirspeed * KNOT_TO_MS, 2) / (G * Math.Tan(bankAngle * Math.PI / 180)) * M_TO_NM; //nm
+
+            while (segmentDistance > 1)
             {
-                foreach (Waypoint wp in currentRoute)
+                DecimalCoordinate curr = simRoute.ElementAt(0).Coordinate;
+                DecimalCoordinate next = simRoute.ElementAt(1).Coordinate;
+
+                double currBrng = NavTools.BearingBetweenTwoPoints(simPosition, curr); //deg
+                double nextBrng = NavTools.BearingBetweenTwoPoints(curr, next); //deg
+
+                double currentLegDist = NavTools.DistanceBetweenTwoPoints(simPosition, curr); //nm
+
+                // do we need to turn?
+                double turnAngle = ((nextBrng - simHeading + 540) % 360) - 180; //deg
+                double turnInDistance = turnRadius / Math.Tan(Math.Abs(turnAngle) * Math.PI / 180 / 2); // nm; this is repeated from TurnViaRoute(), but I need the variables inside for the chord and I'd rather not risk the compiler computing it twice
+
+                if (currentLegDist <= turnInDistance)
                 {
-                    Console.WriteLine(wp.Name);
-                }
-                // here, the "prev" point is the one we are currently going towards, which would become the previous point
-                DecimalCoordinate prev = currentRoute.ElementAt(0).Coordinate;
-                DecimalCoordinate next = currentRoute.ElementAt(1).Coordinate;
+                    Console.WriteLine("curved part");
+                    // turn to join the next leg
+                    double innerAngle = (180 - 90 - (Math.Abs(turnAngle) / 2)) * 2 * Math.PI / 180; //rad
+                    double arcLength = Math.Min(turnRadius * innerAngle, segmentDistance); //nm
 
-                double segmentDistance = Groundspeed * KNOT_TO_MS * 30 * M_TO_NM; // s = ut; t = 30 seconds
-                double currentLegDist = NavTools.DistanceBetweenTwoPoints(currentPosition, prev);
+                    double arcInnerAngle = arcLength / turnRadius; //rad
+                    double chordLength = 2 * turnRadius * Math.Sin(arcInnerAngle / 2);
 
-                double currBrng = NavTools.BearingBetweenTwoPoints(currentPosition, prev);
-                double nextBrng = NavTools.BearingBetweenTwoPoints(prev, next);
+                    double chordBearing = 90 - ((180 - (arcInnerAngle * 180 / Math.PI)) / 2);
 
-                int bankAngle = _indicatedAirspeed > 300 ? 20 : 25;
-                double turnRadius = Math.Pow(_indicatedAirspeed * KNOT_TO_MS, 2) / (G * Math.Tan(bankAngle * Math.PI / 180));
+                    simHeading += Math.Sign(turnAngle) * chordBearing;
 
-                double turnAngle;
+                    simPosition = NavTools.TranslatePoint(simPosition, simHeading, chordLength);
+                    segmentDistance -= arcLength;
 
-                if (_heading != currBrng)
-                {
-                    turnAngle = (Math.Abs(nextBrng - (_heading + 180)) + 360) % 360;
+                    Console.WriteLine($"segmentDistance {segmentDistance}");
+
+                    if (segmentDistance >= 0) simRoute.Dequeue();
                 }
                 else
                 {
-                    turnAngle = (Math.Abs(nextBrng - (currBrng + 180)) + 360) % 360;
+                    Console.WriteLine("straight part");
+                    Console.WriteLine($"towards {simRoute.ElementAt(0).Name}");
+                    double straightLength = Math.Min(currentLegDist - turnInDistance, segmentDistance);
+                    simHeading = currBrng;
+                    simPosition = NavTools.TranslatePoint(simPosition, simHeading, straightLength);
+                    segmentDistance -= straightLength;
                 }
-
-                if (turnAngle > 180)
-                {
-                    turnAngle = 360 - turnAngle;
-                }
-
-                double turnInDistance = turnRadius / Math.Tan(turnAngle * Math.PI / 180 / 2) * M_TO_NM; // this is repeated from TurnViaRoute(), but I need the variables inside for the chord and I'd rather not risk the compiler computing it twice
-
-                while (segmentDistance > 0)
-                {
-                    if (segmentDistance > (currentLegDist - turnInDistance)) // leg contains turn
-                    {
-                        Console.WriteLine("leg contains turn");
-                        currentPosition = NavTools.TranslatePoint(currentPosition, currBrng, (currentLegDist - turnInDistance));
-                        segmentDistance -= (currentLegDist - turnInDistance);
-
-                        turnComplete = false;
-                    }
-                    else // leg doesn't contain turn
-                    {
-                        currentPosition = NavTools.TranslatePoint(currentPosition, currBrng, segmentDistance);
-                        segmentDistance = 0;
-                        continue;
-                    }
-
-                    if (_heading != currBrng || turnComplete == false) // currently in turn
-                    {
-                        double turnArcLength = turnRadius * (180 - 90 - (turnAngle / 2)) * 2 * Math.PI / 180;
-
-                        if (segmentDistance > turnArcLength) // contains straight after turn
-                        {
-                            Console.WriteLine("1st case");
-                            double chordLength = 2 * turnRadius * Math.Sin(turnArcLength * Math.PI / 180 / (2 * turnRadius));
-                            double turnBrng = 90 - (180 - 90 - (turnAngle / (2 * turnRadius))) + currBrng;
-
-                            currentPosition = NavTools.TranslatePoint(currentPosition, turnBrng, chordLength);
-                            segmentDistance -= turnArcLength;
-                        }
-                        else // segement ends in the turn
-                        {
-                            Console.WriteLine("2nd case");
-                            turnComplete = false;
-
-                            double chordLength = 2 * turnRadius * Math.Sin(segmentDistance * Math.PI / 180 / (2 * turnRadius));
-                            double turnBrng = 90 - (180 - 90 - (segmentDistance * Math.PI / 180 / (2 * turnRadius)));
-
-                            currentPosition = NavTools.TranslatePoint(currentPosition, turnBrng + currBrng, chordLength);
-                            segmentDistance = 0;
-                        }
-
-                        currentRoute.Dequeue();
-                    }
-                    //Console.WriteLine($"{currentPosition.Lat}, {currentPosition.Lon}");
-                }
-
-                Trajectory.PredictedPoints.Add(new TrajectoryPoint(DateTime.UtcNow.Add(new(0, 0, 30 * t)), currentPosition));
             }
+
+            Trajectory.PredictedPoints.Add(new TrajectoryPoint(DateTime.UtcNow.Add(new(0, 0, 30 * t)), simPosition));
         }
     }
 }
