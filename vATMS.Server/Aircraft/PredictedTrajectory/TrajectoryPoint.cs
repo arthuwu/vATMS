@@ -3,6 +3,8 @@ public class TrajectoryPoint
     public DateTime Time { get; init; }
     public DecimalCoordinate Position { get; init; }
 
+    public int Altitude { get; init; }
+
     public TrajectoryPoint(
         DateTime time,
         DecimalCoordinate position
@@ -10,5 +12,6 @@ public class TrajectoryPoint
     {
         Time = time;
         Position = position;
+        Altitude = 0;
     }
 }

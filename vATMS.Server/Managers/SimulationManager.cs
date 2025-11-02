@@ -16,7 +16,11 @@ public class SimulationManager
     {
         if (_simulation == null)
         {
-            _simulation = new Simulation(_serviceProvider.GetService<RadarScreenUpdater>()!, _serviceProvider.GetService<NavigationData>()!);
+            _simulation = new Simulation(
+                _serviceProvider.GetService<RadarScreenUpdater>()!,
+                _serviceProvider.GetService<NavigationData>()!,
+                _serviceProvider.GetService<ConflictDetection>()!
+            );
         }
     }
 

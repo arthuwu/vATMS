@@ -2,10 +2,13 @@ internal class AABB
 {
     public (double, double)[] _bounds;
 
-    public AABB(params (double min, double max)[] bounds)
+    public string? Callsign;
+
+    public AABB(string? callsign, params (double min, double max)[] bounds)
     {
         //(min, max)
         _bounds = bounds.Length > 0 ? bounds : Array.Empty<(double, double)>();
+        Callsign = callsign;
     }
 
     public bool IsOverlapping(AABB box)
@@ -19,7 +22,6 @@ internal class AABB
 
             if (min1 >= max2 || min2 >= max1) return false;
         }
-
 
         return true;
     }
@@ -58,7 +60,7 @@ internal class AABB
 
     public AABB Merge(AABB box)
     {
-        AABB newAABB = new(new (double, double)[box._bounds.Length]);
+        AABB newAABB = new(null, new (double, double)[box._bounds.Length]);
 
         for (int i = 0; i < box._bounds.Length; i++)
         {
@@ -165,6 +167,7 @@ internal class AABBTree
 
         if (tree1.IsLeaf() && tree2.IsLeaf())
         {
+            Console.WriteLine("two leafs");
             overlaps.Add((tree1._node, tree2._node));
             return overlaps;
         }
@@ -187,7 +190,7 @@ internal class AABBTree
             if (tree1._left != null && tree2._right != null) overlaps.AddRange(GetOverlaps(tree1._left, tree2._right));
         }
 
-        return overlaps;
+        return GetUniquePairs(overlaps);
     }
 
     List<AABB> OverlapDFS(AABBTree inTree, AABBTree curTree)
@@ -237,4 +240,17 @@ internal class AABBTree
         return overlappingAABB;
     }
 
+    private List<(AABB, AABB)> GetUniquePairs(List<(AABB, AABB)> pairs)
+    {
+        List<(AABB, AABB)> unique = new();
+        HashSet<(AABB, AABB)> seen = new();
+        foreach (var p in pairs)
+        {
+            if (seen.Contains(p) || seen.Contains((p.Item2, p.Item1)) || p.Item1 == p.Item2)
+                continue;
+            seen.Add(p);
+            unique.Add(p);
+        }
+        return unique;
+    }
 }

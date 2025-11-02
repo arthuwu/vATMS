@@ -13,45 +13,63 @@ public class Simulation
     private readonly TargetGenerator _targetGenerator;
     private readonly RadarScreenUpdater _radarScreenUpdater;
     private readonly NavigationData _navigationData;
+    private readonly ConflictDetection _conflictDetection;
 
-    private List<Aircraft> _aircraft;
+    public List<Aircraft> Aircraft;
     // list<Controllers> controllers;
 
     /// <summary>
     /// Constructor for the Simulation instance
     /// </summary>
     /// <param name="radarScreenUpdater">The ASP.NET RadarScreenUpdater service</param>
-    public Simulation(RadarScreenUpdater radarScreenUpdater, NavigationData navigationData)
+    public Simulation(RadarScreenUpdater radarScreenUpdater, NavigationData navigationData, ConflictDetection conflictDetection)
     {
-        _aircraft = new List<Aircraft>();
+        Aircraft = new List<Aircraft>();
         _navigationData = navigationData;
+        _conflictDetection = conflictDetection;
 
-        _targetGenerator = new TargetGenerator(1, 1, _aircraft, _navigationData); // TODO: test, demo values
+        _targetGenerator = new TargetGenerator(1, 1, Aircraft, _navigationData); // TODO: test, demo values
         _radarScreenUpdater = radarScreenUpdater;
 
         _timer = new System.Threading.Timer(UpdateOnTimerElapsed, null, 0, 1000); // every second
-        //_trajTimer = new System.Threading.Timer(UpdateOnTrajTimerElapsed, null, 0, 15000); // every 15 seconds
+        _trajTimer = new System.Threading.Timer(UpdateOnTrajTimerElapsed, null, 0, 15100); // every 15.1 seconds
 
         Console.WriteLine("DEBUG: new Simulation instance");
     }
 
     private async void UpdateOnTimerElapsed(object? state)
     {
-        foreach (Aircraft ac in _aircraft)
+        foreach (Aircraft ac in Aircraft)
         {
             // do stuff to aircraft
             // remember to check if it can be displayed using RadarHead, but otherwise
             //despawn if too far from centre
             // Console.WriteLine($"DEBUG: UpdateOnTimerElapsed, {ac.FlightPlan.Callsign} at {ac.Position.Lat}, {ac.Position.Lon}");
             ac.UpdatePosition();
+        }
+
+        await _radarScreenUpdater.UpdateAircraftPosition(Aircraft);
+    }
+
+    private async void UpdateOnTrajTimerElapsed(object? state)
+    {
+        foreach (Aircraft ac in Aircraft)
+        {
             ac.PredictTrajectory();
         }
 
-        await _radarScreenUpdater.UpdateAircraftPosition(_aircraft);
+        List<(Aircraft, Aircraft)> conflictList = _conflictDetection.GetBroadphaseConflicts();
+
+        foreach ((Aircraft ac1, Aircraft ac2) in conflictList)
+        {
+            Console.WriteLine($"DEBUG: {ac1.FlightPlan.Callsign} is in conflict with {ac2.FlightPlan.Callsign}");
+        }
+
+        await _radarScreenUpdater.UpdateAircraftPosition(Aircraft);
     }
 
     public Aircraft? FindAircraft(string selectedAircraftId)
     {
-        return _aircraft.FirstOrDefault(a => a.FlightPlan.Callsign == selectedAircraftId);
+        return Aircraft.FirstOrDefault(a => a.FlightPlan.Callsign == selectedAircraftId);
     }
 }

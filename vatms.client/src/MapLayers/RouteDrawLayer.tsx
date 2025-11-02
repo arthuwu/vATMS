@@ -85,6 +85,14 @@ const RouteDrawLayer = ({ projectionCenter, zoom, screenSize, selectedAircraft, 
                     )
                     )}
                 </div>
+                <div className="route-draw-time-layer">
+                    {selectedAircraft.trajectory.predictedPoints.map((point: any) => (
+                        <div style={{ position: "absolute", top: calculatePixelCoordinate([point.position.lat, point.position.lon])[1], left: calculatePixelCoordinate([point.position.lat, point.position.lon])[0] }}>
+                            {point.time}
+                        </div>
+                    )
+                    )}
+                </div>
             </>
         )
     }

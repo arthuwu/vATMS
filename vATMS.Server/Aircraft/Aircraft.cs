@@ -296,11 +296,18 @@ public class Aircraft
         {
             // advance in chunks of 30 seconds each
             // otherwise treat exactly the same as a real plane
-            if (simRoute.Count < 2) return;
 
             double segmentDistance = Groundspeed * KNOT_TO_MS * 30 * M_TO_NM; // s = ut; t = 30 seconds; in nm
             int bankAngle = _indicatedAirspeed > 300 ? 20 : 25;
             double turnRadius = Math.Pow(_indicatedAirspeed * KNOT_TO_MS, 2) / (G * Math.Tan(bankAngle * Math.PI / 180)) * M_TO_NM; //nm
+
+            if (FlightPlan.flightPlanAssignedData.AHDG != null)
+            {
+                simPosition = NavTools.TranslatePoint(simPosition, simHeading, segmentDistance);
+                segmentDistance = 0;
+            }
+
+            if (simRoute.Count < 2) return;
 
             while (segmentDistance > 1)
             {
@@ -318,6 +325,7 @@ public class Aircraft
 
                 if (currentLegDist <= turnInDistance)
                 {
+                    /*
                     Console.WriteLine("curved part");
                     // turn to join the next leg
                     double innerAngle = (180 - 90 - (Math.Abs(turnAngle) / 2)) * 2 * Math.PI / 180; //rad
@@ -336,6 +344,10 @@ public class Aircraft
                     Console.WriteLine($"segmentDistance {segmentDistance}");
 
                     if (segmentDistance >= 0) simRoute.Dequeue();
+                    */
+
+                    segmentDistance = 0;
+                    simRoute.Dequeue();
                 }
                 else
                 {

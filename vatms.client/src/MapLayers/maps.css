@@ -51,3 +51,14 @@
     background: transparent;
     z-index: 3;
 }
+
+.route-draw-time-layer {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    position: absolute;
+    background: transparent;
+    z-index: 3;
+}
