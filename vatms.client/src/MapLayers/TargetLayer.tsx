@@ -14,7 +14,8 @@ interface TargetLayerMapProps extends MapPropsInterface {
 
 const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw }: TargetLayerMapProps) => {
     const [targetList, setTargetList] = useState<any>();
-    const [selectedAircraftID, setSelectedAircraftID] = useState<any>();
+    const [selectedAircraftID, setSelectedAircraftID] = useState<string>();
+    const [conflictList, setConflictList] = useState<string[]>([]);
 
     const signalRManager: SignalRManager = SignalRManager.getInstance();
 
@@ -42,11 +43,30 @@ const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw }: TargetLa
         })
     }, [signalRManager])
 
-    /*
     useEffect(() => {
-        console.log(targetList);
-    }, [targetList])
-    */
+        signalRManager.on("conflictPairsUpdate", (pairs: [any, any][]) => {
+            const newConflictList: string[] = [];
+            pairs.forEach((pair: any) => {
+                const { item1: ac1, item2: ac2 } = pair;
+                if (ac1.flightPlan != null)
+                    newConflictList.push(ac1.flightPlan.callsign);
+                if (ac2.flightPlan != null)
+                    newConflictList.push(ac2.flightPlan.callsign);
+            })
+
+            setConflictList(newConflictList);
+        })
+    }, [signalRManager])
+
+    const getDatablockStatus = (target: any): string => {
+        var datablockStatus: string[] = [];
+
+        if (selectedAircraftID == target.flightPlan.callsign) datablockStatus.push("selected");
+
+        if (conflictList.includes(target.flightPlan.callsign)) datablockStatus.push("predicted-conflict");
+
+        return datablockStatus.join(" ")
+    }
 
     return (
         <>
@@ -61,6 +81,7 @@ const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw }: TargetLa
                         projectionCenter={projectionCenter}
                         zoom={zoom}
                         screenSize={screenSize}
+                        datablockStatus={getDatablockStatus(target)}
                         onClick={() => { setSelectedAircraftID(target.flightPlan.callsign) }}
                     ></RadarTarget>
                 ))}

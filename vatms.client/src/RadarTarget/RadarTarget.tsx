@@ -9,10 +9,11 @@ interface RadarTargetProps extends MapPropsInterface {
     aircraft: any; //TODO: TMPY until radar correlation, because then we wouldnt have this, we'd only have the radar target
     lat: number;
     lon: number;
+    datablockStatus: string;
     onClick: () => void;
 }
 
-const RadarTarget = ({ flightPlan, aircraft, lat, lon, zoom, projectionCenter, screenSize, onClick }: RadarTargetProps) => {
+const RadarTarget = ({ flightPlan, aircraft, lat, lon, zoom, projectionCenter, screenSize, datablockStatus, onClick }: RadarTargetProps) => {
     const [datablockOffset, setDatablockOffset] = useState<[x: number, y: number]>([0, 0]);
     const [radarTrail, setRadarTrail] = useState<[lat: number | null, lon: number | null][]>([[null, null]]);
 
@@ -48,12 +49,8 @@ const RadarTarget = ({ flightPlan, aircraft, lat, lon, zoom, projectionCenter, s
         setDatablockOffset([e.clientX - t_left_coord, e.clientY - t_top_coord])
     }
 
-    const getDatablockStatus = (): string => {
-        return "";
-    }
-
     return (
-        <div className={getDatablockStatus()}>
+        <div className={datablockStatus}>
             <div className="radar-target-symbol"
                 style={{ position: "absolute", top: t_top_coord, left: t_left_coord }}></div>
             <div className="target-data-block"

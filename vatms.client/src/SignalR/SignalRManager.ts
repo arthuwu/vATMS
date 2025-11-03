@@ -1,36 +1,6 @@
 // Singleton to be reused outside React
 import * as signalR from '@microsoft/signalr';
 
-// TODO: cleanup
-
-/*
-
-off = (eventName) => {
-  this.connection.off(eventName);
-};
-
-
-// component:
-
-const signalR = useSignalR();
-
-useEffect(() => {
-  const handleMessage = (msg) => {
-    console.log("Received:", msg);
-  };
-
-  signalR.on("ReceiveMessage", handleMessage);
-
-  return () => {
-    signalR.off("ReceiveMessage", handleMessage);  // Cleanup handler
-  };
-}, []);
-
-const sendMessage = () => {
-    signalR.send("SendMessage", "Hello from React!");
-  };
-*/
-
 class SignalRManager {  // this is a SINGLETON class! becasue i don't want to accidentially create another SignalR connection
     private static instance: SignalRManager;
     protected connection: signalR.HubConnection;
@@ -39,8 +9,7 @@ class SignalRManager {  // this is a SINGLETON class! becasue i don't want to ac
 
     constructor() {
         this.connection = new signalR.HubConnectionBuilder()
-            // http://localhost:5239 for dotnet
-            .withUrl(`${window.location.origin}/api/hub`, { // TODO: find a way to make this persist without specifying port
+            .withUrl(`${window.location.origin}/api/hub`, {
                 withCredentials: false
             })
             .withAutomaticReconnect()

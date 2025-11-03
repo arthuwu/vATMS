@@ -24,7 +24,7 @@ public class Simulation
     /// <param name="radarScreenUpdater">The ASP.NET RadarScreenUpdater service</param>
     public Simulation(RadarScreenUpdater radarScreenUpdater, NavigationData navigationData, ConflictDetection conflictDetection)
     {
-        Aircraft = new List<Aircraft>();
+        Aircraft = new List<Aircraft>(); // Aircraft is the plural form of Aircraft (lol)
         _navigationData = navigationData;
         _conflictDetection = conflictDetection;
 
@@ -32,7 +32,7 @@ public class Simulation
         _radarScreenUpdater = radarScreenUpdater;
 
         _timer = new System.Threading.Timer(UpdateOnTimerElapsed, null, 0, 1000); // every second
-        _trajTimer = new System.Threading.Timer(UpdateOnTrajTimerElapsed, null, 0, 15100); // every 15.1 seconds
+        _trajTimer = new System.Threading.Timer(UpdateOnTrajTimerElapsed, null, 0, 15100); // every 15.1 seconds (to not coincide with _timer)
 
         Console.WriteLine("DEBUG: new Simulation instance");
     }
@@ -66,6 +66,7 @@ public class Simulation
         }
 
         await _radarScreenUpdater.UpdateAircraftPosition(Aircraft);
+        await _radarScreenUpdater.UpdateConflictPairs(conflictList);
     }
 
     public Aircraft? FindAircraft(string selectedAircraftId)
