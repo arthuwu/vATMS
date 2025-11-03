@@ -73,6 +73,11 @@ const RouteDrawLayer = ({ projectionCenter, zoom, screenSize, selectedAircraft, 
     }, [projectionCenter, zoom, screenSize]);
 
 
+    const formatDateTime = (dateTime: Date): string => {
+        return `${dateTime.getUTCHours().toString().padStart(2, "0")}:${dateTime.getUTCMinutes().toString().padStart(2, "0")}:${dateTime.getUTCSeconds().toString().padStart(2, "0")}`
+    }
+
+
     if (routeDraw) {
         return (
             <>
@@ -88,7 +93,7 @@ const RouteDrawLayer = ({ projectionCenter, zoom, screenSize, selectedAircraft, 
                 <div className="route-draw-time-layer">
                     {selectedAircraft.trajectory.predictedPoints.map((point: any) => (
                         <div style={{ position: "absolute", top: calculatePixelCoordinate([point.position.lat, point.position.lon])[1], left: calculatePixelCoordinate([point.position.lat, point.position.lon])[0] }}>
-                            {point.time}
+                            {formatDateTime(new Date(point.time))}
                         </div>
                     )
                     )}

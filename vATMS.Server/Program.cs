@@ -80,6 +80,7 @@ async Task CreateElectronWindow()
             Width = 1280,
             Height = 720,
             AutoHideMenuBar = true,
+            //Frame = false,
             WebPreferences = new WebPreferences
             {
                 NodeIntegration = false, // force node off, otherwise electron won't be able to use eventsource, which breaks signalR entirely

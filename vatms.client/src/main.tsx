@@ -1,7 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import './index.css'
 import RadarScreen from './RadarScreen.tsx'
 import { SignalRProvider } from './SignalR/SignalRContext.tsx'
 import SelectionWindow from './iFACTS/SelectionWindow.tsx';

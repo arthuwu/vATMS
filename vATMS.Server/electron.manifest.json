@@ -34,9 +34,9 @@
         ]
       },
       "**/*"
-    ]
-  },
-  "win": {
-    "icon": "/wwwroot/icon/vATMS.ico"
+    ],
+    "win": {
+      "icon": "/wwwroot/icon/vATMS.ico"
+    }
   }
 }

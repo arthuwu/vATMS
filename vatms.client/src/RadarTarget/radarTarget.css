@@ -7,6 +7,16 @@
     transform: translate(-50%, -50%)
 }
 
+.predicted-conflict .radar-target-symbol {
+    background-color: #e46f15;
+}
+
+.unconcerned .radar-target-symbol {
+    transform: translate(-50%, -50%) rotate(45deg);
+    background: transparent;
+    border: 2px solid #665d10;
+}
+
 .target-data-block {
     width: 50px;
     height: 48px;
@@ -20,12 +30,29 @@
     user-select: none;
 }
 
-.target-data-block:hover {
-    background-color: #050081;
+.redundant .target-data-block {
+    color: #226323;
+}
+
+.concerned .target-data-block {
+    color: #7f7414;
+}
+
+.unconcerned .target-data-block {
+    color: #575757;
+}
+
+.selected .target-data-block {
+    background-color: #000080;
 }
 
 .radar-trail {
     z-index: 2;
-    color: #f2d927;
+    color: #665d10;
+    user-select: none;
     transform: translate(-50%, -50%)
+}
+
+.unconcerned .radar-trail {
+    color: #575757;
 }

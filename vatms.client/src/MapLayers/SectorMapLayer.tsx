@@ -59,7 +59,7 @@ const SectorMapLayer = ({ projectionCenter, zoom, screenSize }: MapPropsInterfac
                     }
 
                     ctx.closePath();
-                    ctx.strokeStyle = "#000";
+                    ctx.strokeStyle = "#414141";
                     ctx.lineWidth = 1;
                     ctx.stroke();
                 }
@@ -71,10 +71,10 @@ const SectorMapLayer = ({ projectionCenter, zoom, screenSize }: MapPropsInterfac
         const SetupMapHandler = (map: string) => {
             setSectorJson(JSON.parse(map));
         }
-        signalRManager.on("SetupMap", SetupMapHandler)
+        signalRManager.on("SetupSectorMap", SetupMapHandler)
 
         return () => {
-            signalRManager.off("SetupMap", SetupMapHandler)
+            signalRManager.off("SetupSectorMap", SetupMapHandler)
         }
     }, [signalRManager])
 

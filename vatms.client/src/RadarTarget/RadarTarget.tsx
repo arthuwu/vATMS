@@ -48,11 +48,15 @@ const RadarTarget = ({ flightPlan, aircraft, lat, lon, zoom, projectionCenter, s
         setDatablockOffset([e.clientX - t_left_coord, e.clientY - t_top_coord])
     }
 
+    const getDatablockStatus = (): string => {
+        return "";
+    }
+
     return (
-        <>
-            <div className={"radar-target-symbol"}
+        <div className={getDatablockStatus()}>
+            <div className="radar-target-symbol"
                 style={{ position: "absolute", top: t_top_coord, left: t_left_coord }}></div>
-            <div className={"target-data-block"}
+            <div className="target-data-block"
                 style={{ position: "absolute", top: t_top_coord + datablockOffset[1], left: t_left_coord + datablockOffset[0] }}
                 draggable="true"
                 onDragEnd={handleDatablockDragEnd}
@@ -75,7 +79,7 @@ const RadarTarget = ({ flightPlan, aircraft, lat, lon, zoom, projectionCenter, s
                         null
                 )
             }
-        </>
+        </div>
     )
 }
 

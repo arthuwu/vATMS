@@ -1,0 +1,22 @@
+.ifacts-outer-frame {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background: #dddfe2;
+}
+
+.inner-container .radar-screen-container {
+    position: absolute;
+    z-index: 6;
+    margin-top: 25px;
+    margin-bottom: 50px;
+    margin-left: 45px;
+    margin-right: 45px;
+    width: calc(100vw - 90px);
+    height: calc(100vh - 75px);
+}
+
+
+.ifacts-components .base-map-layer {
+    background: #373739;
+}

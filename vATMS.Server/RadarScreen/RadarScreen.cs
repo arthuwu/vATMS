@@ -25,13 +25,24 @@ public class RadarScreen
         SetupMaps();
     }
 
-    public void SetupMaps()
+    public async void SetupMaps()
     {
-        using (var fs = new FileStream(Path.Combine(_webEnv.WebRootPath, "Maps\\EG_LAC_PC_SECTOR.geojson"), FileMode.Open, FileAccess.Read, FileShare.Read))
-        using (var sr = new StreamReader(fs))
+        using (var fs1 = new FileStream(Path.Combine(_webEnv.WebRootPath, "Maps\\EG_LAC_PC_SECTOR.geojson"), FileMode.Open, FileAccess.Read, FileShare.Read))
+        using (var sr1 = new StreamReader(fs1))
         {
-            string sectorMaps = sr.ReadToEnd();
-            _hubContext.Clients.Client(ConnectionId).SendAsync("SetupMap", sectorMaps);
+            string sectorMaps = sr1.ReadToEnd();
+            await _hubContext.Clients.Client(ConnectionId).SendAsync("SetupSectorMap", sectorMaps);
+            sr1.Close();
+            fs1.Close();
+        }
+
+        using (var fs2 = new FileStream(Path.Combine(_webEnv.WebRootPath, "Maps\\CAS_background.geojson"), FileMode.Open, FileAccess.Read, FileShare.Read))
+        using (var sr2 = new StreamReader(fs2))
+        {
+            string baseMaps = sr2.ReadToEnd();
+            await _hubContext.Clients.Client(ConnectionId).SendAsync("SetupBaseMap", baseMaps);
+            sr2.Close();
+            fs2.Close();
         }
     }
 }

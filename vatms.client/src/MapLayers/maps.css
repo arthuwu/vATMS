@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=B612+Mono:wght@700&display=swap');
+
 .base-map-layer {
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     margin: 0;
     padding: 0;
     position: absolute;
@@ -9,8 +11,8 @@
 }
 
 .sector-map-layer {
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     margin: 0;
     padding: 0;
     overflow: hidden;
@@ -20,8 +22,8 @@
 }
 
 .target-layer {
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     margin: 0;
     padding: 0;
     overflow: hidden;
@@ -31,8 +33,8 @@
 }
 
 .route-draw-layer {
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     margin: 0;
     padding: 0;
     overflow: hidden;
@@ -42,8 +44,11 @@
 }
 
 .route-draw-text-layer {
-    width: 100vw;
-    height: 100vh;
+    font-family: "B612 Mono", monospace;
+    font-size: 10px;
+    color: white;
+    width: 100%;
+    height: 100%;
     margin: 0;
     padding: 0;
     overflow: hidden;
@@ -53,8 +58,11 @@
 }
 
 .route-draw-time-layer {
-    width: 100vw;
-    height: 100vh;
+    font-family: "B612 Mono", monospace;
+    font-size: 8px;
+    color: green;
+    width: 100%;
+    height: 100%;
     margin: 0;
     padding: 0;
     overflow: hidden;
