@@ -1,0 +1,102 @@
+{
+    "logons": [
+        {
+            "displayName": "Clacton Bandbox (12+13+14)",
+            "ifactsName": "12TPA 13TPA 14TPA",
+            "sectorVolumes": [
+                "ACS12P01",
+                "ACS12P02",
+                "ACS12P03",
+                "ACS12P04",
+                "ACS12P05",
+                "ACS13P01",
+                "ACS13P02",
+                "ACS14P01"
+            ]
+        },
+        {
+            "displayName": "Norwich Bandbox (10+11)",
+            "ifactsName": "10TPA 11TPA",
+            "sectorVolumes": [
+                "ACS10P01",
+                "ACS10P02",
+                "ACS11P01"
+            ]
+        },
+        {
+            "displayName": "Dover Bandbox (15+16+17)",
+            "ifactsName": "15TPA 16TPA 17TPA",
+            "sectorVolumes": [
+                "ACS15P01",
+                "ACS15P02",
+                "ACS15P03",
+                "ACS15P04",
+                "ACS16P01",
+                "ACS16P02",
+                "ACS17P01",
+                "ACS17P02",
+                "ACS17P03",
+                "ACS17P04",
+                "ACS17P05"
+            ]
+        },
+        {
+            "displayName": "Worthing Bandbox (18+19+20+21+22)",
+            "ifactsName": "18TPA 19TPA 20TPA 21TPA 22TPA",
+            "sectorVolumes": [
+                "ACS18P01",
+                "ACS18P02",
+                "ACS18P03",
+                "ACS19P01",
+                "ACS19P02",
+                "ACS19P03",
+                "ACS19P04",
+                "ACS19P05",
+                "ACS20P01",
+                "ACS20P02",
+                "ACS20P03",
+                "ACS20P04",
+                "ACS20P05",
+                "ACS20P06",
+                "ACS20P07",
+                "ACS21P01",
+                "ACS21P02",
+                "ACS21P03",
+                "ACS22P01",
+                "ACS22P02",
+                "ACS22P03",
+                "ACS22P04",
+                "ACS22P05",
+                "ACS22P06",
+                "ACS22P07",
+                "ACS22P08"
+            ]
+        },
+        {
+            "displayName": "London Upper South Bandbox (1+2+24)",
+            "ifactsName": "01TPA 02TPA 24TPA",
+            "sectorVolumes": [
+                "ACS01P01",
+                "ACS01P02",
+                "ACS02P01",
+                "ACS02P02",
+                "ACS02P03",
+                "ACS04P01"
+            ]
+        },
+        {
+            "displayName": "London Middle South Bandbox (25+26)",
+            "ifactsName": "25TPA 26TPA",
+            "sectorVolumes": [
+                "ACS25P01",
+                "ACS25P02",
+                "ACS25P03",
+                "ACS25P04",
+                "ACS26P01",
+                "ACS26P02",
+                "ACS26P03",
+                "ACS26P04"
+            ]
+        }
+    ]
+}

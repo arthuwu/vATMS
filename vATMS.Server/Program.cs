@@ -49,6 +49,17 @@ app.UseCors();
 
 app.MapHub<RadarScreenHub>("/api/hub");
 
+// This is a single API endpoint for the main menu. The main menu is NOT SignalR (that will start the simulation automatically, which we don't want)
+app.MapGet("/api/get-available-sectors", () =>
+{
+    using (var fs = new FileStream(Path.Combine(builder.Environment.WebRootPath, "Sector\\SectorLogon.json"), FileMode.Open, FileAccess.Read, FileShare.Read))
+    using (var sr = new StreamReader(fs))
+    {
+        string sectorJson = sr.ReadToEnd();
+        return sectorJson;
+    }
+});
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}"
