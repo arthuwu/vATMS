@@ -167,7 +167,6 @@ internal class AABBTree
 
         if (tree1.IsLeaf() && tree2.IsLeaf())
         {
-            Console.WriteLine("two leafs");
             overlaps.Add((tree1._node, tree2._node));
             return overlaps;
         }

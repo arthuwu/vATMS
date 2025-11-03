@@ -33,14 +33,6 @@ public class ConflictDetection
 
             List<(AABB, AABB)> conflictAABBPairs = trajectoryTree.GetOverlappingPairs();
 
-            if (conflictAABBPairs.Count() > 0)
-            {
-                foreach ((AABB box1, AABB box2) in conflictAABBPairs)
-                {
-                    Console.WriteLine($"conflict between {box1.Callsign ?? "null"} {box2.Callsign ?? "null"}");
-                }
-            }
-
             List<(Aircraft, Aircraft)> conflictPairs = new();
 
             foreach ((AABB box1, AABB box2) in conflictAABBPairs)

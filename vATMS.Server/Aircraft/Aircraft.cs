@@ -298,65 +298,34 @@ public class Aircraft
             // otherwise treat exactly the same as a real plane
 
             double segmentDistance = Groundspeed * KNOT_TO_MS * 30 * M_TO_NM; // s = ut; t = 30 seconds; in nm
-            int bankAngle = _indicatedAirspeed > 300 ? 20 : 25;
-            double turnRadius = Math.Pow(_indicatedAirspeed * KNOT_TO_MS, 2) / (G * Math.Tan(bankAngle * Math.PI / 180)) * M_TO_NM; //nm
 
-            if (FlightPlan.flightPlanAssignedData.AHDG != null)
+            while (segmentDistance > 0)
             {
-                simPosition = NavTools.TranslatePoint(simPosition, simHeading, segmentDistance);
-                segmentDistance = 0;
-            }
+                if (FlightPlan.flightPlanAssignedData.AHDG != null || simRoute.Count() < 1)
+                {
+                    simPosition = NavTools.TranslatePoint(simPosition, simHeading, segmentDistance);
+                    segmentDistance = 0;
+                    continue;
+                }
 
-            if (simRoute.Count < 2) return;
-
-            while (segmentDistance > 1)
-            {
                 DecimalCoordinate curr = simRoute.ElementAt(0).Coordinate;
-                DecimalCoordinate next = simRoute.ElementAt(1).Coordinate;
 
                 double currBrng = NavTools.BearingBetweenTwoPoints(simPosition, curr); //deg
-                double nextBrng = NavTools.BearingBetweenTwoPoints(curr, next); //deg
 
                 double currentLegDist = NavTools.DistanceBetweenTwoPoints(simPosition, curr); //nm
 
-                // do we need to turn?
-                double turnAngle = ((nextBrng - simHeading + 540) % 360) - 180; //deg
-                double turnInDistance = turnRadius / Math.Tan(Math.Abs(turnAngle) * Math.PI / 180 / 2); // nm; this is repeated from TurnViaRoute(), but I need the variables inside for the chord and I'd rather not risk the compiler computing it twice
-
-                if (currentLegDist <= turnInDistance)
+                // my attempts at making the curves smooth were to no avail - so this is if the curves are sharp...
+                if (segmentDistance >= currentLegDist)
                 {
-                    /*
-                    Console.WriteLine("curved part");
-                    // turn to join the next leg
-                    double innerAngle = (180 - 90 - (Math.Abs(turnAngle) / 2)) * 2 * Math.PI / 180; //rad
-                    double arcLength = Math.Min(turnRadius * innerAngle, segmentDistance); //nm
-
-                    double arcInnerAngle = arcLength / turnRadius; //rad
-                    double chordLength = 2 * turnRadius * Math.Sin(arcInnerAngle / 2);
-
-                    double chordBearing = 90 - ((180 - (arcInnerAngle * 180 / Math.PI)) / 2);
-
-                    simHeading += Math.Sign(turnAngle) * chordBearing;
-
-                    simPosition = NavTools.TranslatePoint(simPosition, simHeading, chordLength);
-                    segmentDistance -= arcLength;
-
-                    Console.WriteLine($"segmentDistance {segmentDistance}");
-
-                    if (segmentDistance >= 0) simRoute.Dequeue();
-                    */
-
-                    segmentDistance = 0;
+                    segmentDistance -= currentLegDist;
+                    simPosition = curr;
                     simRoute.Dequeue();
                 }
                 else
                 {
-                    Console.WriteLine("straight part");
-                    Console.WriteLine($"towards {simRoute.ElementAt(0).Name}");
-                    double straightLength = Math.Min(currentLegDist - turnInDistance, segmentDistance);
+                    simPosition = NavTools.TranslatePoint(simPosition, currBrng, segmentDistance);
                     simHeading = currBrng;
-                    simPosition = NavTools.TranslatePoint(simPosition, simHeading, straightLength);
-                    segmentDistance -= straightLength;
+                    segmentDistance = 0;
                 }
             }
 
