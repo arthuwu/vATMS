@@ -7,19 +7,21 @@ class SignalRManager {  // this is a SINGLETON class! becasue i don't want to ac
     private isConnected: boolean = false;
     private readyCb: (() => void)[] = [];
 
-    constructor() {
+    constructor(sector: string) {
         this.connection = new signalR.HubConnectionBuilder()
-            .withUrl(`${window.location.origin}/api/hub`, {
+            .withUrl(`${window.location.origin}/api/hub?sector=${sector}`, {
                 withCredentials: false
             })
             .withAutomaticReconnect()
             .build()
     }
 
+    public static createInstance(sector: string): SignalRManager {
+        SignalRManager.instance = new SignalRManager(sector);
+        return SignalRManager.instance;
+    }
+
     public static getInstance(): SignalRManager {
-        if (!SignalRManager.instance) {
-            SignalRManager.instance = new SignalRManager();
-        }
         return SignalRManager.instance;
     }
 

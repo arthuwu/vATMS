@@ -53,7 +53,7 @@ public class RadarScreenHub : Hub
             }
         );
 
-        window.LoadURL($"http://localhost:8001/ifacts-selection-window/?sectorId={sectorId}");
+        window.LoadURL($"http://localhost:8001/ifacts-selection-window/?sector={sectorId}");
     }
 
     /// <summary>
@@ -92,6 +92,16 @@ public class RadarScreenHub : Hub
 
     }
 
+    public async Task SetRadarScreenSector(string sectorId)
+    {
+        if (_simulationManager.IsSimulationStarted())
+        {
+            Simulation simulation = _simulationManager.CurrentSimulation!; // if IsSimulationStarted is true, this will never be null
+
+
+        }
+    }
+
     /// <summary>
     /// Called when a client connects to the SignalR hub
     /// Creates a new instance of RadarScreen and stores it in _radarScreens
@@ -100,11 +110,16 @@ public class RadarScreenHub : Hub
     public override Task OnConnectedAsync()
     {
         string connectionId = Context.ConnectionId;
+        string sectorId = Context.GetHttpContext()?.Request.Query["sector"].ToString() ?? string.Empty;
+
+        if (string.IsNullOrWhiteSpace(sectorId))
+            throw new ArgumentException("Missing required parameter ('sector')");
+
         Console.WriteLine($"DEBUG: new connectionId {connectionId}");
-        RadarScreen newRadarScreen = ActivatorUtilities.CreateInstance<RadarScreen>(_serviceProvider, connectionId)
+        RadarScreen newRadarScreen = ActivatorUtilities.CreateInstance<RadarScreen>(_serviceProvider, connectionId, sectorId)
                                     ?? throw new InvalidOperationException("RadarScreen service did not register.");
 
-        _radarScreenManager.AddRadarScreen(connectionId, newRadarScreen);
+        _radarScreenManager.AddRadarScreen(sectorId, newRadarScreen);
 
         // TODO: logic to associate a selection window with a radarScreen instance, instead of being its own instance.
         if (!_simulationManager.IsSimulationStarted())

@@ -1,11 +1,14 @@
-import { createContext, useEffect, useContext } from "react";
+import { createContext, useEffect, useContext, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import SignalRManager from './SignalRManager';
-
 
 const SignalRContext = createContext<SignalRManager | null>(null);
 
 const SignalRProvider = ({ children }: any) => { // exporting this allows us to be very sure we are using the same SignalR connection throughout
-    const signalRManager = SignalRManager.getInstance();
+    const [searchParams] = useSearchParams();
+    const initialSector = useMemo(() => searchParams.get("sector") ?? "", [searchParams]);
+    const [sector] = useState(initialSector);
+    const signalRManager = SignalRManager.createInstance(sector);
 
     useEffect(() => {
         signalRManager.startConnection();
@@ -14,6 +17,11 @@ const SignalRProvider = ({ children }: any) => { // exporting this allows us to 
             signalRManager.stopConnection();
         };
     }, [])
+
+    useEffect(() => {
+        if (searchParams.has("rate"))
+            signalRManager.send("setSimulationRate", searchParams.get("rate"))
+    }, [searchParams])
 
     return (
         <SignalRContext value={signalRManager}>

@@ -1,5 +1,4 @@
 import { useRef, useEffect, useState } from 'react';
-// import * as signalR from '@microsoft/signalr';
 import BaseMapLayer from './MapLayers/BaseMapLayer';
 import TargetLayer from './MapLayers/TargetLayer';
 import SectorMapLayer from './MapLayers/SectorMapLayer';

@@ -3,15 +3,13 @@ using vATMS.Aircraft;
 class TargetGenerator
 {
     public int Rate { get; set; } // aircraft per hour - will be variable (not exact)
-    public int PilotQuality { get; set; }
 
     public SpawnPoint[] SpawnPoints { get; set; }
     private List<Aircraft> _aircraft;
 
-    public TargetGenerator(int rate, int pilotQuality, List<Aircraft> aircraft, NavigationData navData)
+    public TargetGenerator(int rate, List<Aircraft> aircraft, NavigationData navData)
     {
         Rate = rate;
-        PilotQuality = pilotQuality;
         SpawnPoints = [new SpawnPoint(
             coordinate: new DecimalCoordinate(51.4775, -0.461389),
             availableLevels: [130],

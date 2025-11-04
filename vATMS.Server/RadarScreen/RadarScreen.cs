@@ -12,12 +12,14 @@ public class RadarScreen
     private readonly IHubContext<RadarScreenHub> _hubContext;
     private readonly IWebHostEnvironment _webEnv;
     public string ConnectionId { get; init; }
+    public string SectorId { get; set; }
 
-    public RadarScreen(IHubContext<RadarScreenHub> hubContext, IWebHostEnvironment webEnv, string connectionId)
+    public RadarScreen(IHubContext<RadarScreenHub> hubContext, IWebHostEnvironment webEnv, string connectionId, string sectorId)
     {
         _hubContext = hubContext;
         _webEnv = webEnv;
         ConnectionId = connectionId;
+        SectorId = sectorId;
 
         Console.WriteLine(connectionId);
         Console.WriteLine("DEBUG: new RadarScreen instance");

@@ -28,7 +28,7 @@ public class Simulation
         _navigationData = navigationData;
         _conflictDetection = conflictDetection;
 
-        _targetGenerator = new TargetGenerator(1, 1, Aircraft, _navigationData); // TODO: test, demo values
+        _targetGenerator = new TargetGenerator(25, Aircraft, _navigationData); // The default spawn rate is 25. This value will be (re)set once loading has complete - the user is able to change the spawn rate during their session
         _radarScreenUpdater = radarScreenUpdater;
 
         _timer = new System.Threading.Timer(UpdateOnTimerElapsed, null, 0, 1000); // every second

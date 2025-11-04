@@ -6,9 +6,10 @@ const MainMenu = () => {
     let navigate = useNavigate();
     const [sectorList, setSectorList] = useState<any>([]);
     const [selectedSector, setSelectedSector] = useState<any>();
+    const [spawnRate, setSpawnRate] = useState<number>();
 
     const startSimulation = () => {
-        navigate(`/radar-screen?sector=${selectedSector}`)
+        navigate(`/radar-screen?sector=${selectedSector}&rate=${spawnRate}`)
     }
 
     useEffect(() => {
@@ -26,9 +27,11 @@ const MainMenu = () => {
             <div>vATMS</div>
             <select value={selectedSector} onChange={e => setSelectedSector(e.target.value)}>
                 {sectorList?.logons?.map((sector: any) =>
-                    (<option value={sector.displayName}>{sector.displayName}</option>)
+                    (<option value={sector.id}>{sector.displayName}</option>)
                 )}
             </select>
+            <div>Spawn Rate</div>
+            <input type='number' value={spawnRate} onChange={e => setSpawnRate(e.target.value as unknown as number)}></input>
             <button onClick={startSimulation}>Start!</button>
         </div>
     )
