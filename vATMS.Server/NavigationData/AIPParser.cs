@@ -1,3 +1,5 @@
+namespace vATMS.NavData;
+
 using System.Xml;
 using System.Linq;
 using System.Xml.Serialization;
@@ -102,7 +104,7 @@ public static class AIPParser
                       (
                           name: airspaceTimeSliceNode?.Element(aixm + "name")?.Value!, // the sector dataset shouldn't break this rule
                           polygonCoordinates: ParseXMLCoordinates(horizontalProjection),
-                          lowerLimit: Convert.ToInt32(airspaceVolume?.Element(aixm + "lowerLimit")?.Value) * 100,
+                          lowerLimit: Convert.ToInt32(airspaceVolume?.Element(aixm + "lowerLimit")?.Value) * 100, // TODO: feet/FL conversions
                           upperLimit: Convert.ToInt32(airspaceVolume?.Element(aixm + "upperLimit")?.Value) * 100
                       );
 
@@ -115,7 +117,7 @@ public static class AIPParser
 
         return aipData.ToList();
     }
-    public static List<AirspaceVolume> ParseXMLSectors(IWebHostEnvironment webEnv)
+    public static Dictionary<string, Sector> ParseSectors(IWebHostEnvironment webEnv)
     {
         XDocument doc = XDocument.Load(Path.Combine(webEnv.WebRootPath, "NavigationData\\EG_LAC_PC_SECTOR.xml"));
         XNamespace aixm = "http://www.aixm.aero/schema/5.1";
@@ -130,15 +132,18 @@ public static class AIPParser
                          let horizontalProjection = airspaceVolume?.Element(aixm + "horizontalProjection")
 
                          // if any of these "?"s are null, we carry on to the next item
-                         select new AirspaceVolume
+                         select new Sector
                          (
-                            name: airspaceTimeSliceNode?.Element(aixm + "name")?.Value!, // the sector dataset shouldn't break this rule
-                            polygonCoordinates: ParseXMLCoordinates(horizontalProjection),
-                            lowerLimit: Convert.ToInt32(airspaceVolume?.Element(aixm + "lowerLimit")?.Value) * 100,
-                            upperLimit: Convert.ToInt32(airspaceVolume?.Element(aixm + "upperLimit")?.Value) * 100
+                            id: airspaceTimeSliceNode?.Element(aixm + "designator")?.Value!,
+                            sectorVolume: new(
+                                name: airspaceTimeSliceNode?.Element(aixm + "designator")?.Value!, // the sector dataset shouldn't break this rule
+                                polygonCoordinates: ParseXMLCoordinates(horizontalProjection),
+                                lowerLimit: Convert.ToInt32(airspaceVolume?.Element(aixm + "lowerLimit")?.Value) * 100,
+                                upperLimit: Convert.ToInt32(airspaceVolume?.Element(aixm + "upperLimit")?.Value) * 100
+                            )
                          );
 
-        return sectorData.ToList();
+        return sectorData.DistinctBy(item => item.Id).ToDictionary(item => item.Id, item => item);
     }
 
     public static DecimalCoordinate? TryParseCoordinates(string val)

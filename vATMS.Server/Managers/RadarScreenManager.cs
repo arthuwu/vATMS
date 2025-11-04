@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using System.Security.Cryptography.X509Certificates;
 
 /// <summary>
 /// This is a WebApplicationBuilder.Services singleton class.
@@ -8,7 +7,8 @@ using System.Security.Cryptography.X509Certificates;
 /// </summary>
 public class RadarScreenManager
 {
-    private static ConcurrentDictionary<string, List<RadarScreen>> _radarScreens = []; // Connection-related Tasks are async, so concurrency is required
+    // Each UserSectorController contains a dictionary of RadarScreens, with their ConnectionId as the key
+    private static ConcurrentDictionary<string, UserSectorController> _userControllerScreens = []; // Connection-related Tasks are async, so concurrency is required
 
     /// <summary>
     /// Adds a radarScreen to the dictionary
@@ -17,13 +17,13 @@ public class RadarScreenManager
     /// <param name="radarScreen">the radar screen instance to be added</param>
     public void AddRadarScreen(string sectorId, RadarScreen radarScreen)
     {
-        if (_radarScreens.ContainsKey(sectorId))
+        if (_userControllerScreens.ContainsKey(sectorId))
         {
-            _radarScreens[sectorId].Append(radarScreen);
+            _userControllerScreens[sectorId].RadarScreens.TryAdd(radarScreen.ConnectionId, radarScreen);
             return;
         }
 
-        _radarScreens.TryAdd(sectorId, [radarScreen]);
+        _userControllerScreens.TryAdd(sectorId, new(sectorId, radarScreen));
     }
 
     /// <summary>
@@ -31,12 +31,13 @@ public class RadarScreenManager
     /// </summary>
     /// <param name="sectorId">the SignalR connectionId</param>
     /// <returns>the required RadarScreen instances</returns>
-    public List<RadarScreen> GetRadarScreen(string sectorId)
+    public List<RadarScreen> GetRadarScreens(string sectorId)
     {
-        List<RadarScreen> radarScreens;
+        UserSectorController userController;
 
-        _radarScreens.TryGetValue(sectorId, out radarScreens!); // TODO: maybe don't use the ! operator here. But, it should never be null anyway.
-        return radarScreens;
+        _userControllerScreens.TryGetValue(sectorId, out userController!); // TODO: maybe don't use the ! operator here. But, it should never be null anyway.
+
+        return userController.RadarScreens.Values.ToList();
     }
 
     /// <summary>
@@ -45,11 +46,12 @@ public class RadarScreenManager
     /// <param name="connectionId">the SignalR connectionId</param>
     public void RemoveRadarScreen(string connectionId)
     {
-        foreach (KeyValuePair<string, List<RadarScreen>> kvp in _radarScreens)
+        foreach (KeyValuePair<string, UserSectorController> kvp in _userControllerScreens)
         {
-            RadarScreen rs = kvp.Value.FirstOrDefault(rs => rs.ConnectionId == connectionId) ?? throw new ArgumentException($"Connection does not exist in dictionary: ConnectionId {connectionId}");
-
-            kvp.Value.Remove(rs);
+            if (kvp.Value.RadarScreens.ContainsKey(connectionId))
+            {
+                kvp.Value.RadarScreens.Remove(connectionId);
+            }
         }
     }
 }

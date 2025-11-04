@@ -1,4 +1,5 @@
 using vATMS.Aircraft;
+using vATMS.NavData;
 
 /// <summary>
 /// A new Simulation instance is created when SimulationManager.StartSimulation() is called.

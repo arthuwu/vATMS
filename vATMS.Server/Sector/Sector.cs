@@ -1,21 +1,18 @@
-namespace vATMS.Sector;
+using vATMS.NavData;
 
 public class Sector
 {
-    public Guid Id { get; set; }
-    public string Name { get; set; }
-    public List<DecimalCoordinate> SectorPolygon { get; set; }
+    public string Id { get; set; }
+    public AirspaceVolume SectorVolume { get; set; }
     private ISectorController? sectorController = null;
 
     public Sector(
-        string name,
-        List<DecimalCoordinate> sectorPolygon
+        string id,
+        AirspaceVolume sectorVolume
     )
     {
-        Name = name;
-        SectorPolygon = sectorPolygon;
-
-        Id = Guid.NewGuid();
+        Id = id;
+        SectorVolume = sectorVolume;
     }
 
     public bool IsUserControlled()

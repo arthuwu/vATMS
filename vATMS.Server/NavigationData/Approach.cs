@@ -1,3 +1,5 @@
+namespace vATMS.NavData;
+
 class Approach
 {
     public DecimalCoordinate Coordinate; //Use GP coordinate

@@ -1,4 +1,5 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useMemo } from 'react';
+import { useSearchParams } from "react-router-dom";
 import BaseMapLayer from './MapLayers/BaseMapLayer';
 import TargetLayer from './MapLayers/TargetLayer';
 import SectorMapLayer from './MapLayers/SectorMapLayer';
@@ -25,6 +26,10 @@ const RadarScreen = () => {
     const [zoomLevel, setZoomLevel] = useState<number>(60);
     const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
     const [routeDraw, setRouteDraw] = useState<boolean>(false);
+
+    const [searchParams] = useSearchParams();
+    const initialSector = useMemo(() => searchParams.get("sector") ?? "", [searchParams]);
+    const [sectorId] = useState<string>(initialSector);
 
     const keyboardManager = KeyboardManager.getInstance();
     const containerRef = useRef<HTMLDivElement>(null);
@@ -79,13 +84,13 @@ const RadarScreen = () => {
             })
         }
 
-        openSelectionWindow("16");
+        openSelectionWindow(sectorId);
     }, [])
 
     return (
-        <RadarScreenFrame>
+        <RadarScreenFrame sectorId={sectorId}>
             <div className='radar-screen-container' ref={containerRef}>
-                <TargetLayer projectionCenter={projectionCenter} zoom={zoomLevel} screenSize={[screenSize.width, screenSize.height]} routeDraw={routeDraw}></TargetLayer>
+                <TargetLayer projectionCenter={projectionCenter} zoom={zoomLevel} screenSize={[screenSize.width, screenSize.height]} routeDraw={routeDraw} sectorId={sectorId}></TargetLayer>
                 <SectorMapLayer projectionCenter={projectionCenter} zoom={zoomLevel} screenSize={[screenSize.width, screenSize.height]}></SectorMapLayer>
                 <BaseMapLayer projectionCenter={projectionCenter} zoom={zoomLevel} screenSize={[screenSize.width, screenSize.height]}></BaseMapLayer>
             </div>

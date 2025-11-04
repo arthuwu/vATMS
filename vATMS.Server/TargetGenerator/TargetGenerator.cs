@@ -1,4 +1,5 @@
 using vATMS.Aircraft;
+using vATMS.NavData;
 
 class TargetGenerator
 {

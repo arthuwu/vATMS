@@ -1,5 +1,6 @@
 // This is the entry point to the simulation
 using vATMS.Aircraft;
+using vATMS.NavData;
 public class SimulationManager
 {
     private readonly IServiceProvider _serviceProvider;

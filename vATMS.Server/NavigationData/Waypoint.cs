@@ -1,3 +1,5 @@
+namespace vATMS.NavData;
+
 public struct Waypoint
 {
     public DecimalCoordinate Coordinate; //workaround

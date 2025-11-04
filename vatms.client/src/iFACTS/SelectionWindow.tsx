@@ -1,4 +1,6 @@
 //import type { FlightPlanAssignedData } from '../RadarTarget/Types';
+import { useMemo } from 'react';
+import { useSearchParams } from "react-router-dom";
 import SignalRManager from '../SignalR/SignalRManager';
 import { useEffect, useState } from 'react';
 
@@ -6,6 +8,10 @@ const SelectionWindow = () => {
     const [targetList, setTargetList] = useState<any>();
     const [selectedAircraftID, setSelectedAircraftID] = useState<any>();
     // const [selectedAircraftAssignedData, setSelectedAircraftAssignedData] = useState<FlightPlanAssignedData>();
+
+    const [searchParams] = useSearchParams();
+    const initialSector = useMemo(() => searchParams.get("sector") ?? "", [searchParams]);
+    const [sectorId] = useState<string>(initialSector);
 
     const signalRManager: SignalRManager = SignalRManager.getInstance();
 
@@ -22,7 +28,7 @@ const SelectionWindow = () => {
     }, [signalRManager])
 
     useEffect(() => {
-        signalRManager.send("SetSectorSelectedAircraftID", "sector", selectedAircraftID); // TODO: replace sector with the actual sector string once sectorisation logic is in place
+        signalRManager.send("SetSectorSelectedAircraftID", sectorId, selectedAircraftID); // TODO: replace sector with the actual sector string once sectorisation logic is in place
     }, [selectedAircraftID])
 
     useEffect(() => {
@@ -55,7 +61,7 @@ const SelectionWindow = () => {
 
     return (
         <>
-            <div>Selection Window</div>
+            <div>Selection Window {sectorId}</div>
             <div className='temp-target-list'>
                 {targetList?.map((target: any) => (
                     <div>{target.flightPlan.callsign}</div>

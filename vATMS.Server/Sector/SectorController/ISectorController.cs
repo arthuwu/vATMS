@@ -1,4 +1,4 @@
-using vATMS.Sector;
+using vATMS.NavData;
 
 public interface ISectorController
 {

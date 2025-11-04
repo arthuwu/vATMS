@@ -1,5 +1,7 @@
 namespace vATMS.Aircraft;
 
+using vATMS.NavData;
+
 public class FlightPlan
 {
     // TODO: Make some of these enums

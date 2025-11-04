@@ -20,3 +20,7 @@
 .ifacts-components .base-map-layer {
     background: #373739;
 }
+
+.ifacts-top-bar {
+    position: absolute;
+}

@@ -1,4 +1,5 @@
 using System.Drawing;
+namespace vATMS.NavData;
 
 public class AirspaceVolume
 {

@@ -1,10 +1,11 @@
 // This is the "point of connection" with React - for ALL clients INBOUND
-
+using vATMS.NavData;
 using ElectronNET.API;
 using ElectronNET.API.Entities;
 using Microsoft.AspNetCore.SignalR;
 
 namespace vATMS.Hubs;
+
 
 /// <summary>
 /// RadarScreenHub inherits the base SignalR hub to provide specific functionality
@@ -64,8 +65,10 @@ public class RadarScreenHub : Hub
     /// <returns></returns>
     public async Task SetSectorSelectedAircraftID(string sectorId, string selectedAircraftId)
     {
-        await Clients.All.SendAsync("sectorSelectedId", sectorId, selectedAircraftId);
-        // TODO: associate selection window with a specific RadarScreen instance s.t. no redundant broadcasting occurs
+        foreach (RadarScreen rs in _radarScreenManager.GetRadarScreens(sectorId))
+        {
+            await Clients.Client(rs.ConnectionId).SendAsync("sectorSelectedId", sectorId, selectedAircraftId);
+        }
     }
 
 
@@ -92,16 +95,6 @@ public class RadarScreenHub : Hub
 
     }
 
-    public async Task SetRadarScreenSector(string sectorId)
-    {
-        if (_simulationManager.IsSimulationStarted())
-        {
-            Simulation simulation = _simulationManager.CurrentSimulation!; // if IsSimulationStarted is true, this will never be null
-
-
-        }
-    }
-
     /// <summary>
     /// Called when a client connects to the SignalR hub
     /// Creates a new instance of RadarScreen and stores it in _radarScreens
@@ -121,7 +114,6 @@ public class RadarScreenHub : Hub
 
         _radarScreenManager.AddRadarScreen(sectorId, newRadarScreen);
 
-        // TODO: logic to associate a selection window with a radarScreen instance, instead of being its own instance.
         if (!_simulationManager.IsSimulationStarted())
         {
             _simulationManager.StartSimulation();

@@ -1,5 +1,6 @@
 using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
+using vATMS.NavData;
 
 namespace vATMS.Aircraft;
 

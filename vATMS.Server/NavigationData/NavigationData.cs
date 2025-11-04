@@ -1,7 +1,9 @@
+namespace vATMS.NavData;
+
 public class NavigationData
 {
     private readonly IWebHostEnvironment _webEnv;
-    public List<AirspaceVolume> AirspaceList { get; set; }
+    public Dictionary<string, Sector> SectorList { get; set; }
     public List<AirspaceVolume> AIPAirspaceList { get; set; }
     public Dictionary<string, Waypoint> WpList { get; set; }
 
@@ -10,7 +12,7 @@ public class NavigationData
     {
         _webEnv = webEnv;
 
-        AirspaceList = AIPParser.ParseXMLSectors(webEnv);
+        SectorList = AIPParser.ParseSectors(webEnv);
 
         AIPAirspaceList = AIPParser.ParseAIPAirspace(webEnv);
 

@@ -2,6 +2,7 @@ using ElectronNET.API;
 using ElectronNET.API.Entities;
 using Microsoft.AspNetCore.Http.HttpResults;
 using vATMS.Hubs;
+using vATMS.NavData;
 
 var builder = WebApplication.CreateBuilder(args);
 

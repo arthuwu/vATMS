@@ -1,3 +1,5 @@
+namespace vATMS.NavData;
+
 class Airport
 {
     public DecimalCoordinate Coordinate;

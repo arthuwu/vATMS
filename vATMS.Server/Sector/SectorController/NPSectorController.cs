@@ -1,4 +1,4 @@
-using vATMS.Sector;
+using vATMS.NavData;
 
 internal class NPSectorController : ISectorController
 {

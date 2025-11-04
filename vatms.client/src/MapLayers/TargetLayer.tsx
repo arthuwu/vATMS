@@ -10,9 +10,10 @@ import RouteDrawLayer from './RouteDrawLayer';
 
 interface TargetLayerMapProps extends MapPropsInterface {
     routeDraw: boolean;
+    sectorId: string;
 }
 
-const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw }: TargetLayerMapProps) => {
+const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw, sectorId }: TargetLayerMapProps) => {
     const [targetList, setTargetList] = useState<any>();
     const [selectedAircraftID, setSelectedAircraftID] = useState<string>();
     const [conflictList, setConflictList] = useState<string[]>([]);
@@ -33,7 +34,7 @@ const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw }: TargetLa
 
     useEffect(() => {
         if (selectedAircraftID)
-            signalRManager.send("SetSectorSelectedAircraftID", "sector", selectedAircraftID); // TODO: replace sector with the actual sector string once sectorisation logic is in place
+            signalRManager.send("SetSectorSelectedAircraftID", sectorId, selectedAircraftID); // TODO: replace sector with the actual sector string once sectorisation logic is in place
     }, [selectedAircraftID])
 
     useEffect(() => {
