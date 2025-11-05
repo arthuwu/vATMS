@@ -1,5 +1,9 @@
 namespace vATMS.Aircraft;
 
+/// <summary>
+/// Each FlightPlan instance has a single FlightPlanAssignedData instance.
+/// This contains everything that would be assigned by ATC and associated with a single flight plan
+/// </summary>
 public class FlightPlanAssignedData
 {
     public int CFL { get; set; }
@@ -8,6 +12,8 @@ public class FlightPlanAssignedData
 
     private int? _ahdg { get; set; }
     private string? _directToPoint { get; set; }
+
+    // AHDG and DirectToPoint have explicit getters and setters as the other value has to be changed when one value is set
 
     public int? AHDG
     {
@@ -30,6 +36,6 @@ public class FlightPlanAssignedData
     }
 
 
-    public FlightPlanAssignedData() { }
+    public FlightPlanAssignedData() { } // TODO!: initialise CFL
 
 }

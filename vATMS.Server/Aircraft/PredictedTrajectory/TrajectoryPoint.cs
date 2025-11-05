@@ -1,3 +1,6 @@
+/// <summary>
+/// Represents a predicted trajectory point 
+/// </summary>
 public class TrajectoryPoint
 {
     public DateTime Time { get; init; }
