@@ -83,7 +83,7 @@ const RouteDrawLayer = ({ projectionCenter, zoom, screenSize, selectedAircraft, 
             <>
                 <canvas className="route-draw-layer" ref={canvasRef} />
                 <div className="route-draw-text-layer">
-                    {selectedAircraft.flightPlan.route.map((point: any) => (
+                    {selectedAircraft && selectedAircraft.flightPlan.route.map((point: any) => (
                         <div style={{ position: "absolute", top: calculatePixelCoordinate([point.coordinate.lat, point.coordinate.lon])[1], left: calculatePixelCoordinate([point.coordinate.lat, point.coordinate.lon])[0] }}>
                             {point.name}
                         </div>
@@ -91,7 +91,7 @@ const RouteDrawLayer = ({ projectionCenter, zoom, screenSize, selectedAircraft, 
                     )}
                 </div>
                 <div className="route-draw-time-layer">
-                    {selectedAircraft.trajectory.predictedPoints.map((point: any) => (
+                    {selectedAircraft && selectedAircraft.trajectory.predictedPoints.map((point: any) => (
                         <div style={{ position: "absolute", top: calculatePixelCoordinate([point.position.lat, point.position.lon])[1], left: calculatePixelCoordinate([point.position.lat, point.position.lon])[0] }}>
                             {formatDateTime(new Date(point.time))}
                         </div>
