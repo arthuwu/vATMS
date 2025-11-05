@@ -61,10 +61,12 @@ public class Simulation
 
         List<(Aircraft, Aircraft)> conflictList = _conflictDetection.GetBroadphaseConflicts();
 
+        /*
         foreach ((Aircraft ac1, Aircraft ac2) in conflictList)
         {
             Console.WriteLine($"DEBUG: {ac1.FlightPlan.Callsign} is in conflict with {ac2.FlightPlan.Callsign}");
         }
+        */
 
         await _radarScreenUpdater.UpdateAircraftPosition(Aircraft);
         await _radarScreenUpdater.UpdateConflictPairs(conflictList);

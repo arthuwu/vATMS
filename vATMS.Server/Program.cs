@@ -33,6 +33,7 @@ builder.Services.AddSingleton<SimulationManager>(); // Creates a new instance
 builder.Services.AddSingleton<RadarScreenUpdater>(); // Creates a new instance
 builder.Services.AddSingleton<NavigationData>(); // Creates a new instance
 builder.Services.AddSingleton<ConflictDetection>(); // Creates a new instance
+builder.Services.AddSingleton<LogonData>(); // Creates a new instance
 builder.Services.AddScoped<RadarScreen>();
 builder.WebHost.UseElectron(args);
 

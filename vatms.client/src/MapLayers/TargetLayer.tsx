@@ -11,19 +11,24 @@ import RouteDrawLayer from './RouteDrawLayer';
 interface TargetLayerMapProps extends MapPropsInterface {
     routeDraw: boolean;
     sectorId: string;
+    sectorVolumes: string[];
 }
 
-const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw, sectorId }: TargetLayerMapProps) => {
+const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw, sectorId, sectorVolumes }: TargetLayerMapProps) => {
     const [targetList, setTargetList] = useState<any>();
     const [selectedAircraftID, setSelectedAircraftID] = useState<string>();
     const [conflictList, setConflictList] = useState<string[]>([]);
+    const [aircraftThroughSector, setAircraftThroughSector] = useState<string[]>([]);
 
     const signalRManager: SignalRManager = SignalRManager.getInstance();
 
     useEffect(() => {
         const AircraftPositionUpdateHandler = (ac: any) => {
-            //console.log(ac);
             setTargetList(ac);
+            ac.forEach((e: any) => {
+                if (sectorVolumes.includes(e.trajectory.currentSector))
+                    setAircraftThroughSector((prev: any) => [...prev, e.flightPlan.callsign])
+            });
         }
         signalRManager.on("AircraftPositionUpdate", AircraftPositionUpdateHandler)
 
@@ -62,9 +67,21 @@ const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw, sectorId }
     const getDatablockStatus = (target: any): string => {
         var datablockStatus: string[] = [];
 
-        if (selectedAircraftID == target.flightPlan.callsign) datablockStatus.push("selected");
+        if (selectedAircraftID == target.flightPlan.callsign)
+            datablockStatus.push("selected");
 
-        if (conflictList.includes(target.flightPlan.callsign)) datablockStatus.push("predicted-conflict");
+        if (conflictList.includes(target.flightPlan.callsign))
+            datablockStatus.push("predicted-conflict");
+
+        if (sectorVolumes.includes(target.trajectory.currentSector)) {
+            datablockStatus.push("assumed");
+        } else if (sectorVolumes.includes(target.trajectory.nextSector)) {
+            datablockStatus.push("concerned");
+        } else if (aircraftThroughSector.includes(target.callsign) && !sectorVolumes.includes(target.trajectory.currentSector)) {
+            datablockStatus.push("redundant");
+        } else {
+            datablockStatus.push("unconcerned")
+        }
 
         return datablockStatus.join(" ")
     }

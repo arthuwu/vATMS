@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
 using vATMS.NavData;
@@ -282,7 +283,6 @@ public class Aircraft
 
     public void PredictTrajectory()
     {
-        const double G = 9.81;
         const double M_TO_NM = 0.000539957;
         const double KNOT_TO_MS = 0.514444;
 
@@ -290,14 +290,12 @@ public class Aircraft
         DecimalCoordinate simPosition = Position;
         Queue<Waypoint> simRoute = new(FlightPlan.Route);
         double simHeading = _heading;
+        double simAltitude = PressureAltitude;
 
         Trajectory.PredictedPoints.Clear();
 
         for (int t = 0; t < 30; t++)
         {
-            // advance in chunks of 30 seconds each
-            // otherwise treat exactly the same as a real plane
-
             double segmentDistance = Groundspeed * KNOT_TO_MS * 30 * M_TO_NM; // s = ut; t = 30 seconds; in nm
 
             while (segmentDistance > 0)
@@ -330,7 +328,19 @@ public class Aircraft
                 }
             }
 
-            Trajectory.PredictedPoints.Add(new TrajectoryPoint(DateTime.UtcNow.Add(new(0, 0, 30 * t)), simPosition));
+            Trajectory.PredictedPoints.Add(new TrajectoryPoint(DateTime.UtcNow.Add(new(0, 0, 30 * t)), simPosition, simAltitude));
+        }
+
+        foreach (Sector av in _navigationData.SectorList.Select(s => s.Value))
+        {
+            if (av.SectorVolume.IsInside(Position, PressureAltitude))
+            {
+                Trajectory.CurrentSector = av.Id;
+            }
+            if (av.SectorVolume.IsInside(simPosition, simAltitude))
+            {
+                Trajectory.NextSector = av.Id;
+            }
         }
     }
 }

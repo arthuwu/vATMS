@@ -13,11 +13,11 @@ class TargetGenerator
         Rate = rate;
         SpawnPoints = [new SpawnPoint(
             coordinate: new DecimalCoordinate(51.4775, -0.461389),
-            availableLevels: [130],
+            availableLevels: [30000],
             initialTrack: 270
         ), new SpawnPoint(
             coordinate: new DecimalCoordinate(51.885, 0.235),
-            availableLevels: [130],
+            availableLevels: [30000],
             initialTrack: 270
         )];
         _aircraft = aircraft;

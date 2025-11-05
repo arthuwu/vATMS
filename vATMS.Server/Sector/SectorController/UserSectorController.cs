@@ -10,8 +10,6 @@ public class UserSectorController : ISectorController
     {
         SectorId = sectorId;
 
-        // sector allocation logic here
-
         RadarScreens = new() { { radarScreen.ConnectionId, radarScreen } };
 
         SectorsControlled = new List<Sector>();

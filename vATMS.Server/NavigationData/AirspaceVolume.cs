@@ -28,7 +28,7 @@ public class AirspaceVolume
 
     // TODO: make this an interface, and have children "ControlledAirspace" and "SectorAirspace"
 
-    public bool IsInside(DecimalCoordinate position, int level)
+    public bool IsInside(DecimalCoordinate position, double level)
     {
         int count = 0;
 

@@ -28,8 +28,9 @@ const RadarScreen = () => {
     const [routeDraw, setRouteDraw] = useState<boolean>(false);
 
     const [searchParams] = useSearchParams();
-    const initialSector = useMemo(() => searchParams.get("sector") ?? "", [searchParams]);
-    const [sectorId] = useState<string>(initialSector);
+    const sectorId = useMemo(() => searchParams.get("sector") ?? "", [searchParams]);
+
+    const [sectorProps, setSectorProps] = useState<any>([]);
 
     const keyboardManager = KeyboardManager.getInstance();
     const containerRef = useRef<HTMLDivElement>(null);
@@ -87,14 +88,36 @@ const RadarScreen = () => {
         openSelectionWindow(sectorId);
     }, [])
 
+    useEffect(() => {
+        const fetchSectors = async () => {
+            const res = await fetch(`${window.location.origin}/api/get-available-sectors`);
+            const json = await res.json();
+            setSectorProps(json.logons.find((e: any) => e.id == sectorId));
+        }
+
+        fetchSectors();
+    }, [sectorId])
+
+
+    useEffect(() => {
+        console.log(sectorProps);
+    }, [sectorProps])
+
     return (
-        <RadarScreenFrame sectorId={sectorId}>
+        <RadarScreenFrame sectorId={sectorProps.ifactsName}>
             <div className='radar-screen-container' ref={containerRef}>
-                <TargetLayer projectionCenter={projectionCenter} zoom={zoomLevel} screenSize={[screenSize.width, screenSize.height]} routeDraw={routeDraw} sectorId={sectorId}></TargetLayer>
+                <TargetLayer
+                    projectionCenter={projectionCenter}
+                    zoom={zoomLevel}
+                    screenSize={[screenSize.width, screenSize.height]}
+                    routeDraw={routeDraw}
+                    sectorId={sectorId}
+                    sectorVolumes={sectorProps.sectorVolumes}
+                ></TargetLayer>
                 <SectorMapLayer projectionCenter={projectionCenter} zoom={zoomLevel} screenSize={[screenSize.width, screenSize.height]}></SectorMapLayer>
                 <BaseMapLayer projectionCenter={projectionCenter} zoom={zoomLevel} screenSize={[screenSize.width, screenSize.height]}></BaseMapLayer>
             </div>
-        </RadarScreenFrame>
+        </RadarScreenFrame >
     )
 }
 
