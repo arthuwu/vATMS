@@ -90,7 +90,7 @@ const SectorMapLayer = ({ projectionCenter, zoom, screenSize }: MapPropsInterfac
         return () => {
             window.removeEventListener('resize', handleResize);
         };
-    }, [projectionCenter, zoom, screenSize]);
+    }, [projectionCenter, zoom, screenSize, sectorJson]);
 
 
     return <canvas className="sector-map-layer" ref={canvasRef} />

@@ -1,4 +1,5 @@
 .ifacts-outer-frame {
+    font-family: sans-serif;
     position: absolute;
     width: 100vw;
     height: 100vh;
@@ -23,4 +24,59 @@
 
 .ifacts-top-bar {
     position: absolute;
+    height: 25px;
+    width: 100vw;
+    padding-top: 2px;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 60px 75px 485px 220px;
+}
+
+.ifacts-sector-display {
+    width: 220px;
+    height: 18px;
+    margin-top: 3px;
+    border: 1px solid #808080;
+}
+
+.ifacts-left-bar {
+    position: absolute;
+    width: 45px;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 50px auto auto auto auto;
+}
+
+.ifacts-right-bar {
+    position: absolute;
+    right: 0;
+    width: 45px;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 50px auto;
+}
+
+.ifacts-button {
+    font-size: 10px;
+    box-shadow: inset -2px -2px 0px #808080, inset 2px 2px 0px #C8C8C8;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 2px;
+    user-select: none;
+}
+
+.ifacts-button:hover {
+    background-color: #969696;
+}
+
+.ifacts-clock {
+    background-color: #FCFCDE;
+    width: 75px;
+    height: 21px;
 }

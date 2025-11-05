@@ -94,7 +94,7 @@ const BaseMapLayer = ({ projectionCenter, zoom, screenSize }: MapPropsInterface)
         return () => {
             window.removeEventListener('resize', handleResize);
         };
-    }, [projectionCenter, zoom, screenSize]);
+    }, [projectionCenter, zoom, screenSize, baseMapJson]);
 
 
     return <canvas className="base-map-layer" ref={canvasRef} />
