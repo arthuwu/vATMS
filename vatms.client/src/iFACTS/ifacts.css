@@ -1,5 +1,4 @@
 .ifacts-outer-frame {
-    font-family: sans-serif;
     position: absolute;
     width: 100vw;
     height: 100vh;
@@ -68,7 +67,6 @@
     justify-content: center;
     align-items: center;
     margin-left: 2px;
-    user-select: none;
 }
 
 .ifacts-button:hover {
@@ -79,4 +77,40 @@
     background-color: #FCFCDE;
     width: 75px;
     height: 21px;
+}
+
+.ifacts-popup {
+    border: 3px solid #999999;
+    background-color: #DCDCDC;
+    box-shadow: inset -2px -2px 0px #808080, inset 2px 2px 0px #C8C8C8;
+    z-index: 10;
+    pointer-events: auto;
+}
+
+.ifacts-popup-handle {
+    width: 100%;
+    height: 14px;
+    font-size: 10px;
+    background-color: #999999;
+    text-align: center;
+    box-shadow: inset -2px -2px 0px #808080, inset 2px 2px 0px #C8C8C8;
+}
+
+.ifacts-popup-handle .close-button {
+    position: relative;
+    margin-left: 3px;
+    margin-top: 2px;
+    background-color: #999999;
+    width: 10px;
+    height: 10px;
+    box-shadow: inset -2px -2px 0px #808080, inset 2px 2px 0px #C8C8C8;
+}
+
+.popup-container {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10;
+    background: transparent;
+    pointer-events: none;
 }
