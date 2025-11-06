@@ -58,11 +58,11 @@ class TargetGenerator
 
         int weightedSpawn = random.Next(1, _weightedSpawnSum.LastOrDefault());
 
-        int requiredIndex = SpawnPoints.Select(e => e.Chance).ToList().BinarySearch(weightedSpawn);
+        int requiredIndex = _weightedSpawnSum.BinarySearch(weightedSpawn);
 
         if (requiredIndex < 0)
         {
-            requiredIndex = ~requiredIndex - 1;
+            requiredIndex = ~requiredIndex;
         }
 
         Console.WriteLine(requiredIndex);
