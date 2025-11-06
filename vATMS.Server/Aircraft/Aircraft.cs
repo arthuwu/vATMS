@@ -44,6 +44,7 @@ public class Aircraft
         RadarTarget = new RadarTarget();
         FlightPlan = flightPlan;
         Position = position;
+        _heading = track;
         Track = track;
         PressureAltitude = pressureAltitude;
         _indicatedAirspeed = indicatedAirspeed;
@@ -192,6 +193,12 @@ public class Aircraft
 
             TurnToHeading(currBrng);
 
+            if (dist <= 0.2 || dist <= _indicatedAirspeed / 3600)  // if the distance required is smaller than the update distance, it won't dequeue properly, so this is required
+            {
+                FlightPlan.Route.Dequeue();
+                return;
+            }
+
             if (_heading == currBrng)
             {
                 //Console.WriteLine("DEBUG: Established on track");
@@ -211,7 +218,7 @@ public class Aircraft
 
                 double distanceRequired = turnRadius / Math.Tan(turnAngle * Math.PI / 180 / 2) * M_TO_NM;
 
-                //Console.WriteLine($"DEBUG: distanceRequired: {distanceRequired}, dist = {dist}, to turn from {_heading} to {nextBrng}");
+                // Console.WriteLine($"DEBUG: distanceRequired: {distanceRequired}, dist = {dist}, to turn from {_heading} to {nextBrng}");
 
                 if (dist <= distanceRequired)
                 {
@@ -220,10 +227,13 @@ public class Aircraft
                 }
             }
         }
-        else
+        else if (FlightPlan.Route.Count() == 1)
         {
             TurnViaDirect(FlightPlan.Route.ElementAt(0).Coordinate); // holds at last waypoint
-            // TODO: Delete here?
+        }
+        else
+        {
+            FlightPlan.flightPlanAssignedData.AHDG = Convert.ToInt32(_heading);
         }
 
 
@@ -333,6 +343,8 @@ public class Aircraft
 
         foreach (Sector av in _navigationData.SectorList.Select(s => s.Value))
         {
+            Trajectory.CurrentSector = "";
+            Trajectory.NextSector = "";
             if (av.SectorVolume.IsInside(Position, PressureAltitude))
             {
                 Trajectory.CurrentSector = av.Id;

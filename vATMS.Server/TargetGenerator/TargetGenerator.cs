@@ -65,6 +65,8 @@ class TargetGenerator
             requiredIndex = ~requiredIndex - 1;
         }
 
+        Console.WriteLine(requiredIndex);
+
         SpawnPoint spawnPoint = SpawnPoints[requiredIndex];
 
         FlightPlan fp = new FlightPlan(
@@ -91,7 +93,7 @@ class TargetGenerator
                     fp.Route.Peek().Coordinate,
                     NavTools.BearingBetweenTwoPoints(fp.Route.ElementAt(1).Coordinate, fp.Route.Peek().Coordinate),
                     15),
-                track: NavTools.BearingBetweenTwoPoints(fp.Route.ElementAt(1).Coordinate, fp.Route.Peek().Coordinate),
+                track: NavTools.BearingBetweenTwoPoints(fp.Route.Peek().Coordinate, fp.Route.ElementAt(1).Coordinate),
                 pressureAltitude: spawnPoint.SpawnLevels[random.Next(spawnPoint.SpawnLevels.Count())],
                 indicatedAirspeed: GetSpawnSpeed(),
                 finalApchSpeed: 120,
