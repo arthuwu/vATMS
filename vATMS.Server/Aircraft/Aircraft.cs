@@ -1,6 +1,3 @@
-using System.IO.Compression;
-using System.Net.NetworkInformation;
-using System.Runtime.CompilerServices;
 using vATMS.NavData;
 
 namespace vATMS.Aircraft;
@@ -48,6 +45,8 @@ public class Aircraft
         Track = track;
         PressureAltitude = pressureAltitude;
         _indicatedAirspeed = indicatedAirspeed;
+
+        FlightPlan.flightPlanAssignedData.CFL = pressureAltitude;
 
         FinalApchSpeed = finalApchSpeed;
         MinimumCleanSpeed = minimumCleanSpeed;
@@ -341,17 +340,26 @@ public class Aircraft
             Trajectory.PredictedPoints.Add(new TrajectoryPoint(DateTime.UtcNow.Add(new(0, 0, 30 * t)), simPosition, simAltitude));
         }
 
+        Trajectory.CurrentSector = "";
+        Trajectory.NextSector = "";
+
         foreach (Sector av in _navigationData.SectorList.Select(s => s.Value))
         {
-            Trajectory.CurrentSector = "";
-            Trajectory.NextSector = "";
             if (av.SectorVolume.IsInside(Position, PressureAltitude))
             {
                 Trajectory.CurrentSector = av.Id;
             }
-            if (av.SectorVolume.IsInside(simPosition, simAltitude))
+        }
+
+        foreach (TrajectoryPoint tp in Trajectory.PredictedPoints)
+        {
+            foreach (Sector av in _navigationData.SectorList.Select(s => s.Value))
             {
-                Trajectory.NextSector = av.Id;
+                if (av.SectorVolume.IsInside(tp.Position, tp.Altitude) && av.Id != Trajectory.CurrentSector)
+                {
+                    Trajectory.NextSector = av.Id;
+                    return; //return early once next sector found
+                }
             }
         }
     }
