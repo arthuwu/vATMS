@@ -1,3 +1,5 @@
+namespace vATMS.NavData;
+
 public static class NavTools
 {
     public static double BearingBetweenTwoPoints(DecimalCoordinate prev, DecimalCoordinate next)

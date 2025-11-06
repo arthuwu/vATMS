@@ -31,7 +31,7 @@ public class Aircraft
     public Aircraft(
         FlightPlan flightPlan,
         DecimalCoordinate position,
-        int track,
+        double track,
         int pressureAltitude,
         int indicatedAirspeed,
         int finalApchSpeed,

@@ -1,0 +1,211 @@
+{
+    "minimumLevel": 19500,
+    "maximumLevel": 66000,
+    "simulationCentre": [
+        51.4775,
+        -0.461389
+    ],
+    "spawnRadius": 150,
+    "spawnPoints": [
+        {
+            "chance": 1,
+            "callsigns": [
+                "BAW",
+                "CPA",
+                "DLH",
+                "EWG",
+                "QTR",
+                "UAE"
+            ],
+            "callsignPattern": "numeric",
+            "adep": [
+                "VHHH",
+                "VHHH",
+                "EDDF",
+                "OTHH",
+                "OMDB"
+            ],
+            "ades": [
+                "EGLL"
+            ],
+            "displayRoute": "L608 LOGAN",
+            "flownRoute": "SUMUM LOGAN SABER BRASO WESUL LAM",
+            "spawnLevels": [
+                30000,
+                32000,
+                34000
+            ],
+            "minimumLevel": 30000,
+            "maximumLevel": 43000,
+            "standingAgreements": [
+                {
+                    "point": "LOGAN",
+                    "level": 25000
+                }
+            ]
+        },
+        {
+            "chance": 1,
+            "callsigns": [
+                "AAL",
+                "DAL",
+                "DLH",
+                "ACA"
+            ],
+            "callsignPattern": "numeric",
+            "adep": [
+                "EDDF",
+                "LSZH",
+                "EDDB",
+                "EDDK"
+            ],
+            "ades": [
+                "KJFK",
+                "KBOS",
+                "KCLT",
+                "CYYZ"
+            ],
+            "displayRoute": "RAPIX L610 KOPUL Q63 ICTAM M197 ENHAQ DCT GAJIT DCT BAPHU DCT LESLU",
+            "flownRoute": "RAPIX SUNUP TEBRA KOPUL IDITU IPKUS ICTAM ENHAQ GAJIT BAPHU LESLU",
+            "spawnLevels": [
+                30000,
+                32000,
+                34000,
+                36000,
+                38000,
+                40000
+            ],
+            "minimumLevel": 30000,
+            "maximumLevel": 40000,
+            "standingAgreements": []
+        },
+        {
+            "chance": 1,
+            "callsigns": [
+                "WZZ",
+                "WUK",
+                "EZY",
+                "RYR",
+                "RUK"
+            ],
+            "callsignPattern": "alphaNumeric",
+            "adep": [
+                "EGSS"
+            ],
+            "ades": [
+                "EPWA"
+            ],
+            "displayRoute": "CLN P44 RATLO M197 REDFA",
+            "flownRoute": "CLN RATLO REDFA",
+            "spawnLevels": [
+                19500
+            ],
+            "minimumLevel": 29000,
+            "maximumLevel": 41000,
+            "standingAgreements": [
+                {
+                    "point": "",
+                    "level": 21000
+                }
+            ]
+        },
+        {
+            "chance": 1,
+            "callsigns": [
+                "WZZ",
+                "WUK",
+                "EZY",
+                "RYR",
+                "RUK"
+            ],
+            "callsignPattern": "alphaNumeric",
+            "adep": [
+                "EGGW"
+            ],
+            "ades": [
+                "EPWA"
+            ],
+            "displayRoute": "MATCH Q295 BRAIN M197 REDFA",
+            "flownRoute": "MATCH BRAIN GASBA RATLO REDFA",
+            "spawnLevels": [
+                19500
+            ],
+            "minimumLevel": 29000,
+            "maximumLevel": 41000,
+            "standingAgreements": [
+                {
+                    "point": "",
+                    "level": 23000
+                }
+            ]
+        },
+        {
+            "chance": 1,
+            "callsigns": [
+                "WZZ",
+                "WUK",
+                "EZY",
+                "RYR",
+                "RUK"
+            ],
+            "callsignPattern": "alphaNumeric",
+            "adep": [
+                "EGGW"
+            ],
+            "ades": [
+                "EPWA"
+            ],
+            "displayRoute": "MATCH Q295 BRAIN M197 REDFA",
+            "flownRoute": "MATCH BRAIN GASBA RATLO REDFA",
+            "spawnLevels": [
+                19500
+            ],
+            "minimumLevel": 29000,
+            "maximumLevel": 41000,
+            "standingAgreements": [
+                {
+                    "point": "",
+                    "level": 23000
+                }
+            ]
+        },
+        {
+            "chance": 1,
+            "callsigns": [
+                "WZZ",
+                "WUK",
+                "EZY",
+                "RYR",
+                "RUK"
+            ],
+            "callsignPattern": "alphaNumeric",
+            "adep": [
+                "LFPG",
+                "LSZH",
+                "LIMC"
+            ],
+            "ades": [
+                "EGBB"
+            ],
+            "displayRoute": "ALESO T420 HEMEL",
+            "flownRoute": "ALESO ROTNO ETVAX TIGER BIG ULTIB HEMEL BUZAD WELIN",
+            "spawnLevels": [
+                30000,
+                32000,
+                34000
+            ],
+            "minimumLevel": 30000,
+            "maximumLevel": 43000,
+            "standingAgreements": [
+                {
+                    "point": "ETVAX",
+                    "level": 26000
+                },
+                {
+                    "point": "HEMEL",
+                    "level": 22000
+                }
+            ]
+        }
+    ]
+}

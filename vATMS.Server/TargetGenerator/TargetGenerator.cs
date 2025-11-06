@@ -1,112 +1,143 @@
 using vATMS.Aircraft;
 using vATMS.NavData;
+using Newtonsoft.Json;
 
 class TargetGenerator
 {
     public int Rate { get; set; } // aircraft per hour - will be variable (not exact)
+    public int MinimumLevel { get; init; }
+    public int MaximumLevel { get; init; }
+    public DecimalCoordinate SimulationCentre { get; init; }
+    public int SpawnRadius { get; init; }
 
-    public SpawnPoint[] SpawnPoints { get; set; }
+    private readonly IWebHostEnvironment _webEnv;
+    private readonly NavigationData _navData;
+    public List<SpawnPoint> SpawnPoints { get; set; }
     private List<Aircraft> _aircraft;
 
-    public TargetGenerator(int rate, List<Aircraft> aircraft, NavigationData navData)
+    private List<int> _weightedSpawnSum = new();
+
+    public TargetGenerator(IWebHostEnvironment webEnv, int rate, List<Aircraft> aircraft, NavigationData navData)
     {
         Rate = rate;
-        SpawnPoints = [new SpawnPoint(
-            coordinate: new DecimalCoordinate(51.4775, -0.461389),
-            availableLevels: [30000],
-            initialTrack: 270
-        ), new SpawnPoint(
-            coordinate: new DecimalCoordinate(51.885, 0.235),
-            availableLevels: [30000],
-            initialTrack: 270
-        )];
+        _webEnv = webEnv;
+        _navData = navData;
         _aircraft = aircraft;
 
-        FlightPlan fp = new FlightPlan(
-            callsign: "CPA253",
-            flightrules: "I",
-            atyp: "A35K",
-            wtc: "H",
-            equipment: "SABDE2E3GHIJ1J2J3J4J5LM1OP2RVWXYZ/LB1D1G1",
-            dep: "VHHH",
-            dest: "EGLL",
-            eobt: 0655,
-            eet: 1245,
-            altn: "EHAM",
-            rmk: "",
-            rfl: 34000,
-            spd: 543,
-            route: navData.ParseRoute("ULTIB BNN UTAVA BKY LAM")
-        );
+        using (var fs = new FileStream(Path.Combine(_webEnv.WebRootPath, "TargetGenerator\\TargetGeneration.json"), FileMode.Open, FileAccess.Read, FileShare.Read))
+        using (var sr = new StreamReader(fs))
+        {
+            string targetJson = sr.ReadToEnd();
+            TargetGeneratorJson file = JsonConvert.DeserializeObject<TargetGeneratorJson>(targetJson)!;
 
-        _aircraft.Add(new Aircraft(
-            flightPlan: fp,
-            position: SpawnPoints[0].Coordinate,
-            track: SpawnPoints[0].InitialTrack,
-            pressureAltitude: SpawnPoints[0].getSpawnLevel(),
-            indicatedAirspeed: 260,
-            finalApchSpeed: 120,
-            minimumCleanSpeed: 230,
-            navigationData: navData
-        ));
+            MinimumLevel = file.MinimumLevel;
+            MaximumLevel = file.MaximumLevel;
+            SimulationCentre = new(file.SimulationCentre.ElementAt(0), file.SimulationCentre.ElementAt(1));
+            SpawnRadius = file.SpawnRadius;
 
-        FlightPlan fp2 = new FlightPlan(
-            callsign: "BAW123N",
-            flightrules: "I",
-            atyp: "A320",
-            wtc: "H",
-            equipment: "SABDE2E3GHIJ1J2J3J4J5LM1OP2RVWXYZ/LB1D1G1",
-            dep: "VHHH",
-            dest: "EGLL",
-            eobt: 0655,
-            eet: 1245,
-            altn: "EHAM",
-            rmk: "",
-            rfl: 34000,
-            spd: 543,
-            route: navData.ParseRoute("BPK BNN")
-        );
+            SpawnPoints = file.SpawnPoints;
 
-        _aircraft.Add(new Aircraft(
-            flightPlan: fp2,
-            position: SpawnPoints[1].Coordinate,
-            track: SpawnPoints[1].InitialTrack,
-            pressureAltitude: SpawnPoints[1].getSpawnLevel(),
-            indicatedAirspeed: 260,
-            finalApchSpeed: 120,
-            minimumCleanSpeed: 230,
-            navigationData: navData
-        ));
+            sr.Close();
+            fs.Close();
+        }
 
-        FlightPlan fp3 = new FlightPlan(
-            callsign: "SHT3N",
-            flightrules: "I",
-            atyp: "A21N",
-            wtc: "M",
-            equipment: "SABDE2E3GHIJ1J2J3J4J5LM1OP2RVWXYZ/LB1D1G1",
-            dep: "VHHH",
-            dest: "EGLL",
-            eobt: 0655,
-            eet: 1245,
-            altn: "EHAM",
-            rmk: "",
-            rfl: 34000,
-            spd: 543,
-            route: navData.ParseRoute("UMLAT WOBUN DTY SILVA")
-        );
-
-        _aircraft.Add(new Aircraft(
-            flightPlan: fp3,
-            position: SpawnPoints[0].Coordinate,
-            track: SpawnPoints[0].InitialTrack,
-            pressureAltitude: SpawnPoints[0].getSpawnLevel(),
-            indicatedAirspeed: 260,
-            finalApchSpeed: 120,
-            minimumCleanSpeed: 230,
-            navigationData: navData
-        ));
+        foreach (SpawnPoint sp in SpawnPoints)
+        {
+            _weightedSpawnSum.Add(_weightedSpawnSum.LastOrDefault() + sp.Chance);
+        }
 
         Console.WriteLine("DEBUG: new TargetGenerator");
+
+        SpawnAircraft();
+        SpawnAircraft();
     }
 
+    public void SpawnAircraft()
+    {
+        Random random = new();
+
+        int weightedSpawn = random.Next(1, _weightedSpawnSum.LastOrDefault());
+
+        int requiredIndex = SpawnPoints.Select(e => e.Chance).ToList().BinarySearch(weightedSpawn);
+
+        if (requiredIndex < 0)
+        {
+            requiredIndex = ~requiredIndex - 1;
+        }
+
+        SpawnPoint spawnPoint = SpawnPoints[requiredIndex];
+
+        FlightPlan fp = new FlightPlan(
+                callsign: GetRandomCallsign(spawnPoint.Callsigns, spawnPoint.CallsignPattern),
+                flightrules: "I",
+                atyp: GetRandomAircraftType(),
+                wtc: "X",
+                equipment: "SABDE2E3GHIJ1J2J3J4J5LM1OP2RVWXYZ/LB1D1G1",
+                dep: spawnPoint.ADEP[random.Next(spawnPoint.ADEP.Count())],
+                dest: spawnPoint.ADES[random.Next(spawnPoint.ADES.Count())],
+                eobt: 0000,
+                eet: 0000,
+                altn: "ZZZZ",
+                rmk: "",
+                rfl: 40000, //TODO: FIX
+                spd: GetRandomSpeed(),
+                route: _navData.ParseRoute(spawnPoint.FlownRoute),
+                displayRoute: spawnPoint.DisplayRoute
+            );
+
+        _aircraft.Add(new Aircraft(
+                flightPlan: fp,
+                position: NavTools.TranslatePoint(
+                    fp.Route.Peek().Coordinate,
+                    NavTools.BearingBetweenTwoPoints(fp.Route.ElementAt(1).Coordinate, fp.Route.Peek().Coordinate),
+                    15),
+                track: NavTools.BearingBetweenTwoPoints(fp.Route.ElementAt(1).Coordinate, fp.Route.Peek().Coordinate),
+                pressureAltitude: spawnPoint.SpawnLevels[random.Next(spawnPoint.SpawnLevels.Count())],
+                indicatedAirspeed: GetSpawnSpeed(),
+                finalApchSpeed: 120,
+                minimumCleanSpeed: 230,
+                navigationData: _navData
+            ));
+    }
+
+    private string GetRandomCallsign(List<string> ICAO, string type)
+    {
+        Random random = new();
+        string callsign = ICAO[random.Next(ICAO.Count())];
+
+        if (type == "alphaNumeric")
+        {
+            char[] alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ".ToCharArray(); // "I" and "O" are excluded intentionally
+            callsign += random.Next(0, 99);
+            callsign += alphabet[random.Next(alphabet.Length)];
+        }
+        else
+        {
+            callsign += random.Next(0, 9999);
+        }
+
+        return callsign;
+    }
+
+    private string GetRandomAircraftType()
+    {
+        return "A20N";
+    }
+
+    private int GetRandomRFL(int min, int max)
+    {
+        Random random = new();
+        return random.Next(min % 1000 / 2, max % 1000 / 2) * 2000;
+    }
+
+    private int GetRandomSpeed()
+    {
+        Random random = new();
+        return random.Next(340, 550);
+    }
+
+    private int GetSpawnSpeed()
+    {
+        return 300;
+    }
 }

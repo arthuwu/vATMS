@@ -21,6 +21,7 @@ public class FlightPlan
     public int EET { get; set; }
     public string ALTN { get; set; }
     public string RMK { get; set; }
+    public string DisplayRoute { get; set; }
     private string? _intentionCode;
 
     public int RFL { get; set; }
@@ -62,7 +63,8 @@ public class FlightPlan
         string rmk,
         int rfl,
         int spd,
-        Queue<Waypoint> route
+        Queue<Waypoint> route,
+        string displayRoute
     )
     {
         Callsign = callsign;
@@ -80,6 +82,7 @@ public class FlightPlan
         SPD = spd;
 
         Route = route;
+        DisplayRoute = displayRoute;
         flightPlanAssignedData = new();
     }
 

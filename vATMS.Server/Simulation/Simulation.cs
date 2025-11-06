@@ -23,13 +23,13 @@ public class Simulation
     /// Constructor for the Simulation instance
     /// </summary>
     /// <param name="radarScreenUpdater">The ASP.NET RadarScreenUpdater service</param>
-    public Simulation(RadarScreenUpdater radarScreenUpdater, NavigationData navigationData, ConflictDetection conflictDetection)
+    public Simulation(IWebHostEnvironment webEnv, RadarScreenUpdater radarScreenUpdater, NavigationData navigationData, ConflictDetection conflictDetection)
     {
         Aircraft = new List<Aircraft>(); // Aircraft is the plural form of Aircraft (lol)
         _navigationData = navigationData;
         _conflictDetection = conflictDetection;
 
-        _targetGenerator = new TargetGenerator(25, Aircraft, _navigationData); // The default spawn rate is 25. This value will be (re)set once loading has complete - the user is able to change the spawn rate during their session
+        _targetGenerator = new TargetGenerator(webEnv, 25, Aircraft, _navigationData); // The default spawn rate is 25. This value will be (re)set once loading has complete - the user is able to change the spawn rate during their session
         _radarScreenUpdater = radarScreenUpdater;
 
         _timer = new System.Threading.Timer(UpdateOnTimerElapsed, null, 0, 1000); // every second
