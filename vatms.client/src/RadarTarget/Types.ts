@@ -12,8 +12,8 @@ export type FlightPlan = {
     rmk: string,
     rfl: number,
     spd: number,
-    flightPlanAssignedData: FlightPlanAssignedData
-    testingValue: number
+    flightPlanAssignedData: FlightPlanAssignedData,
+    intentionCode: string
 }
 
 export type FlightPlanAssignedData = {

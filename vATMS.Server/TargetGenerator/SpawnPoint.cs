@@ -18,6 +18,7 @@ public class SpawnPoint
     public int MinimumLevel { get; init; }
     public int MaximumLevel { get; init; }
     public List<StandingAgreement> StandingAgreements { get; init; }
+    public string IntentionCode { get; init; }
 }
 
 public class TargetGeneratorJson

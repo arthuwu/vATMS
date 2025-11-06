@@ -8,7 +8,7 @@ using vATMS.NavData;
 /// </summary>
 public class FlightPlan
 {
-    // TODO: Make some of these enums
+    // TODO: Make some of these enums and/or init only
     public string Callsign { get; set; }
     public string FlightRules { get; set; }
 
@@ -22,7 +22,7 @@ public class FlightPlan
     public string ALTN { get; set; }
     public string RMK { get; set; }
     public string DisplayRoute { get; set; }
-    private string? _intentionCode;
+    public string IntentionCode { get; set; }
 
     public int RFL { get; set; }
     public int SPD { get; set; }
@@ -64,7 +64,8 @@ public class FlightPlan
         int rfl,
         int spd,
         Queue<Waypoint> route,
-        string displayRoute
+        string displayRoute,
+        string? intentionCode
     )
     {
         Callsign = callsign;
@@ -84,24 +85,8 @@ public class FlightPlan
         Route = route;
         DisplayRoute = displayRoute;
         flightPlanAssignedData = new();
-    }
 
-    /// <summary>
-    /// The intention code is a short 1/2 character string used to indicated an aircraft's exit point/destination
-    /// </summary>
-    /// <returns>The intention code for use within the EGTT/PX FIRs</returns>
-    public string getIntentionCode()
-    {
-        // TODO: Convert to JSON-able rules
-        // TODO: implement this properly
-        if (_intentionCode == null)
-        {
-            return DEST.Substring(DEST.Length - 2); // TEMP: get last two chars
-        }
-        else
-        {
-            return _intentionCode;
-        }
+        IntentionCode = intentionCode ?? "";
     }
 
     /// <summary>

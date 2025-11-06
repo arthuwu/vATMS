@@ -42,7 +42,8 @@
                     "point": "LOGAN",
                     "level": 25000
                 }
-            ]
+            ],
+            "intentionCode": "LL"
         },
         {
             "chance": 1,
@@ -77,7 +78,8 @@
             ],
             "minimumLevel": 30000,
             "maximumLevel": 40000,
-            "standingAgreements": []
+            "standingAgreements": [],
+            "intentionCode": "M"
         },
         {
             "chance": 1,
@@ -107,7 +109,8 @@
                     "point": "",
                     "level": 21000
                 }
-            ]
+            ],
+            "intentionCode": "C"
         },
         {
             "chance": 1,
@@ -137,40 +140,11 @@
                     "point": "",
                     "level": 23000
                 }
-            ]
+            ],
+            "intentionCode": "C"
         },
         {
             "chance": 1,
-            "callsigns": [
-                "WZZ",
-                "WUK",
-                "EZY",
-                "RYR",
-                "RUK"
-            ],
-            "callsignPattern": "alphaNumeric",
-            "adep": [
-                "EGGW"
-            ],
-            "ades": [
-                "EPWA"
-            ],
-            "displayRoute": "MATCH Q295 BRAIN M197 REDFA",
-            "flownRoute": "MATCH BRAIN GASBA RATLO REDFA",
-            "spawnLevels": [
-                21000
-            ],
-            "minimumLevel": 29000,
-            "maximumLevel": 41000,
-            "standingAgreements": [
-                {
-                    "point": "",
-                    "level": 23000
-                }
-            ]
-        },
-        {
-            "chance": 10,
             "callsigns": [
                 "WZZ",
                 "WUK",
@@ -205,7 +179,8 @@
                     "point": "HEMEL",
                     "level": 22000
                 }
-            ]
+            ],
+            "intentionCode": "BB"
         }
     ]
 }

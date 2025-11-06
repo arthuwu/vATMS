@@ -84,7 +84,8 @@ class TargetGenerator
                 rfl: 40000, //TODO: FIX
                 spd: GetRandomSpeed(),
                 route: _navData.ParseRoute(spawnPoint.FlownRoute),
-                displayRoute: spawnPoint.DisplayRoute
+                displayRoute: spawnPoint.DisplayRoute,
+                intentionCode: spawnPoint.IntentionCode
             );
 
         _aircraft.Add(new Aircraft(
