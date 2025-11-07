@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useSearchParams } from "react-router-dom";
 import SignalRManager from '../SignalR/SignalRManager';
 import { useEffect, useState } from 'react';
+import HorizontalSelect from './HorizontalSelect';
 
 const SelectionWindow = () => {
     const [targetList, setTargetList] = useState<any>();
@@ -61,73 +62,107 @@ const SelectionWindow = () => {
 
     return (
         <>
-            <div>Selection Window {sectorId}</div>
-            <div className='temp-target-list'>
-                {targetList?.map((target: any) => (
-                    <div>{target.flightPlan.callsign}</div>
-                ))}
+            <div className='ifacts-selection-window'>
+                <div className='left'>
+                    <div className='selected-aircraft-window'></div>
+                    <div className='lad'>
+                        <div className='lad-display'>
+                            <div>CFL: {getSelectedAircraft()?.flightPlan.flightPlanAssignedData.cfl}</div>
+                            <input
+                                type="text"
+                                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                                    if (e.key === "Enter") {
+                                        e.preventDefault();
+                                        handleSelectedAircraftAssignedDataChange(
+                                            selectedAircraftID,
+                                            "CFL",
+                                            e.currentTarget.value
+                                        );
+                                        e.currentTarget.value = ""; //temp reset anyways
+                                    }
+                                }}
+                            />
+                            <div>AHDG: {getSelectedAircraft()?.flightPlan.flightPlanAssignedData.ahdg}</div>
+                            <input
+                                type="text"
+                                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                                    if (e.key === "Enter") {
+                                        e.preventDefault();
+                                        handleSelectedAircraftAssignedDataChange(
+                                            selectedAircraftID,
+                                            "AHDG",
+                                            e.currentTarget.value
+                                        );
+                                        e.currentTarget.value = ""; //temp reset anyways
+                                    }
+                                }}
+                            />
+                            <div>ASP: {getSelectedAircraft()?.flightPlan.flightPlanAssignedData.asp}</div>
+                            <input
+                                type="text"
+                                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                                    if (e.key === "Enter") {
+                                        e.preventDefault();
+                                        handleSelectedAircraftAssignedDataChange(
+                                            selectedAircraftID,
+                                            "ASP",
+                                            e.currentTarget.value
+                                        );
+                                        e.currentTarget.value = ""; //temp reset anyways
+                                    }
+                                }}
+                            />
+                            <div>Route: {getRoute(getSelectedAircraft())}</div>
+                            <input
+                                type="text"
+                                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                                    if (e.key === "Enter") {
+                                        e.preventDefault();
+                                        handleSelectedAircraftAssignedDataChange(
+                                            selectedAircraftID,
+                                            "DirectToPoint",
+                                            e.currentTarget.value
+                                        );
+                                        e.currentTarget.value = ""; //temp reset anyways
+                                    }
+                                }}
+                            />
+                        </div>
+                        <div className='vertical-selection'></div>
+                    </div>
+                </div>
+                <div className='right'>
+                    <div className='selected-aircraft-data'>
+                        <div>CLLSIGN</div>
+                        <div>TYP</div>
+                        <div>CFL</div>
+                        <div>XFL</div>
+                        <div>HDG</div>
+                        <div>ROUTE</div>
+                        <div>SPD</div>
+                        <div>{selectedAircraftID}</div>
+                        <div>{getSelectedAircraft()?.flightPlan.atyp}</div>
+                        <div>{getSelectedAircraft()?.flightPlan.flightPlanAssignedData.cfl.toString().padStart(5, "0").substring(0, 3)}</div>
+                        <div>XFL</div>
+                        <div>{getSelectedAircraft()?.flightPlan.flightPlanAssignedData.ahdg}</div>
+                        <div>{getSelectedAircraft()?.flightPlan.flightPlanAssignedData.directToPoint}</div>
+                        <div>{getSelectedAircraft()?.flightPlan.flightPlanAssignedData.asp}</div>
+                        <div className='ifacts-button enter-button'>ENTER</div>
+                    </div>
+                    <div className='lateral-selection'>
+                        <HorizontalSelect></HorizontalSelect>
+                        <HorizontalSelect></HorizontalSelect>
+                    </div>
+                    <div className='fpl-bays'>
+                        <div className='incomm-bay'>
+                            {targetList?.map((target: any) => (
+                                <div className={(selectedAircraftID == target.flightPlan.callsign) ? "bay-strip selected" : "bay-strip"}>{target.flightPlan.callsign}</div>
+                            ))}
+                        </div>
+                        <div className='pending-bay'></div>
+                    </div>
+                </div>
             </div>
-            <div>Selected callsign: {selectedAircraftID}</div>
-            <div>CFL: {getSelectedAircraft()?.flightPlan.flightPlanAssignedData.cfl}</div>
-            <input
-                type="text"
-                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                    if (e.key === "Enter") {
-                        e.preventDefault();
-                        handleSelectedAircraftAssignedDataChange(
-                            selectedAircraftID,
-                            "CFL",
-                            e.currentTarget.value
-                        );
-                        e.currentTarget.value = ""; //temp reset anyways
-                    }
-                }}
-            />
-            <div>AHDG: {getSelectedAircraft()?.flightPlan.flightPlanAssignedData.ahdg}</div>
-            <input
-                type="text"
-                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                    if (e.key === "Enter") {
-                        e.preventDefault();
-                        handleSelectedAircraftAssignedDataChange(
-                            selectedAircraftID,
-                            "AHDG",
-                            e.currentTarget.value
-                        );
-                        e.currentTarget.value = ""; //temp reset anyways
-                    }
-                }}
-            />
-            <div>ASP: {getSelectedAircraft()?.flightPlan.flightPlanAssignedData.asp}</div>
-            <input
-                type="text"
-                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                    if (e.key === "Enter") {
-                        e.preventDefault();
-                        handleSelectedAircraftAssignedDataChange(
-                            selectedAircraftID,
-                            "ASP",
-                            e.currentTarget.value
-                        );
-                        e.currentTarget.value = ""; //temp reset anyways
-                    }
-                }}
-            />
-            <div>Route: {getRoute(getSelectedAircraft())}</div>
-            <input
-                type="text"
-                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                    if (e.key === "Enter") {
-                        e.preventDefault();
-                        handleSelectedAircraftAssignedDataChange(
-                            selectedAircraftID,
-                            "DirectToPoint",
-                            e.currentTarget.value
-                        );
-                        e.currentTarget.value = ""; //temp reset anyways
-                    }
-                }}
-            />
         </>
     )
 }

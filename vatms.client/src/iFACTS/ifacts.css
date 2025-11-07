@@ -97,7 +97,7 @@
 }
 
 .ifacts-popup-handle .close-button {
-    position: relative;
+    position: absolute;
     margin-left: 3px;
     margin-top: 2px;
     background-color: #999999;
@@ -113,4 +113,89 @@
     z-index: 10;
     background: transparent;
     pointer-events: none;
+}
+
+.ifacts-selection-window {
+    display: flex;
+    flex-direction: row;
+    width: 100vw;
+    height: 100vh;
+    background-color: #DCDCDC;
+}
+
+.ifacts-selection-window .left {
+    width: 38%;
+    height: 100%;
+}
+
+.ifacts-selection-window .right {
+    width: 62%;
+    height: 100%;
+    float: right;
+}
+
+.selected-aircraft-data {
+    display: grid;
+    margin: 3px;
+    box-shadow: inset -2px -2px 0px #808080, inset 2px 2px 0px #C8C8C8;
+    grid-template-columns: 3fr 1fr 1fr 1fr 1fr 3fr 2fr 2fr;
+    grid-template-rows: 1fr 2fr;
+}
+
+.selected-aircraft-data div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+
+.selected-aircraft-data div:nth-child(-n+7) {
+    color: white;
+    background-color: #868d93;
+}
+
+
+.selected-aircraft-data .enter-button {
+    grid-column: 8 / 9;
+    grid-row: 1 / 3;
+    color: #868d93;
+    width: calc(100% - 6px);
+    height: calc(100% - 6px);
+    margin: 3px;
+    font-size: 1em;
+}
+
+.fpl-bays {
+    height: 70%;
+    display: flex;
+    flex-direction: row;
+}
+
+.fpl-bays>div {
+    background-color: #989Ca0;
+    height: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    box-shadow: inset -2px -2px 0px #808080, inset 2px 2px 0px #C8C8C8;
+    margin: 5px;
+}
+
+.incomm-bay {
+    width: 60%;
+}
+
+.pending-bay {
+    width: 40%;
+}
+
+.fpl-bays .bay-strip {
+    background-color: #DBDFE2;
+    width: 100%;
+    height: 20px;
+    border: 1px solid #C8C8C8;
+}
+
+.fpl-bays .bay-strip.selected {
+    background-color: #888D94;
 }

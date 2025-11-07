@@ -8,7 +8,7 @@ const PopupWindow = ({ windowTitle, isVisible, handleClose, width, height, child
     return <>
         {
             isVisible && (
-                <Draggable nodeRef={nodeRef} handle=".ifacts-popup-handle">
+                <Draggable nodeRef={nodeRef} handle=".ifacts-popup-handle" bounds="body">
                     <div className='ifacts-popup' ref={nodeRef} style={{ width: width, height: height }}>
                         <div className='ifacts-popup-handle'>
                             <div className="close-button" onClick={handleClose}>&nbsp;</div>
