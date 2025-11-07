@@ -29,7 +29,7 @@
     user-select: none;
 }
 
-.target-data-block div {
+.target-data-block * {
     font-family: "B612 Mono", monospace;
 }
 

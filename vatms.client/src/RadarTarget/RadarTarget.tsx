@@ -49,35 +49,92 @@ const RadarTarget = ({ flightPlan, aircraft, lat, lon, zoom, projectionCenter, s
         setDatablockOffset([e.clientX - t_left_coord, e.clientY - t_top_coord])
     }
 
-    return (
-        <div className={datablockStatus}>
-            <div className="radar-target-symbol"
-                style={{ position: "absolute", top: t_top_coord, left: t_left_coord }}></div>
-            <div className="target-data-block"
-                style={{ position: "absolute", top: t_top_coord + datablockOffset[1], left: t_left_coord + datablockOffset[0] }}
-                draggable="true"
-                onDragEnd={handleDatablockDragEnd}
-                onDragEnter={(e: React.DragEvent<HTMLDivElement>) => { e.preventDefault() }}
-                onDragOver={(e: React.DragEvent<HTMLDivElement>) => { e.preventDefault() }}
-                onClick={onClick}
-            >
-                <div>{flightPlan.callsign}</div>
-                <div>{Math.trunc(aircraft.pressureAltitude).toString().padStart(5, "0").substring(0, 3)}&nbsp;{Math.trunc(flightPlan.flightPlanAssignedData.cfl).toString().padStart(5, "0").substring(0, 2)}</div>
-                <div>{"XX"}&nbsp;&nbsp;G{Math.trunc(aircraft.groundspeed).toString().padStart(3, "0").substring(0, 3)}</div>
-                <div>{flightPlan.rfl.toString().substring(0, 3)}&nbsp;{"XXXXX"}</div>
+    const getLateralClearanceItem = (): string => {
+        if (flightPlan.flightPlanAssignedData.ahdg)
+            return "h" + flightPlan.flightPlanAssignedData.ahdg.toString().padStart(3, "0");
+
+        if (flightPlan.flightPlanAssignedData.directtopoint)
+            return flightPlan.flightPlanAssignedData.directtopoint;
+
+        return "";
+    }
+
+    const getVerticalClearanceItem = (): string => {
+        if (aircraft.pressureAltitude == flightPlan.flightPlanAssignedData.cfl) {
+            return "   ";
+        }
+
+        return flightPlan.flightPlanAssignedData.cfl.toString().padStart(5, "0").substring(0, 3);
+    }
+
+    if (datablockStatus.includes("unconcerned")) {
+        return (
+            <div className={datablockStatus}>
+                <div className="radar-target-symbol"
+                    style={{ position: "absolute", top: t_top_coord, left: t_left_coord }}></div>
+                <div className="target-data-block"
+                    style={{ position: "absolute", top: t_top_coord + datablockOffset[1], left: t_left_coord + datablockOffset[0] }}
+                    draggable="true"
+                    onDragEnd={handleDatablockDragEnd}
+                    onDragEnter={(e: React.DragEvent<HTMLDivElement>) => { e.preventDefault() }}
+                    onDragOver={(e: React.DragEvent<HTMLDivElement>) => { e.preventDefault() }}
+                    onClick={onClick}
+                >
+                    <div>{flightPlan.callsign}</div>
+                    <div>{Math.trunc(aircraft.pressureAltitude).toString().padStart(5, "0").substring(0, 3)}</div>
+                    <div>{flightPlan.intentionCode}</div>
+                </div>
+                {
+                    radarTrail.map(([lat, lon], i) =>
+                        i % 10 == 0 ?
+                            <div className="radar-trail" style={{ position: "absolute", top: calculatePixelCoordinate([lat!, lon!])[1], left: calculatePixelCoordinate([lat!, lon!])[0] }}>
+                                ⟋
+                            </div>
+                            :
+                            null
+                    )
+                }
             </div>
-            {
-                radarTrail.map(([lat, lon], i) =>
-                    i % 10 == 0 ?
-                        <div className="radar-trail" style={{ position: "absolute", top: calculatePixelCoordinate([lat!, lon!])[1], left: calculatePixelCoordinate([lat!, lon!])[0] }}>
-                            ⟋
-                        </div>
-                        :
-                        null
-                )
-            }
-        </div>
-    )
+        )
+    } else {
+        return (
+            <div className={datablockStatus}>
+                <div className="radar-target-symbol"
+                    style={{ position: "absolute", top: t_top_coord, left: t_left_coord }}></div>
+                <div className="target-data-block"
+                    style={{ position: "absolute", top: t_top_coord + datablockOffset[1], left: t_left_coord + datablockOffset[0] }}
+                    draggable="true"
+                    onDragEnd={handleDatablockDragEnd}
+                    onDragEnter={(e: React.DragEvent<HTMLDivElement>) => { e.preventDefault() }}
+                    onDragOver={(e: React.DragEvent<HTMLDivElement>) => { e.preventDefault() }}
+                    onClick={onClick}
+                >
+                    <div>{flightPlan.callsign}</div>
+                    <div>
+                        <span>{Math.trunc(aircraft.pressureAltitude).toString().padStart(5, "0").substring(0, 3)}</span>
+                        &nbsp;
+                        <span>{Math.trunc(flightPlan.rfl).toString().padStart(5, "0").substring(0, 2)}</span>
+                    </div>
+                    <div>{flightPlan.intentionCode.padEnd(3, " ")}&nbsp;G{Math.trunc(aircraft.groundspeed).toString().padStart(3, "0").substring(0, 3)}</div>
+                    <div>
+                        <span>{getVerticalClearanceItem()}</span>
+                        &nbsp;
+                        <span>{getLateralClearanceItem()}</span>
+                    </div>
+                </div>
+                {
+                    radarTrail.map(([lat, lon], i) =>
+                        i % 10 == 0 ?
+                            <div className="radar-trail" style={{ position: "absolute", top: calculatePixelCoordinate([lat!, lon!])[1], left: calculatePixelCoordinate([lat!, lon!])[0] }}>
+                                ⟋
+                            </div>
+                            :
+                            null
+                    )
+                }
+            </div>
+        )
+    }
 }
 
 export default RadarTarget;
