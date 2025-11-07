@@ -54,7 +54,7 @@ public class RadarScreenHub : Hub
             }
         );
 
-        window.LoadURL($"http://localhost:8001/ifacts-selection-window/?sector={sectorId}");
+        window.LoadURL($"http://localhost:{Context.GetHttpContext()?.Connection.LocalPort}/ifacts-selection-window/?sector={sectorId}");
     }
 
     /// <summary>

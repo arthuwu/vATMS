@@ -1,5 +1,7 @@
 using vATMS.Aircraft;
 
+// TODO: refactor
+
 public class ConflictDetection
 {
     private readonly SimulationManager _simulationManager;
@@ -8,11 +10,11 @@ public class ConflictDetection
         _simulationManager = simulationManager;
     }
 
-    public List<(Aircraft, Aircraft)> GetBroadphaseConflicts()
+    public List<(Aircraft, Aircraft)> GetBroadphaseConflicts(List<Aircraft> aircraft)
     {
         if (_simulationManager.IsSimulationStarted())
         {
-            List<Aircraft> aircraftList = _simulationManager.CurrentSimulation!.Aircraft;
+            List<Aircraft> aircraftList = aircraft.ToList(); // use a copy instead of a reference
             List<AABB> trajectoryList = new();
 
             foreach (Aircraft ac in aircraftList)

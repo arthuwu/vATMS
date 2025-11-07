@@ -35,6 +35,9 @@ public class SimulationManager
 
     public void EndSimulation()
     {
+        if (_simulation == null) return;
+
+        _simulation.EndSimulation();
         _simulation = null;
     }
 }

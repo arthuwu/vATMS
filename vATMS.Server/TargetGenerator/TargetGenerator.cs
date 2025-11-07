@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using vATMS.Aircraft;
 using vATMS.NavData;
 using Newtonsoft.Json;
@@ -12,12 +13,14 @@ class TargetGenerator
 
     private readonly IWebHostEnvironment _webEnv;
     private readonly NavigationData _navData;
+    private readonly System.Threading.Timer _timer;
+
     public List<SpawnPoint> SpawnPoints { get; set; }
-    private List<Aircraft> _aircraft;
+    private ConcurrentDictionary<string, Aircraft> _aircraft;
 
     private List<int> _weightedSpawnSum = new();
 
-    public TargetGenerator(IWebHostEnvironment webEnv, int rate, List<Aircraft> aircraft, NavigationData navData)
+    public TargetGenerator(IWebHostEnvironment webEnv, int rate, ConcurrentDictionary<string, Aircraft> aircraft, NavigationData navData)
     {
         Rate = rate;
         _webEnv = webEnv;
@@ -48,11 +51,25 @@ class TargetGenerator
 
         Console.WriteLine("DEBUG: new TargetGenerator");
 
-        SpawnAircraft();
-        SpawnAircraft();
+        SpawnAircraft(null);
+
+        _timer = new System.Threading.Timer(SpawnAircraft, null, Timeout.Infinite, Timeout.Infinite); // initialise "paused" timer
+
+        setupTimer(rate, _navData);
     }
 
-    public void SpawnAircraft()
+    public void setupTimer(int rate, NavigationData navData)
+    {
+        Console.WriteLine($"rate {rate}");
+        // rough derivation of spawn rate
+        //int spawnInterval = (3600000 / rate) / (_navData.SectorList.Select(s => s.Value.IsUserControlled() == true).ToList().Count() / _navData.SectorList.Count());
+
+        int spawnInterval = 1000;
+
+        _timer.Change(spawnInterval, spawnInterval);
+    }
+
+    public void SpawnAircraft(object? state)
     {
         Random random = new();
 
@@ -88,7 +105,7 @@ class TargetGenerator
                 intentionCode: spawnPoint.IntentionCode
             );
 
-        _aircraft.Add(new Aircraft(
+        _aircraft.TryAdd(fp.Callsign, new Aircraft(
                 flightPlan: fp,
                 position: NavTools.TranslatePoint(
                     fp.Route.Peek().Coordinate,

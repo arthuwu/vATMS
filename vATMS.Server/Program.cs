@@ -1,6 +1,7 @@
 using ElectronNET.API;
 using ElectronNET.API.Entities;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.SignalR;
 using vATMS.Hubs;
 using vATMS.NavData;
 
@@ -8,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddElectron();
-builder.Services.AddSignalR()
+builder.Services.AddSignalR() // (options => options.EnableDetailedErrors = true)
     .AddJsonProtocol(options =>
     {
         options.PayloadSerializerOptions.WriteIndented = true;
@@ -101,5 +102,6 @@ async Task CreateElectronWindow()
             }
         });
 
+    window.Maximize();
     window.OnClosed += () => Electron.App.Quit();
 }
