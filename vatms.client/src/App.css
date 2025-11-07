@@ -1,4 +1,6 @@
-﻿#root {
+﻿@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
+#root {
     height: 100vh;
     width: 100vw;
     margin: 0;
@@ -28,8 +30,62 @@ body {
 }
 
 .main-menu {
+    width: 100%;
+    height: 100%;
+    font-size: 1.5em;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    row-gap: 0.5em;
+    background-image: linear-gradient(to left top, #616e8c, #4d5971, #3b4656, #2a323d, #1b2026);
+}
+
+.main-menu * {
+    font-family: "DM Sans", sans-serif;
+    color: #f8f9f9;
+}
+
+.main-menu select {
+    background-color: #1b202642;
+    color: #f8f9f9;
+    border: none;
+    border-radius: 0.5em;
+    font-size: 0.8em;
+    padding: 0.3em;
+    width: 20em;
+}
+
+.main-menu select option {
+    background-color: #1b202642;
+}
+
+.main-menu input {
+    background-color: #1b202642;
+    color: #f8f9f9;
+    border: none;
+    border-radius: 0.5em;
+    font-size: 0.8em;
+    padding: 0.3em;
+    width: 20em;
+}
+
+.main-menu button {
+    background-image: linear-gradient(to right, #3d547e, #4a6492, #5875a6, #6586ba, #7398cf);
+    color: #f8f9f9;
+    border: none;
+    border-radius: 1em;
+    font-size: 1em;
+    padding: 0.3em;
+    width: 10em;
+    margin-top: 1em
+}
+
+.main-menu button:hover {
+    background-color: #10121442;
+}
+
+.main-menu .title {
+    font-weight: 700;
+    font-size: 6em;
 }

@@ -25,15 +25,14 @@ const MainMenu = () => {
 
     return (
         <div className="main-menu">
-            <div>vATMS</div>
+            <div className="title">vATMS</div>
             <select value={selectedSector} onChange={e => setSelectedSector(e.target.value)}>
-                <option value="" disabled selected hidden>Select a sector</option>
+                <option value="" disabled selected hidden>select a sector</option>
                 {sectorList?.logons?.map((sector: any) =>
                     (<option value={sector.id}>{sector.displayName}</option>)
                 )}
             </select>
-            <div>Spawn Rate</div>
-            <input type='number' value={spawnRate} onChange={e => setSpawnRate(e.target.value as unknown as number)}></input>
+            <input type='number' min={5} max={35} value={spawnRate} placeholder="spawn rate" onChange={e => setSpawnRate(e.target.value as unknown as number)}></input>
             <button onClick={startSimulation}>Start!</button>
         </div>
     )
