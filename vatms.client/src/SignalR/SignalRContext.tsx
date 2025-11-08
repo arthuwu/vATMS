@@ -19,9 +19,11 @@ const SignalRProvider = ({ children }: any) => { // exporting this allows us to 
     }, [])
 
     useEffect(() => {
-        if (searchParams.has("rate"))
-            signalRManager.send("setSimulationRate", searchParams.get("rate"))
-    }, [searchParams])
+        signalRManager.on("simulationReady", () => {
+            if (searchParams.has("rate"))
+                signalRManager.send("setSimulationRate", searchParams.get("rate"))
+        })
+    }, [signalRManager])
 
     return (
         <SignalRContext value={signalRManager}>

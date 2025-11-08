@@ -55,10 +55,10 @@ class TargetGenerator
 
         _timer = new System.Threading.Timer(SpawnAircraft, null, Timeout.Infinite, Timeout.Infinite); // initialise "paused" timer
 
-        setupTimer(rate, _navData);
+        SetupTimer(rate);
     }
 
-    public void setupTimer(int rate, NavigationData navData)
+    public void SetupTimer(int rate)
     {
         Console.WriteLine($"rate {rate}");
         // rough derivation of spawn rate

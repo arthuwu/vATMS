@@ -98,7 +98,6 @@ const RadarScreen = () => {
         fetchSectors();
     }, [sectorId])
 
-
     useEffect(() => {
         console.log(sectorProps);
     }, [sectorProps])

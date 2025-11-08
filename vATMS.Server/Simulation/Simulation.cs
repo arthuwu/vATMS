@@ -85,6 +85,11 @@ public class Simulation
         return Aircraft[selectedAircraftId];
     }
 
+    public void UpdateSpawnRate(int rate)
+    {
+        _targetGenerator.SetupTimer(rate);
+    }
+
     public void EndSimulation()
     {
         _cts.Cancel();

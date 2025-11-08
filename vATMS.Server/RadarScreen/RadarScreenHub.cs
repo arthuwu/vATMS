@@ -95,12 +95,21 @@ public class RadarScreenHub : Hub
 
     }
 
+    public async Task SetSimulationRate(string rate)
+    {
+        if (_simulationManager.IsSimulationStarted())
+        {
+            int newRate;
+            int.TryParse(rate, out newRate);
+            _simulationManager.CurrentSimulation!.UpdateSpawnRate(newRate);
+        }
+    }
+
     /// <summary>
     /// Called when a client connects to the SignalR hub
     /// Creates a new instance of RadarScreen and stores it in _radarScreens
     /// </summary>
-    /// <returns>The base OnConnectedAsync function</returns>
-    public override Task OnConnectedAsync()
+    public override async Task OnConnectedAsync()
     {
         string connectionId = Context.ConnectionId;
         string sectorId = Context.GetHttpContext()?.Request.Query["sector"].ToString() ?? string.Empty;
@@ -119,7 +128,8 @@ public class RadarScreenHub : Hub
             _simulationManager.StartSimulation();
         }
 
-        return base.OnConnectedAsync();
+        await Clients.Client(connectionId).SendAsync("simulationReady");
+        await base.OnConnectedAsync();
     }
 
     /// <summary>
