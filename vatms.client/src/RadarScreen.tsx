@@ -98,10 +98,6 @@ const RadarScreen = () => {
         fetchSectors();
     }, [sectorId])
 
-    useEffect(() => {
-        console.log(sectorProps);
-    }, [sectorProps])
-
     return (
         <RadarScreenFrame sectorId={sectorProps.ifactsName}>
             <div className='radar-screen-container' ref={containerRef}>

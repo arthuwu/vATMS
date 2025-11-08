@@ -14,6 +14,8 @@ const SelectionWindow = () => {
     const initialSector = useMemo(() => searchParams.get("sector") ?? "", [searchParams]);
     const [sectorId] = useState<string>(initialSector);
 
+    // const [sectorProps, setSectorProps] = useState<any>([]);
+
     const [headingSelectList, setHeadingSelectList] = useState<string[]>(Array(9).fill(""));
     const [waypointSelectList, setWaypointSelectList] = useState<string[]>(Array(8).fill(""));
 
@@ -34,7 +36,7 @@ const SelectionWindow = () => {
     }, [signalRManager])
 
     useEffect(() => {
-        signalRManager.send("SetSectorSelectedAircraftID", sectorId, selectedAircraftID); // TODO: replace sector with the actual sector string once sectorisation logic is in place
+        signalRManager.send("SetSectorSelectedAircraftID", sectorId, selectedAircraftID);
     }, [selectedAircraftID])
 
     useEffect(() => {
@@ -44,12 +46,25 @@ const SelectionWindow = () => {
         })
     }, [signalRManager])
 
+    /*
+    useEffect(() => {
+        const fetchSectors = async () => {
+            const res = await fetch(`${window.location.origin}/api/get-available-sectors`);
+            const json = await res.json();
+            setSectorProps(json.logons.find((e: any) => e.id == sectorId));
+        }
+
+        fetchSectors();
+    }, [sectorId])
+    */
+
     const getSelectedAircraft: any = () => {
         return targetList?.find((target: any) => target.flightPlan.callsign === selectedAircraftID);
     }
 
     const handleSelectedAircraftAssignedDataChange: any = (aircraftId: string, data: string, value: string) => {
         if (aircraftId && value) {
+            // if (sectorProps.sectorVolumes.includes(getSelectedAircraft()?.trajectory.currentSector)) // only allow assumed aircraft to be controlled
             signalRManager.send("SetSelectedAircraftAssignedData", aircraftId, data, value)
         }
     }
@@ -107,21 +122,6 @@ const SelectionWindow = () => {
                                     }
                                 }}
                             />
-                            <div>ASP: {getSelectedAircraft()?.flightPlan.flightPlanAssignedData.asp}</div>
-                            <input
-                                type="text"
-                                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                                    if (e.key === "Enter") {
-                                        e.preventDefault();
-                                        handleSelectedAircraftAssignedDataChange(
-                                            selectedAircraftID,
-                                            "ASP",
-                                            e.currentTarget.value
-                                        );
-                                        e.currentTarget.value = ""; //temp reset anyways
-                                    }
-                                }}
-                            />
                         </div>
                         <div className='vertical-selection'></div>
                     </div>
@@ -163,6 +163,9 @@ const SelectionWindow = () => {
                                     }
 
                                     e.currentTarget.value = ""; //temp reset anyways
+                                    handleSpeedToggle();
+                                } else if (e.key === "Escape") {
+                                    e.preventDefault();
                                     handleSpeedToggle();
                                 }
                             }}
