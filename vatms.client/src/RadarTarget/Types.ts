@@ -22,4 +22,5 @@ export type FlightPlanAssignedData = {
     ahdg: number,
     avs: number,
     directtopoint: string,
+    xfl: number
 }

@@ -109,7 +109,7 @@ public class Aircraft
             // can only direct to fix on route
             if (FlightPlan.Route.Any(wp => wp.Name == FlightPlan.flightPlanAssignedData.DirectToPoint))
             {
-                FlightPlan.resolveDirectRoute();
+                FlightPlan.ResolveDirectRoute();
                 TurnViaRoute();
             }
             else
@@ -340,6 +340,8 @@ public class Aircraft
             Trajectory.PredictedPoints.Add(new TrajectoryPoint(DateTime.UtcNow.Add(new(0, 0, 30 * t)), simPosition, simAltitude));
         }
 
+        // Predict next sector
+
         Trajectory.CurrentSector = "";
         Trajectory.NextSector = "";
 
@@ -362,5 +364,18 @@ public class Aircraft
                 }
             }
         }
+    }
+
+    public bool SatisfiedStandingAgreement(StandingAgreement sa)
+    {
+        if (PressureAltitude > sa.Level - 500 && PressureAltitude < sa.Level + 500) // this is less computationally intensive, so we check this first
+        {
+            if (NavTools.DistanceBetweenTwoPoints(Position, _navigationData.WpList[sa.Point].Coordinate) <= 2)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

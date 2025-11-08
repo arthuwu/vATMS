@@ -169,7 +169,7 @@ const SelectionWindow = () => {
                         <div>{selectedAircraftID}</div>
                         <div>{getSelectedAircraft()?.flightPlan.atyp}</div>
                         <div>{getSelectedAircraft()?.flightPlan.flightPlanAssignedData.cfl.toString().padStart(5, "0").substring(0, 3)}</div>
-                        <div>XFL</div>
+                        <div>{getSelectedAircraft()?.flightPlan.flightPlanAssignedData.xfl.toString().padStart(5, "0").substring(0, 3)}</div>
                         <div>{getSelectedAircraft()?.flightPlan.flightPlanAssignedData.ahdg?.toString().padStart(3, "0")}</div>
                         <div>{getSelectedAircraft()?.flightPlan.flightPlanAssignedData.directToPoint}</div>
                         <div>{getSelectedAircraft()?.flightPlan.flightPlanAssignedData.asp}</div>

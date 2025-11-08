@@ -13,6 +13,9 @@ public class FlightPlanAssignedData
     private int? _ahdg { get; set; }
     private string? _directToPoint { get; set; }
 
+    public List<StandingAgreement> StandingAgreements { get; init; }
+    public int XFL { get; set; }
+
     // AHDG and DirectToPoint have explicit getters and setters as the other value has to be changed when one value is set
 
     public int? AHDG
@@ -35,7 +38,8 @@ public class FlightPlanAssignedData
         }
     }
 
-
-    public FlightPlanAssignedData() { } // TODO!: initialise CFL
-
+    public FlightPlanAssignedData(List<StandingAgreement> standingAgreements)
+    {
+        StandingAgreements = standingAgreements;
+    }
 }

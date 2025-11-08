@@ -100,8 +100,10 @@ class TargetGenerator
                 spd: GetRandomSpeed(),
                 route: _navData.ParseRoute(spawnPoint.FlownRoute),
                 displayRoute: spawnPoint.DisplayRoute,
+                standingAgreements: spawnPoint.StandingAgreements,
                 intentionCode: spawnPoint.IntentionCode
             );
+
 
         _aircraft.TryAdd(fp.Callsign, new Aircraft(
                 flightPlan: fp,

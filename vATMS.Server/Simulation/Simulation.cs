@@ -57,6 +57,17 @@ public class Simulation
                 // despawn if too far from centre
                 // Console.WriteLine($"DEBUG: UpdateOnTimerElapsed, {ac.FlightPlan.Callsign} at {ac.Position.Lat}, {ac.Position.Lon}");
                 ac.UpdatePosition();
+                StandingAgreement? sa = ac.FlightPlan.ResolveStandingAgreements();
+
+                if (sa != null)
+                {
+                    if (ac.SatisfiedStandingAgreement(sa))
+                    {
+                        Console.WriteLine("satisfied standing agreement");
+                        // TODO: scoring logic
+                    }
+                }
+                ac.FlightPlan.DetermineXFL();
             }
 
             await _radarScreenUpdater.UpdateAircraftPosition(Aircraft.Values.ToList());

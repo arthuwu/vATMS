@@ -4,14 +4,6 @@ public interface ICoordinate<T>
     public T Lon { get; set; }
 }
 
-public struct WGS84Coordinate : ICoordinate<string>
-{
-    public string Lat { get; set; }
-    public string Lon { get; set; }
-
-    // TODO: Validation?
-}
-
 public struct DecimalCoordinate : ICoordinate<double>
 {
     public double Lat { get; set; }

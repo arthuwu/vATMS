@@ -65,7 +65,8 @@ public class FlightPlan
         int spd,
         Queue<Waypoint> route,
         string displayRoute,
-        string? intentionCode
+        string? intentionCode,
+        List<StandingAgreement> standingAgreements
     )
     {
         Callsign = callsign;
@@ -84,7 +85,7 @@ public class FlightPlan
 
         Route = route;
         DisplayRoute = displayRoute;
-        flightPlanAssignedData = new();
+        flightPlanAssignedData = new(standingAgreements);
 
         IntentionCode = intentionCode ?? "";
     }
@@ -92,12 +93,46 @@ public class FlightPlan
     /// <summary>
     /// Removes all waypoints on FlightPlan.Route preceeding the point being directed to
     /// </summary>
-    public void resolveDirectRoute()
+    public void ResolveDirectRoute()
     {
         // condition checked in Aircraft.cs
         while (Route.Count > 0 && !(Route.Peek().Name == flightPlanAssignedData.DirectToPoint))
         {
             Route.Dequeue();
+        }
+    }
+
+    /// <summary>
+    /// Removes all standing agreements which are no longer valid
+    /// </summary>
+    /// <returns>The StandingAgreement if a standing agreement has been removed, if not null</returns>
+    public StandingAgreement? ResolveStandingAgreements()
+    {
+        // each route will not normally have more than 4 standing agreements, so I believe iteration will be ok here
+        foreach (StandingAgreement sa in flightPlanAssignedData.StandingAgreements)
+        {
+            if (!Route.Select(e => e.Name).ToList().Contains(sa.Point))
+            {
+                flightPlanAssignedData.StandingAgreements.Remove(sa); // then it must have just passed that standing agreement, and so we can
+                return sa;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Determines the XFL (transfer flight level) to be displayed
+    /// </summary>
+    public void DetermineXFL()
+    {
+        if (flightPlanAssignedData.StandingAgreements.Count() > 0)
+        {
+            flightPlanAssignedData.XFL = flightPlanAssignedData.StandingAgreements[0].Level;
+        }
+        else
+        {
+            flightPlanAssignedData.XFL = RFL;
         }
     }
 }

@@ -113,7 +113,7 @@ const RadarTarget = ({ flightPlan, aircraft, lat, lon, zoom, projectionCenter, s
                     <div>
                         <span>{Math.trunc(aircraft.pressureAltitude).toString().padStart(5, "0").substring(0, 3)}</span>
                         &nbsp;
-                        <span>{Math.trunc(flightPlan.rfl).toString().padStart(5, "0").substring(0, 2)}</span>
+                        <span>{Math.trunc(flightPlan.flightPlanAssignedData.xfl).toString().padStart(5, "0").substring(0, 2)}</span>
                     </div>
                     <div>{flightPlan.intentionCode.padEnd(3, " ")}&nbsp;G{Math.trunc(aircraft.groundspeed).toString().padStart(3, "0").substring(0, 3)}</div>
                     <div>
