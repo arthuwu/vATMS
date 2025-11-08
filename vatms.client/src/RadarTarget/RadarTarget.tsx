@@ -2,7 +2,7 @@ import "./radarTarget.css"
 import { getProjection } from '../MapLayers/mappingUtils';
 import type { MapPropsInterface } from "../MapLayers/MapInterface";
 import { useState } from "react";
-import type { FlightPlan } from "./Types";
+import type { FlightPlan } from "../Types";
 
 interface RadarTargetProps extends MapPropsInterface {
     flightPlan: FlightPlan;

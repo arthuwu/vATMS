@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddElectron();
-builder.Services.AddSignalR() // (options => options.EnableDetailedErrors = true)
+builder.Services.AddSignalR(options => options.EnableDetailedErrors = true) // (options => options.EnableDetailedErrors = true)
     .AddJsonProtocol(options =>
     {
         options.PayloadSerializerOptions.WriteIndented = true;

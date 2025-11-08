@@ -24,3 +24,10 @@ export type FlightPlanAssignedData = {
     directtopoint: string,
     xfl: number
 }
+
+export type PredictedConflictPair = {
+    callsign1: string,
+    callsign2: string,
+    closestPointOfApproach: number,
+    startTime: string
+}

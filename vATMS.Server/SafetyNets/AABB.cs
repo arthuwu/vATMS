@@ -1,6 +1,6 @@
 internal class AABB
 {
-    public (double, double)[] _bounds;
+    private (double, double)[] _bounds;
 
     public string? Callsign;
 
@@ -73,6 +73,23 @@ internal class AABB
         }
 
         return newAABB;
+    }
+
+    public DecimalCoordinate GetCentre()
+    {
+        if (_bounds.Length < 2) throw new ArgumentOutOfRangeException("AABB size is smaller than expected, may be invalid");
+
+        double lat = (_bounds[0].Item1 + _bounds[0].Item2) / 2;
+        double lon = (_bounds[1].Item1 + _bounds[1].Item2) / 2;
+
+        return new(lat, lon);
+    }
+
+    public DateTime GetStartTime()
+    {
+        if (_bounds.Length < 4) throw new ArgumentOutOfRangeException("AABB size is smaller than expected, may be invalid");
+
+        return DateTime.FromOADate(_bounds[3].Item1);
     }
 }
 

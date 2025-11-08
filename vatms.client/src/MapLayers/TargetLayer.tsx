@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import RadarTarget from '../RadarTarget/RadarTarget';
 import type { MapPropsInterface } from './MapInterface';
 import RouteDrawLayer from './RouteDrawLayer';
-//import RadarTarget from '../RadarTarget/RadarTarget';
+import type { PredictedConflictPair } from "../Types";
 
 interface TargetLayerMapProps extends MapPropsInterface {
     routeDraw: boolean;
@@ -17,7 +17,7 @@ interface TargetLayerMapProps extends MapPropsInterface {
 const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw, sectorId, sectorVolumes }: TargetLayerMapProps) => {
     const [targetList, setTargetList] = useState<any>();
     const [selectedAircraftID, setSelectedAircraftID] = useState<string>();
-    const [conflictList, setConflictList] = useState<string[]>([]);
+    const [conflictList, setConflictList] = useState<PredictedConflictPair[]>([]);
     const [aircraftThroughSector, setAircraftThroughSector] = useState<string[]>([]);
 
     const signalRManager: SignalRManager = SignalRManager.getInstance();
@@ -50,17 +50,8 @@ const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw, sectorId, 
     }, [signalRManager])
 
     useEffect(() => {
-        signalRManager.on("conflictPairsUpdate", (pairs: [any, any][]) => {
-            const newConflictList: string[] = [];
-            pairs.forEach((pair: any) => {
-                const { item1: ac1, item2: ac2 } = pair;
-                if (ac1.flightPlan != null)
-                    newConflictList.push(ac1.flightPlan.callsign);
-                if (ac2.flightPlan != null)
-                    newConflictList.push(ac2.flightPlan.callsign);
-            })
-
-            setConflictList(newConflictList);
+        signalRManager.on("conflictPairsUpdate", (pairs: PredictedConflictPair[]) => {
+            setConflictList(pairs);
         })
     }, [signalRManager])
 
@@ -70,7 +61,9 @@ const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw, sectorId, 
         if (selectedAircraftID == target.flightPlan.callsign)
             datablockStatus.push("selected");
 
-        if (conflictList.includes(target.flightPlan.callsign))
+        if (conflictList.map((e: PredictedConflictPair) => e.callsign1).includes(target.flightPlan.callsign) ||
+            conflictList.map((e: PredictedConflictPair) => e.callsign2).includes(target.flightPlan.callsign)
+        )
             datablockStatus.push("predicted-conflict");
 
         if (sectorVolumes.includes(target.trajectory.currentSector)) {

@@ -1,6 +1,21 @@
 using vATMS.Aircraft;
+using vATMS.NavData;
 
-// TODO: refactor
+public struct PredictedConflictPair
+{
+    public string Callsign1 { get; init; }
+    public string Callsign2 { get; init; }
+    public double ClosestPointOfApproach { get; init; }
+    public DateTime StartTime { get; init; }
+
+    public PredictedConflictPair(string callsign1, string callsign2, double cpa, DateTime startTime)
+    {
+        Callsign1 = callsign1;
+        Callsign2 = callsign2;
+        ClosestPointOfApproach = cpa;
+        StartTime = startTime;
+    }
+}
 
 public class ConflictDetection
 {
@@ -10,7 +25,7 @@ public class ConflictDetection
         _simulationManager = simulationManager;
     }
 
-    public List<(Aircraft, Aircraft)> GetBroadphaseConflicts(List<Aircraft> aircraft)
+    public List<PredictedConflictPair> GetBroadphaseConflicts(List<Aircraft> aircraft)
     {
         if (_simulationManager.IsSimulationStarted())
         {
@@ -35,27 +50,34 @@ public class ConflictDetection
 
             List<(AABB, AABB)> conflictAABBPairs = trajectoryTree.GetOverlappingPairs();
 
-            List<(Aircraft, Aircraft)> conflictPairs = new();
+            List<PredictedConflictPair> conflictPairs = new();
 
             foreach ((AABB box1, AABB box2) in conflictAABBPairs)
             {
-                Aircraft? ac1 = null;
-                Aircraft? ac2 = null;
-                if (box1.Callsign != null)
-                {
-                    ac1 = _simulationManager.CurrentSimulation!.FindAircraft(box1.Callsign!);
-                }
-                if (box2.Callsign != null)
-                {
-                    ac2 = _simulationManager.CurrentSimulation!.FindAircraft(box2.Callsign!);
-                }
+                if (box1.Callsign == null || box2.Callsign == null) throw new Exception("AABB does not contain callsign, may be invalid");
 
-                if (ac1 != null && ac2 != null) conflictPairs.Add((ac1, ac2));
+                double cpa = GetClosestPointOfApproach(box1, box2);
+
+                PredictedConflictPair pcp = new(box1.Callsign, box2.Callsign, cpa, box1.GetStartTime());
+
+                conflictPairs.Add(pcp);
             }
 
             return conflictPairs;
         }
 
         return new();
+    }
+
+
+    private double GetClosestPointOfApproach(AABB box1, AABB box2)
+    {
+        // As a rough estimate, we will use the centre of the AABBs, since the AABB doesn't store the data for the actual trajectory
+        // this will be "good enough" pratically as the MTCD has a greater margin vs actual loss of separation
+
+        DecimalCoordinate centre1 = box1.GetCentre();
+        DecimalCoordinate centre2 = box2.GetCentre();
+
+        return NavTools.DistanceBetweenTwoPoints(centre1, centre2);
     }
 }

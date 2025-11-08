@@ -85,7 +85,7 @@ public class Simulation
                 ac.PredictTrajectory();
             }
 
-            List<(Aircraft, Aircraft)> conflictList = _conflictDetection.GetBroadphaseConflicts(Aircraft.Values.ToList());
+            List<PredictedConflictPair> conflictList = _conflictDetection.GetBroadphaseConflicts(Aircraft.Values.ToList());
 
             await _radarScreenUpdater.UpdateConflictPairs(conflictList);
         }

@@ -20,11 +20,13 @@ public class RadarScreenUpdater
 
     public async Task UpdateAircraftPosition(List<Aircraft> aircraftList)
     {
+        //Console.WriteLine("updateAircraftPosition called");
         await _hubContext.Clients.All.SendAsync("AircraftPositionUpdate", aircraftList); // maybe use an export-only Aircraft type?
     }
 
-    public async Task UpdateConflictPairs(List<(Aircraft, Aircraft)> conflictList)
+    public async Task UpdateConflictPairs(List<PredictedConflictPair> conflictList)
     {
+        //Console.WriteLine("updateConflictPairs called");
         await _hubContext.Clients.All.SendAsync("ConflictPairsUpdate", conflictList);
     }
 }
