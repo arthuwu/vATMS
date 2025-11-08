@@ -150,6 +150,15 @@
 }
 
 
+.selected-aircraft-data input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    border: none;
+    width: auto;
+}
+
 .selected-aircraft-data div:nth-child(-n+7) {
     color: white;
     background-color: #868d93;

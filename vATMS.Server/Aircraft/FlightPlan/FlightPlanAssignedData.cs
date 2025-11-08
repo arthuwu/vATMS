@@ -7,11 +7,11 @@ namespace vATMS.Aircraft;
 public class FlightPlanAssignedData
 {
     public int CFL { get; set; }
-    public int? ASP { get; set; }
+    public int? _asp;
     public int? AVS { get; set; }
 
-    private int? _ahdg { get; set; }
-    private string? _directToPoint { get; set; }
+    private int? _ahdg;
+    private string? _directToPoint;
 
     public List<StandingAgreement> StandingAgreements { get; init; }
     public int XFL { get; set; }
@@ -35,6 +35,22 @@ public class FlightPlanAssignedData
         {
             _directToPoint = value;
             _ahdg = null;
+        }
+    }
+
+    public int? ASP
+    {
+        get => _asp;
+        set
+        {
+            if (value == 0)
+            {
+                _asp = null;
+            }
+            else
+            {
+                _asp = value;
+            }
         }
     }
 

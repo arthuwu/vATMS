@@ -4,7 +4,8 @@
     width: 10px;
     height: 10px;
     background-color: #f2d927;
-    transform: translate(-50%, -50%)
+    transform: translate(-50%, -50%);
+    pointer-events: none;
 }
 
 .predicted-conflict .radar-target-symbol {
@@ -53,7 +54,8 @@
     z-index: 2;
     color: #665d10;
     user-select: none;
-    transform: translate(-50%, -50%)
+    transform: translate(-50%, -50%);
+    pointer-events: none;
 }
 
 .unconcerned .radar-trail {

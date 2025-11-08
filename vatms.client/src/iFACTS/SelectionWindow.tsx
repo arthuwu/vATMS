@@ -17,6 +17,8 @@ const SelectionWindow = () => {
     const [headingSelectList, setHeadingSelectList] = useState<string[]>(Array(9).fill(""));
     const [waypointSelectList, setWaypointSelectList] = useState<string[]>(Array(8).fill(""));
 
+    const [speedToggle, setSpeedToggle] = useState<boolean>(false);
+
     const signalRManager: SignalRManager = SignalRManager.getInstance();
 
     useEffect(() => {
@@ -47,12 +49,22 @@ const SelectionWindow = () => {
     }
 
     const handleSelectedAircraftAssignedDataChange: any = (aircraftId: string, data: string, value: string) => {
-        signalRManager.send("SetSelectedAircraftAssignedData", aircraftId, data, value)
+        if (aircraftId && value) {
+            signalRManager.send("SetSelectedAircraftAssignedData", aircraftId, data, value)
+        }
+    }
+
+    const handleSpeedToggle = (): void => {
+        setSpeedToggle((prev: any) => !prev)
     }
 
     useEffect(() => {
-        if (getSelectedAircraft()?.flightPlan.route.map((e: any) => e.name) != waypointSelectList) {
-            setWaypointSelectList(getSelectedAircraft()?.flightPlan.route.map((e: any) => e.name))
+        if (getSelectedAircraft() != null) {
+            let newString: string = getSelectedAircraft()?.flightPlan.route.map((e: any) => e.name).toString();
+            let oldString: string = waypointSelectList.toString()
+            if (newString != oldString) { // comparing without .toString() gives an incorrect answer
+                setWaypointSelectList(getSelectedAircraft()?.flightPlan.route.map((e: any) => e.name))
+            }
         }
     }, [targetList, selectedAircraftID])
 
@@ -72,19 +84,6 @@ const SelectionWindow = () => {
         }
 
     }, [selectedAircraftID]);
-
-    const getRoute = (aircraft: any) => {
-        if (aircraft) {
-            let routeString: string = "";
-            let routeQueue: any = aircraft.flightPlan.route;
-            routeQueue.forEach((e: any) => {
-                routeString += ` ${e.name}`;
-            });
-            console.log(aircraft);
-            return routeString;
-        }
-        return ""
-    }
 
     return (
         <>
@@ -108,21 +107,6 @@ const SelectionWindow = () => {
                                     }
                                 }}
                             />
-                            <div>AHDG: {getSelectedAircraft()?.flightPlan.flightPlanAssignedData.ahdg}</div>
-                            <input
-                                type="text"
-                                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                                    if (e.key === "Enter") {
-                                        e.preventDefault();
-                                        handleSelectedAircraftAssignedDataChange(
-                                            selectedAircraftID,
-                                            "AHDG",
-                                            e.currentTarget.value
-                                        );
-                                        e.currentTarget.value = ""; //temp reset anyways
-                                    }
-                                }}
-                            />
                             <div>ASP: {getSelectedAircraft()?.flightPlan.flightPlanAssignedData.asp}</div>
                             <input
                                 type="text"
@@ -132,21 +116,6 @@ const SelectionWindow = () => {
                                         handleSelectedAircraftAssignedDataChange(
                                             selectedAircraftID,
                                             "ASP",
-                                            e.currentTarget.value
-                                        );
-                                        e.currentTarget.value = ""; //temp reset anyways
-                                    }
-                                }}
-                            />
-                            <div>Route: {getRoute(getSelectedAircraft())}</div>
-                            <input
-                                type="text"
-                                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                                    if (e.key === "Enter") {
-                                        e.preventDefault();
-                                        handleSelectedAircraftAssignedDataChange(
-                                            selectedAircraftID,
-                                            "DirectToPoint",
                                             e.currentTarget.value
                                         );
                                         e.currentTarget.value = ""; //temp reset anyways
@@ -172,8 +141,36 @@ const SelectionWindow = () => {
                         <div>{getSelectedAircraft()?.flightPlan.flightPlanAssignedData.xfl.toString().padStart(5, "0").substring(0, 3)}</div>
                         <div>{getSelectedAircraft()?.flightPlan.flightPlanAssignedData.ahdg?.toString().padStart(3, "0")}</div>
                         <div>{getSelectedAircraft()?.flightPlan.flightPlanAssignedData.directToPoint}</div>
-                        <div>{getSelectedAircraft()?.flightPlan.flightPlanAssignedData.asp}</div>
-                        <div className='ifacts-button enter-button'>ENTER</div>
+                        {speedToggle ? <input
+                            type="text"
+                            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                                if (e.key === "Enter") {
+                                    e.preventDefault();
+
+                                    if (e.currentTarget.value == "") {
+                                        console.log("here")
+                                        handleSelectedAircraftAssignedDataChange(
+                                            selectedAircraftID,
+                                            "ASP",
+                                            "0"
+                                        );
+                                    } else {
+                                        handleSelectedAircraftAssignedDataChange(
+                                            selectedAircraftID,
+                                            "ASP",
+                                            e.currentTarget.value
+                                        );
+                                    }
+
+                                    e.currentTarget.value = ""; //temp reset anyways
+                                    handleSpeedToggle();
+                                }
+                            }}
+                        />
+                            : <div onClick={handleSpeedToggle}>{getSelectedAircraft()?.flightPlan.flightPlanAssignedData.asp}</div>
+                        }
+                        <div className='ifacts-button enter-button'></div>
+                        {/*<div className='ifacts-button enter-button'>ENTER</div>*/}
                     </div>
                     <div className='lateral-selection'>
                         <HorizontalSelect
