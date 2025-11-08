@@ -14,6 +14,9 @@ const SelectionWindow = () => {
     const initialSector = useMemo(() => searchParams.get("sector") ?? "", [searchParams]);
     const [sectorId] = useState<string>(initialSector);
 
+    const [headingSelectList, setHeadingSelectList] = useState<string[]>(Array(9).fill(""));
+    const [waypointSelectList, setWaypointSelectList] = useState<string[]>(Array(8).fill(""));
+
     const signalRManager: SignalRManager = SignalRManager.getInstance();
 
     useEffect(() => {
@@ -46,6 +49,29 @@ const SelectionWindow = () => {
     const handleSelectedAircraftAssignedDataChange: any = (aircraftId: string, data: string, value: string) => {
         signalRManager.send("SetSelectedAircraftAssignedData", aircraftId, data, value)
     }
+
+    useEffect(() => {
+        if (getSelectedAircraft()?.flightPlan.route.map((e: any) => e.name) != waypointSelectList) {
+            setWaypointSelectList(getSelectedAircraft()?.flightPlan.route.map((e: any) => e.name))
+        }
+    }, [targetList, selectedAircraftID])
+
+    useEffect(() => {
+        if (getSelectedAircraft()) {
+            let presentHeading: number = Math.round(getSelectedAircraft().track / 5) * 5;
+
+            let headingList: string[] = [];
+
+            for (var i: number = -4; i <= 64; i++) {
+                headingList.push(((presentHeading + (i * 5) + 360) % 360).toString().padStart(3, "0"));
+            }
+
+            setHeadingSelectList(headingList);
+        } else {
+            setHeadingSelectList(Array(9).fill(""));
+        }
+
+    }, [selectedAircraftID]);
 
     const getRoute = (aircraft: any) => {
         if (aircraft) {
@@ -144,14 +170,32 @@ const SelectionWindow = () => {
                         <div>{getSelectedAircraft()?.flightPlan.atyp}</div>
                         <div>{getSelectedAircraft()?.flightPlan.flightPlanAssignedData.cfl.toString().padStart(5, "0").substring(0, 3)}</div>
                         <div>XFL</div>
-                        <div>{getSelectedAircraft()?.flightPlan.flightPlanAssignedData.ahdg}</div>
+                        <div>{getSelectedAircraft()?.flightPlan.flightPlanAssignedData.ahdg?.toString().padStart(3, "0")}</div>
                         <div>{getSelectedAircraft()?.flightPlan.flightPlanAssignedData.directToPoint}</div>
                         <div>{getSelectedAircraft()?.flightPlan.flightPlanAssignedData.asp}</div>
                         <div className='ifacts-button enter-button'>ENTER</div>
                     </div>
                     <div className='lateral-selection'>
-                        <HorizontalSelect></HorizontalSelect>
-                        <HorizontalSelect></HorizontalSelect>
+                        <HorizontalSelect
+                            elementList={headingSelectList}
+                            elementWidth={"3em"}
+                            length={9}
+                            onElementSelect={(value: string) => handleSelectedAircraftAssignedDataChange(
+                                selectedAircraftID,
+                                "AHDG",
+                                value
+                            )}
+                        ></HorizontalSelect>
+                        <HorizontalSelect
+                            elementList={waypointSelectList}
+                            elementWidth={"5em"}
+                            length={8}
+                            onElementSelect={(value: string) => handleSelectedAircraftAssignedDataChange(
+                                selectedAircraftID,
+                                "DirectToPoint",
+                                value
+                            )}
+                        ></HorizontalSelect>
                     </div>
                     <div className='fpl-bays'>
                         <div className='incomm-bay'>
@@ -162,7 +206,7 @@ const SelectionWindow = () => {
                         <div className='pending-bay'></div>
                     </div>
                 </div>
-            </div>
+            </div >
         </>
     )
 }

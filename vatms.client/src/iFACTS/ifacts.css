@@ -199,3 +199,39 @@
 .fpl-bays .bay-strip.selected {
     background-color: #888D94;
 }
+
+.lateral-selection {
+    height: 15%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2em;
+}
+
+.horizontal-select-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.horizontal-select-container div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset -2px -2px 0px #C8C8C8, inset 2px 2px 0px #808080;
+    margin-left: 0.1em;
+    margin-right: 0.1em;
+}
+
+.horizontal-select-container button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    box-shadow: inset -2px -2px 0px #808080, inset 2px 2px 0px #C8C8C8;
+}
+
+.horizontal-select-container button:hover,
+.horizontal-select-container div:hover {
+    background-color: #969696;
+}
