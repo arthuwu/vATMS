@@ -56,18 +56,6 @@ const SelectionWindow = () => {
         setLevelSelectList(levels);
     }, [])
 
-    /*
-    useEffect(() => {
-        const fetchSectors = async () => {
-            const res = await fetch(`${window.location.origin}/api/get-available-sectors`);
-            const json = await res.json();
-            setSectorProps(json.logons.find((e: any) => e.id == sectorId));
-        }
-
-        fetchSectors();
-    }, [sectorId])
-    */
-
     const getSelectedAircraft: any = () => {
         return targetList?.find((target: any) => target.flightPlan.callsign === selectedAircraftID);
     }

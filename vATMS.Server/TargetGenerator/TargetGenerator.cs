@@ -66,7 +66,7 @@ class TargetGenerator
         Console.WriteLine($"rate {rate}");
         // rough derivation of spawn rate
         int spawnInterval = (3600000 / rate) / (_navData.SectorList.Select(s => s.Value.IsUserControlled() == true).ToList().Count() / _navData.SectorList.Count());
-        spawnInterval = 10000;
+        spawnInterval = 30000;
         Console.WriteLine(spawnInterval);
 
         _timer.Period = TimeSpan.FromMilliseconds(spawnInterval);

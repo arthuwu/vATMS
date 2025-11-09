@@ -85,15 +85,18 @@ public class Simulation
 
         while (await timer.WaitForNextTickAsync(token))
         {
-            foreach (Aircraft ac in Aircraft.Values) // use a copy of the list to prevent rewriting
+            if (Aircraft.Values.Count() > 0)
             {
-                _targetGenerator.DespawnIfOutsideRange(); // despawning isn't urgent, so we put it here for performance
-                ac.PredictTrajectory();
+                foreach (Aircraft ac in Aircraft.Values) // use a copy of the list to prevent rewriting
+                {
+                    _targetGenerator.DespawnIfOutsideRange(); // despawning isn't urgent, so we put it here for performance
+                    ac.PredictTrajectory();
+                }
+
+                List<PredictedConflictPair> conflictList = _conflictDetection.GetBroadphaseConflicts(Aircraft.Values.ToList());
+
+                await _radarScreenUpdater.UpdateConflictPairs(conflictList);
             }
-
-            List<PredictedConflictPair> conflictList = _conflictDetection.GetBroadphaseConflicts(Aircraft.Values.ToList());
-
-            await _radarScreenUpdater.UpdateConflictPairs(conflictList);
         }
     }
 
