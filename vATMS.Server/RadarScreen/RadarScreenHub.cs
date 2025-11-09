@@ -101,7 +101,9 @@ public class RadarScreenHub : Hub
         {
             int newRate;
             int.TryParse(rate, out newRate);
-            _simulationManager.CurrentSimulation!.UpdateSpawnRate(newRate);
+
+            if (newRate >= 5 && newRate <= 50)
+                _simulationManager.CurrentSimulation!.UpdateSpawnRate(newRate);
         }
     }
 
