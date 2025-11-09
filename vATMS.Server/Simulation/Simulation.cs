@@ -63,7 +63,8 @@ public class Simulation
                 {
                     if (ac.SatisfiedStandingAgreement(sa))
                     {
-                        Console.WriteLine("satisfied standing agreement");
+                        Console.WriteLine("satisfied standing agreement and aircraft handed off");
+                        ac.FlightPlan.HandoffToNextSector(ac.Trajectory.NextSector);
                         // TODO: scoring logic
                     }
                 }

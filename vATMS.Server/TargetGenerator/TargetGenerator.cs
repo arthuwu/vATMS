@@ -109,6 +109,7 @@ class TargetGenerator
                     route: _navData.ParseRoute(spawnPoint.FlownRoute),
                     displayRoute: spawnPoint.DisplayRoute,
                     standingAgreements: spawnPoint.StandingAgreements,
+                    navigationData: _navData,
                     intentionCode: spawnPoint.IntentionCode
                 );
 
