@@ -370,6 +370,12 @@ public class Aircraft
     {
         if (PressureAltitude > sa.Level - 500 && PressureAltitude < sa.Level + 500) // this is less computationally intensive, so we check this first
         {
+            if (sa.Point == "")
+            {
+                FlightPlan.flightPlanAssignedData.StandingAgreements.Remove(sa);
+                return true;
+            }
+
             if (NavTools.DistanceBetweenTwoPoints(Position, _navigationData.WpList[sa.Point].Coordinate) <= 2)
             {
                 return true;

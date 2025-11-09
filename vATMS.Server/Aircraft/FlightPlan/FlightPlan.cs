@@ -111,6 +111,14 @@ public class FlightPlan
         // each route will not normally have more than 4 standing agreements, so I believe iteration will be ok here
         foreach (StandingAgreement sa in flightPlanAssignedData.StandingAgreements)
         {
+            if (sa.Point == "")
+            {
+                if (flightPlanAssignedData.CFL == sa.Level)
+                {
+                    return sa;
+                }
+            }
+
             if (!Route.Select(e => e.Name).ToList().Contains(sa.Point))
             {
                 flightPlanAssignedData.StandingAgreements.Remove(sa); // then it must have just passed that standing agreement, and so we can

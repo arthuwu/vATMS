@@ -57,6 +57,8 @@ public class Simulation
                 // despawn if too far from centre
                 // Console.WriteLine($"DEBUG: UpdateOnTimerElapsed, {ac.FlightPlan.Callsign} at {ac.Position.Lat}, {ac.Position.Lon}");
                 ac.UpdatePosition();
+
+
                 StandingAgreement? sa = ac.FlightPlan.ResolveStandingAgreements();
 
                 if (sa != null)
@@ -67,6 +69,7 @@ public class Simulation
                         // TODO: scoring logic
                     }
                 }
+
                 ac.FlightPlan.DetermineXFL();
             }
 
