@@ -1,23 +1,12 @@
-import SignalRManager from '../SignalR/SignalRManager';
-import { useEffect, useState } from 'react';
 import type { PredictedConflictPair } from "../Types";
 
-const SeparationMonitor = () => {
-    const [conflictList, setConflictList] = useState<PredictedConflictPair[]>([]);
+const SeparationMonitor = ({ conflictList }: any) => {
     const WIDTH: number = 200;
     const HEIGHT: number = 160;
 
-    const signalRManager: SignalRManager = SignalRManager.getInstance();
-
-    useEffect(() => {
-        signalRManager.on("conflictPairsUpdate", (pairs: PredictedConflictPair[]) => {
-            setConflictList(pairs);
-        })
-    }, [signalRManager])
-
     const calculatePixelCoordinate = (timestamp: string, cpa: number): [number, number] => {
         let dateTime: Date = new Date(timestamp);
-        let timeDiff: number = (dateTime.getDate() - new Date().getDate()) / (60 * 1000);
+        let timeDiff: number = (dateTime.getMinutes() - new Date().getMinutes())
 
         let left_coord = (WIDTH / 15) * timeDiff;
         let top_coord = (HEIGHT / 15) * (15 - cpa);

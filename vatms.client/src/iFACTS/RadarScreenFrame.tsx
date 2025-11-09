@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PopupWindow from './PopupWindow';
 import Clock from './Clock';
 import './ifacts.css'
 import SeparationMonitor from './SeparationMonitor';
+import SignalRManager from '../SignalR/SignalRManager';
+import type { PredictedConflictPair } from "../Types";
 
 const RadarScreenFrame = ({ sectorId, children }: any) => {
+    const [conflictList, setConflictList] = useState<PredictedConflictPair[]>([]);
     const [isVisible, setIsVisible] = useState<any>({});
 
     function toggleVisibility(window: string) {
@@ -12,6 +15,14 @@ const RadarScreenFrame = ({ sectorId, children }: any) => {
         newVisibleState[window] = !newVisibleState[window];
         setIsVisible(newVisibleState);
     }
+
+    const signalRManager: SignalRManager = SignalRManager.getInstance();
+
+    useEffect(() => {
+        signalRManager.on("conflictPairsUpdate", (pairs: PredictedConflictPair[]) => {
+            setConflictList(pairs);
+        })
+    }, [signalRManager])
 
     return (
         <>
@@ -43,7 +54,7 @@ const RadarScreenFrame = ({ sectorId, children }: any) => {
                     width={250}
                     height={230}
                 >
-                    <SeparationMonitor></SeparationMonitor>
+                    <SeparationMonitor conflictList={conflictList}></SeparationMonitor>
                 </PopupWindow>
             </div>
         </>
