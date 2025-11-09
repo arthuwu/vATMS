@@ -35,12 +35,10 @@ const RadarScreenFrame = ({ sectorId, children }: any) => {
                 </div>
                 <div className='ifacts-left-bar'>
                     <div></div>
-                    <div className='ifacts-button'>Full Flight Plan</div>
                     <div className='ifacts-button' onClick={() => toggleVisibility("sepn-monitor")}>Sepn Monitor</div>
                 </div>
                 <div className='ifacts-right-bar'>
                     <div></div>
-                    <div className='ifacts-button'>Range and Bearing</div>
                 </div>
                 <div className='inner-container ifacts-components'>{children}</div>
             </div>
