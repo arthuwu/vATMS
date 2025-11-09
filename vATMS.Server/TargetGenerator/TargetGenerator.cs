@@ -29,7 +29,7 @@ class TargetGenerator
         _navData = navData;
         _aircraft = aircraft;
 
-        using (var fs = new FileStream(Path.Combine(_webEnv.WebRootPath, "TargetGenerator\\TargetGeneration.json"), FileMode.Open, FileAccess.Read, FileShare.Read))
+        using (var fs = new FileStream(Path.Combine(_webEnv.WebRootPath, "TargetGenerator\\SpawnPoints.json"), FileMode.Open, FileAccess.Read, FileShare.Read))
         using (var sr = new StreamReader(fs))
         {
             string targetJson = sr.ReadToEnd();

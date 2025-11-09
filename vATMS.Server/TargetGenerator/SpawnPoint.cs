@@ -4,6 +4,7 @@ public class StandingAgreement
 {
     public required string Point { get; init; }
     public required int Level { get; init; }
+    public required int NextLevel { get; init; }
 }
 public class SpawnPoint
 {

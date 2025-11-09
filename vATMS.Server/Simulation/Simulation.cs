@@ -52,8 +52,6 @@ public class Simulation
         {
             foreach (Aircraft ac in Aircraft.Values)
             {
-                // do stuff to aircraft
-                // remember to check if it can be displayed using RadarHead, but otherwise
                 // Console.WriteLine($"DEBUG: UpdateOnTimerElapsed, {ac.FlightPlan.Callsign} at {ac.Position.Lat}, {ac.Position.Lon}");
                 ac.UpdatePosition();
 
@@ -63,7 +61,11 @@ public class Simulation
                 {
                     if (ac.SatisfiedStandingAgreement(sa))
                     {
-                        Console.WriteLine("satisfied standing agreement");
+                        if (sa.NextLevel != 0)
+                        {
+                            ac.FlightPlan.flightPlanAssignedData.CFL = sa.NextLevel;
+                        }
+                        // Console.WriteLine("DEBUG: satisfied standing agreement");
                         // TODO: scoring logic
                     }
                 }

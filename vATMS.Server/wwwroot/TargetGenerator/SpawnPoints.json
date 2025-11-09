@@ -40,7 +40,8 @@
             "standingAgreements": [
                 {
                     "point": "LOGAN",
-                    "level": 25000
+                    "level": 25000,
+                    "nextLevel": 16000
                 }
             ],
             "intentionCode": "LL"
@@ -100,14 +101,15 @@
             "displayRoute": "CLN P44 RATLO M197 REDFA",
             "flownRoute": "CLN RATLO REDFA",
             "spawnLevels": [
-                21000
+                22000
             ],
             "minimumLevel": 29000,
             "maximumLevel": 41000,
             "standingAgreements": [
                 {
                     "point": "",
-                    "level": 21000
+                    "level": 22000,
+                    "nextLevel": 0
                 }
             ],
             "intentionCode": "C"
@@ -131,14 +133,15 @@
             "displayRoute": "MATCH Q295 BRAIN M197 REDFA",
             "flownRoute": "MATCH BRAIN GASBA RATLO REDFA",
             "spawnLevels": [
-                21000
+                23000
             ],
             "minimumLevel": 29000,
             "maximumLevel": 41000,
             "standingAgreements": [
                 {
                     "point": "",
-                    "level": 23000
+                    "level": 23000,
+                    "nextLevel": 0
                 }
             ],
             "intentionCode": "C"
@@ -173,11 +176,13 @@
             "standingAgreements": [
                 {
                     "point": "ETVAX",
-                    "level": 26000
+                    "level": 26000,
+                    "nextLevel": 0
                 },
                 {
                     "point": "HEMEL",
-                    "level": 22000
+                    "level": 22000,
+                    "nextLevel": 0
                 }
             ],
             "intentionCode": "BB"
