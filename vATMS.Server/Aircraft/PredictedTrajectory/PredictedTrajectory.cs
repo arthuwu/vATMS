@@ -7,7 +7,6 @@ public class PredictedTrajectory
     public List<TrajectoryPoint> PredictedPoints { get; set; } // generate and render this
     public string CurrentSector { get; set; }
     public string NextSector { get; set; }
-    public DateTime? NextSectorEntryTime { get; set; }
 
     public PredictedTrajectory()
     {

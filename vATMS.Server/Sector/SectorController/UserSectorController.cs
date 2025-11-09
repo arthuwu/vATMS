@@ -2,13 +2,13 @@ using vATMS.NavData;
 
 public class UserSectorController : ISectorController
 {
-    public string LogonId { get; set; }
+    public string SectorId { get; set; }
     public Dictionary<string, RadarScreen> RadarScreens { get; set; }
     public List<Sector> SectorsControlled { get; set; }
 
-    public UserSectorController(string logonId, RadarScreen radarScreen)
+    public UserSectorController(string sectorId, RadarScreen radarScreen)
     {
-        LogonId = logonId;
+        SectorId = sectorId;
 
         RadarScreens = new() { { radarScreen.ConnectionId, radarScreen } };
 

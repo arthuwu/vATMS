@@ -44,7 +44,7 @@ public class LogonData
         foreach (string sectorVolume in sectorVolumes)
         {
             _navigationData.SectorList[sectorVolume].SetSectorUserController(sc);
-            Console.WriteLine($"Sector volume {sectorVolume} controlled by {sc.LogonId}");
+            Console.WriteLine($"Sector volume {sectorVolume} controlled by {sc.SectorId}");
         }
     }
 }

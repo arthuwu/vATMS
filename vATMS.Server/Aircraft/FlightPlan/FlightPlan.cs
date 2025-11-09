@@ -27,10 +27,9 @@ public class FlightPlan
     public int RFL { get; set; }
     public int SPD { get; set; }
 
-    public string? AssumedControllerLogon { get; private set; }
     public Queue<Waypoint> Route { get; set; }
+
     public FlightPlanAssignedData flightPlanAssignedData { get; }
-    private readonly NavigationData _navigationData;
 
     /// <summary>
     /// Constructor of the FlightPlan class
@@ -67,8 +66,7 @@ public class FlightPlan
         Queue<Waypoint> route,
         string displayRoute,
         string? intentionCode,
-        List<StandingAgreement> standingAgreements,
-        NavigationData navigationData
+        List<StandingAgreement> standingAgreements
     )
     {
         Callsign = callsign;
@@ -88,8 +86,6 @@ public class FlightPlan
         Route = route;
         DisplayRoute = displayRoute;
         flightPlanAssignedData = new(standingAgreements);
-
-        _navigationData = navigationData;
 
         IntentionCode = intentionCode ?? "";
     }
@@ -123,14 +119,6 @@ public class FlightPlan
                 }
             }
 
-            if (sa.Level == 0)
-            {
-                if (flightPlanAssignedData.CFL == RFL)
-                {
-                    return sa;
-                }
-            }
-
             if (!Route.Select(e => e.Name).ToList().Contains(sa.Point))
             {
                 flightPlanAssignedData.StandingAgreements.Remove(sa); // then it must have just passed that standing agreement, and so we can
@@ -154,18 +142,5 @@ public class FlightPlan
         {
             flightPlanAssignedData.XFL = RFL;
         }
-    }
-
-    public void HandoffToNextSector(string sectorId)
-    {
-        if (sectorId == null)
-        {
-            AssumedControllerLogon = null;
-            return;
-        }
-
-        string? nextLogonId = _navigationData.SectorList[sectorId].GetUserController();
-
-        AssumedControllerLogon = nextLogonId;
     }
 }

@@ -76,7 +76,7 @@ const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw, sectorId, 
             datablockStatus.push("predicted-conflict");
         }
 
-        if (target.flightPlan.assumedControllerLogon == sectorId) {
+        if (sectorVolumes.includes(target.trajectory.currentSector)) {
             datablockStatus.push("assumed");
         } else if (sectorVolumes.includes(target.trajectory.nextSector)) {
             datablockStatus.push("concerned");

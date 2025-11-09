@@ -10,7 +10,7 @@ public class Aircraft
     public DecimalCoordinate Position { get; set; }
     public PredictedTrajectory Trajectory { get; set; }
 
-    private readonly NavigationData _navigationData;
+    private NavigationData _navigationData;
 
     private double _heading;
     private double _indicatedAirspeed;
@@ -283,8 +283,6 @@ public class Aircraft
         VerticalMovement();
     }
 
-    // Methods below are used for trajectory prediction
-
     public void PredictTrajectory()
     {
         const double M_TO_NM = 0.000539957;
@@ -361,17 +359,9 @@ public class Aircraft
         }
     }
 
-    // Methods below are used for sectors
     public bool SatisfiedStandingAgreement(StandingAgreement sa)
     {
-        if (sa.Level == 0)
-        {
-            if (PressureAltitude == FlightPlan.RFL)
-            {
-                return true;
-            }
-        }
-        else if (PressureAltitude > sa.Level - 500 && PressureAltitude < sa.Level + 500) // this is less computationally intensive, so we check this first
+        if (PressureAltitude > sa.Level - 500 && PressureAltitude < sa.Level + 500) // this is less computationally intensive, so we check this first
         {
             if (sa.Point == "")
             {
@@ -387,5 +377,4 @@ public class Aircraft
 
         return false;
     }
-
 }

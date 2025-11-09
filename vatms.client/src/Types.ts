@@ -13,8 +13,7 @@ export type FlightPlan = {
     rfl: number,
     spd: number,
     flightPlanAssignedData: FlightPlanAssignedData,
-    intentionCode: string,
-    assumedControllerLogon: string
+    intentionCode: string
 }
 
 export type FlightPlanAssignedData = {
