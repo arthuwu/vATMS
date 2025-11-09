@@ -64,7 +64,7 @@ const RadarTarget = ({ flightPlan, aircraft, lat, lon, zoom, projectionCenter, s
             return "";
         }
 
-        return flightPlan.flightPlanAssignedData.cfl.toString().padStart(5, "0");
+        return flightPlan.flightPlanAssignedData.cfl.toString().padStart(5, "0").substring(0, 3);
     }
 
     if (datablockStatus.includes("unconcerned")) {

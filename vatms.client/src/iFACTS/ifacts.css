@@ -203,10 +203,28 @@
     width: 100%;
     height: 20px;
     border: 1px solid #C8C8C8;
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr 1fr 1fr;
 }
 
-.fpl-bays .bay-strip.selected {
+.fpl-bays .bay-strip-short {
+    background-color: #DBDFE2;
+    width: 100%;
+    height: 20px;
+    border: 1px solid #C8C8C8;
+    display: grid;
+    grid-template-columns: 3fr 3fr 1fr 1fr;
+}
+
+.fpl-bays .bay-strip.selected,
+.fpl-bays .bay-strip-short.selected {
     background-color: #888D94;
+}
+
+.fpl-bays .bay-strip.selected .bay-strip-callsign,
+.fpl-bays .bay-strip-short.selected .bay-strip-callsign {
+    background-color: #000080;
+    color: white;
 }
 
 .lateral-selection {

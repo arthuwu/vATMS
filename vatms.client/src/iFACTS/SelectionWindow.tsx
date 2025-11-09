@@ -6,15 +6,14 @@ import { useEffect, useState } from 'react';
 import HorizontalSelect from './HorizontalSelect';
 
 const SelectionWindow = () => {
-    const [targetList, setTargetList] = useState<any>();
+    const [targetList, setTargetList] = useState<any>([]);
     const [selectedAircraftID, setSelectedAircraftID] = useState<any>();
-    // const [selectedAircraftAssignedData, setSelectedAircraftAssignedData] = useState<FlightPlanAssignedData>();
 
     const [searchParams] = useSearchParams();
     const initialSector = useMemo(() => searchParams.get("sector") ?? "", [searchParams]);
     const [sectorId] = useState<string>(initialSector);
 
-    // const [sectorProps, setSectorProps] = useState<any>([]);
+    const [sectorProps, setSectorProps] = useState<any>([]);
 
     const [headingSelectList, setHeadingSelectList] = useState<string[]>(Array(9).fill(""));;
     const [waypointSelectList, setWaypointSelectList] = useState<string[]>(Array(8).fill(""));
@@ -22,19 +21,27 @@ const SelectionWindow = () => {
 
     const [speedToggle, setSpeedToggle] = useState<boolean>(false);
 
+    const [incommList, setIncommList] = useState<any>([]);
+    const [pendingList, setPendingList] = useState<any>([]);
+
     const signalRManager: SignalRManager = SignalRManager.getInstance();
 
     useEffect(() => {
         const AircraftPositionUpdateHandler = (ac: any) => {
             //console.log(ac);
             setTargetList(ac);
+
+            console.log(ac.filter((e: any) => sectorProps.sectorVolumes?.includes(e.trajectory.currentSector)))
+            setIncommList(ac.filter((e: any) => sectorProps.sectorVolumes?.includes(e.trajectory.currentSector)))
+            setPendingList(ac.filter((e: any) => sectorProps.sectorVolumes?.includes(e.trajectory.nextSector)))
+
         }
         signalRManager.on("AircraftPositionUpdate", AircraftPositionUpdateHandler)
 
         return () => {
             signalRManager.off("AircraftPositionUpdate", AircraftPositionUpdateHandler)
         }
-    }, [signalRManager])
+    }, [signalRManager, sectorProps])
 
     useEffect(() => {
         signalRManager.send("SetSectorSelectedAircraftID", sectorId, selectedAircraftID);
@@ -49,12 +56,22 @@ const SelectionWindow = () => {
 
     useEffect(() => {
         const levels: number[] = [];
-        for (var i: number = 66000; i >= 19000; i -= 1000) {
+        for (var i: number = 43000; i >= 19000; i -= 1000) {
             levels.push(i);
         }
 
         setLevelSelectList(levels);
     }, [])
+
+    useEffect(() => {
+        const fetchSectors = async () => {
+            const res = await fetch(`${window.location.origin}/api/get-available-sectors`);
+            const json = await res.json();
+            setSectorProps(json.logons.find((e: any) => e.id == sectorId));
+        }
+
+        fetchSectors();
+    }, [sectorId])
 
     const getSelectedAircraft: any = () => {
         return targetList?.find((target: any) => target.flightPlan.callsign === selectedAircraftID);
@@ -191,11 +208,28 @@ const SelectionWindow = () => {
                     </div>
                     <div className='fpl-bays'>
                         <div className='incomm-bay'>
-                            {targetList?.map((target: any) => (
-                                <div className={(selectedAircraftID == target.flightPlan.callsign) ? "bay-strip selected" : "bay-strip"}>{target.flightPlan.callsign}</div>
-                            ))}
+                            {incommList?.map((target: any) => (
+                                <div className={(selectedAircraftID == target.flightPlan.callsign) ? "bay-strip selected" : "bay-strip"}
+                                    onClick={() => { setSelectedAircraftID(target.flightPlan.callsign) }}>
+                                    <div className='bay-strip-callsign'>{target.flightPlan.callsign}</div>
+                                    <div>{target.flightPlan.flightPlanAssignedData.xfl.toString().padStart(5, "0").substring(0, 3)}</div>
+                                    <div></div>
+                                    <div></div>
+                                    <div>{target.flightPlan.intentionCode}</div>
+                                </div>)
+                            )}
                         </div>
-                        <div className='pending-bay'></div>
+                        <div className='pending-bay'>
+                            {pendingList?.map((target: any) => (
+                                <div className={(selectedAircraftID == target.flightPlan.callsign) ? "bay-strip-short selected" : "bay-strip-short"}
+                                    onClick={() => { setSelectedAircraftID(target.flightPlan.callsign) }}>
+                                    <div className='bay-strip-callsign'>{target.flightPlan.callsign}</div>
+                                    <div>{target.flightPlan.flightPlanAssignedData.xfl.toString().padStart(5, "0").substring(0, 3)}</div>
+                                    <div></div>
+                                    <div>{target.flightPlan.intentionCode}</div>
+                                </div>)
+                            )}
+                        </div>
                     </div>
                 </div>
             </div >
