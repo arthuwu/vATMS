@@ -104,7 +104,7 @@ class TargetGenerator
                     eet: 0000, // not in use
                     altn: "ZZZZ", // not in use
                     rmk: "", // not in use
-                    rfl: 40000, //TODO: FIX
+                    rfl: GetRandomRFL(spawnPoint.MinimumLevel, spawnPoint.MaximumLevel),
                     spd: GetRandomSpeed(),
                     route: _navData.ParseRoute(spawnPoint.FlownRoute),
                     displayRoute: spawnPoint.DisplayRoute,
@@ -153,8 +153,10 @@ class TargetGenerator
 
     private int GetRandomRFL(int min, int max)
     {
+        Console.WriteLine(min);
+        Console.WriteLine(max);
         Random random = new();
-        return random.Next(min % 1000 / 2, max % 1000 / 2) * 2000;
+        return random.Next(min / 1000, max / 1000) * 1000;
     }
 
     private int GetRandomSpeed()

@@ -79,8 +79,8 @@ const SelectionWindow = () => {
 
     const handleSelectedAircraftAssignedDataChange: any = (aircraftId: string, data: string, value: string) => {
         if (aircraftId && value) {
-            // if (sectorProps.sectorVolumes.includes(getSelectedAircraft()?.trajectory.currentSector)) // only allow assumed aircraft to be controlled
-            signalRManager.send("SetSelectedAircraftAssignedData", aircraftId, data, value)
+            if (sectorProps.sectorVolumes.includes(getSelectedAircraft()?.trajectory.currentSector)) // only allow assumed aircraft to be controlled
+                signalRManager.send("SetSelectedAircraftAssignedData", aircraftId, data, value)
         }
     }
 
