@@ -14,7 +14,6 @@ public class Aircraft
 
     private double _heading;
     private double _indicatedAirspeed;
-    private double _pilotSelectedAlitude;
 
     public double Track { get; private set; }
     public double PressureAltitude { get; private set; }
@@ -76,6 +75,11 @@ public class Aircraft
     private double DetermineAppropriateSpeed()
     {
         return 220.0d;
+    }
+
+    private double DetermineVerticalSpeed()
+    {
+        return (Groundspeed * 5) / 60;
     }
 
     private void LateralMovement()
@@ -261,9 +265,7 @@ public class Aircraft
         // This is TEMPORARY, UNREALISTIC code taken from a 2023 project. 
         // This has been put here only so things can be tested
 
-        double climbRate = (Groundspeed * 5) / 60;
-
-        _pilotSelectedAlitude = FlightPlan.flightPlanAssignedData.CFL;
+        double climbRate = DetermineVerticalSpeed();
 
         if (PressureAltitude > FlightPlan.flightPlanAssignedData.CFL)
         {
@@ -299,6 +301,7 @@ public class Aircraft
         for (int t = 0; t < 30; t++)
         {
             double segmentDistance = Groundspeed * KNOT_TO_MS * 30 * M_TO_NM; // s = ut; t = 30 seconds; in nm
+            double simVerticalSpeed = (Groundspeed * 5) / 60;
 
             while (segmentDistance > 0)
             {
@@ -328,6 +331,15 @@ public class Aircraft
                     simHeading = currBrng;
                     segmentDistance = 0;
                 }
+            }
+
+            if (simAltitude > FlightPlan.flightPlanAssignedData.CFL)
+            {
+                simAltitude = Math.Max(simAltitude - simVerticalSpeed, FlightPlan.flightPlanAssignedData.CFL);
+            }
+            else if (simAltitude < FlightPlan.flightPlanAssignedData.CFL)
+            {
+                simAltitude = Math.Min(simAltitude + simVerticalSpeed, FlightPlan.flightPlanAssignedData.CFL);
             }
 
             Trajectory.PredictedPoints.Add(new TrajectoryPoint(DateTime.UtcNow.Add(new(0, 0, 30 * t)), simPosition, simAltitude));
