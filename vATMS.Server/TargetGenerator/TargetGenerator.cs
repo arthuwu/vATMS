@@ -169,4 +169,17 @@ class TargetGenerator
     {
         return 300;
     }
+
+    public void DespawnIfOutsideRange()
+    {
+        foreach (Aircraft ac in _aircraft.Values.ToList())
+        {
+            if (ac.PressureAltitude < MinimumLevel ||
+                ac.PressureAltitude > MaximumLevel ||
+                NavTools.DistanceBetweenTwoPoints(ac.Position, SimulationCentre) > SpawnRadius)
+            {
+                _aircraft.TryRemove(ac.FlightPlan.Callsign, out _);
+            }
+        }
+    }
 }

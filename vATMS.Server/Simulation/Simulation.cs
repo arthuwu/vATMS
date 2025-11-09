@@ -46,7 +46,7 @@ public class Simulation
 
     private async Task UpdatePositionLoop(CancellationToken token)
     {
-        using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
+        using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(0.05));
 
         while (await timer.WaitForNextTickAsync(token))
         {
@@ -54,7 +54,6 @@ public class Simulation
             {
                 // do stuff to aircraft
                 // remember to check if it can be displayed using RadarHead, but otherwise
-                // despawn if too far from centre
                 // Console.WriteLine($"DEBUG: UpdateOnTimerElapsed, {ac.FlightPlan.Callsign} at {ac.Position.Lat}, {ac.Position.Lon}");
                 ac.UpdatePosition();
 
@@ -85,6 +84,7 @@ public class Simulation
         {
             foreach (Aircraft ac in Aircraft.Values) // use a copy of the list to prevent rewriting
             {
+                _targetGenerator.DespawnIfOutsideRange(); // despawning isn't urgent, so we put it here for performance
                 ac.PredictTrajectory();
             }
 
