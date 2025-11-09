@@ -18,6 +18,7 @@ const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw, sectorId, 
     const [targetList, setTargetList] = useState<any>();
     const [selectedAircraftID, setSelectedAircraftID] = useState<string>();
     const [conflictList, setConflictList] = useState<PredictedConflictPair[]>([]);
+    const [shortTermConflictList, setShortTermConflictList] = useState<string[]>([]);
     const [aircraftThroughSector, setAircraftThroughSector] = useState<string[]>([]);
 
     const signalRManager: SignalRManager = SignalRManager.getInstance();
@@ -55,16 +56,25 @@ const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw, sectorId, 
         })
     }, [signalRManager])
 
+    useEffect(() => {
+        signalRManager.on("shortTermConflictPairsUpdate", (pairs: string[]) => {
+            setShortTermConflictList(pairs);
+        })
+    }, [signalRManager])
+
     const getDatablockStatus = (target: any): string => {
         var datablockStatus: string[] = [];
 
         if (selectedAircraftID == target.flightPlan.callsign)
             datablockStatus.push("selected");
 
-        if (conflictList.map((e: PredictedConflictPair) => e.callsign1).includes(target.flightPlan.callsign) ||
+        if (shortTermConflictList.includes(target.flightPlan.callsign)) {
+            datablockStatus.push("short-term-conflict");
+        } else if (conflictList.map((e: PredictedConflictPair) => e.callsign1).includes(target.flightPlan.callsign) ||
             conflictList.map((e: PredictedConflictPair) => e.callsign2).includes(target.flightPlan.callsign)
-        )
+        ) {
             datablockStatus.push("predicted-conflict");
+        }
 
         if (sectorVolumes.includes(target.trajectory.currentSector)) {
             datablockStatus.push("assumed");

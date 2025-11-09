@@ -29,4 +29,9 @@ public class RadarScreenUpdater
         //Console.WriteLine("updateConflictPairs called");
         await _hubContext.Clients.All.SendAsync("ConflictPairsUpdate", conflictList);
     }
+
+    public async Task UpdateShortTermConflictPairs(List<string> conflictList)
+    {
+        await _hubContext.Clients.All.SendAsync("ShortTermConflictPairsUpdate", conflictList);
+    }
 }

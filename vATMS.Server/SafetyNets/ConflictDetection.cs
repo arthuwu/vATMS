@@ -20,6 +20,8 @@ public struct PredictedConflictPair
 public class ConflictDetection
 {
     private readonly SimulationManager _simulationManager;
+    private List<PredictedConflictPair> _conflictList = new();
+
     public ConflictDetection(SimulationManager simulationManager)
     {
         _simulationManager = simulationManager;
@@ -77,10 +79,30 @@ public class ConflictDetection
                 conflictPairs[callsignKey] = pcp;
             }
 
-            return conflictPairs.Values.ToList();
+            _conflictList = conflictPairs.Values.ToList();
+            return _conflictList;
         }
 
         return new();
+    }
+
+    public List<string> GetShortTermConflicts(Dictionary<string, Aircraft> aircraft)
+    {
+        List<string> conflicts = new();
+
+        foreach (PredictedConflictPair pcp in _conflictList)
+        {
+            DecimalCoordinate pos1 = aircraft[pcp.Callsign1].Position;
+            DecimalCoordinate pos2 = aircraft[pcp.Callsign2].Position;
+
+            if (NavTools.DistanceBetweenTwoPoints(pos1, pos2) < 5)
+            {
+                conflicts.Add(pcp.Callsign1);
+                conflicts.Add(pcp.Callsign2);
+            }
+        }
+
+        return conflicts;
     }
 
 

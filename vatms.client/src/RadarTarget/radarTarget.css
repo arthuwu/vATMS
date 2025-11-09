@@ -12,6 +12,10 @@
     background-color: #e46f15;
 }
 
+.short-term-conflict .radar-target-symbol {
+    background-color: #e41515;
+}
+
 .unconcerned .radar-target-symbol {
     transform: translate(-50%, -50%) rotate(45deg);
     background: transparent;
@@ -48,6 +52,10 @@
 
 .selected .target-data-block {
     background-color: #000080;
+}
+
+.short-term-conflict .target-data-block {
+    color: #e41515;
 }
 
 .radar-trail {

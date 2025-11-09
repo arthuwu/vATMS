@@ -46,7 +46,7 @@ public class Simulation
 
     private async Task UpdatePositionLoop(CancellationToken token)
     {
-        using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(0.05));
+        using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
 
         while (await timer.WaitForNextTickAsync(token))
         {
@@ -56,7 +56,6 @@ public class Simulation
                 // remember to check if it can be displayed using RadarHead, but otherwise
                 // Console.WriteLine($"DEBUG: UpdateOnTimerElapsed, {ac.FlightPlan.Callsign} at {ac.Position.Lat}, {ac.Position.Lon}");
                 ac.UpdatePosition();
-
 
                 StandingAgreement? sa = ac.FlightPlan.ResolveStandingAgreements();
 
@@ -73,6 +72,10 @@ public class Simulation
             }
 
             await _radarScreenUpdater.UpdateAircraftPosition(Aircraft.Values.ToList());
+
+            List<string> stcaList = _conflictDetection.GetShortTermConflicts(new(Aircraft));
+
+            await _radarScreenUpdater.UpdateShortTermConflictPairs(stcaList);
         }
     }
 
