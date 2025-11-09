@@ -31,8 +31,8 @@
             "displayRoute": "L608 LOGAN",
             "flownRoute": "SUMUM LOGAN SABER BRASO WESUL LAM",
             "spawnLevels": [
-                28000,
-                30000
+                26000,
+                28000
             ],
             "minimumLevel": 30000,
             "maximumLevel": 38000,

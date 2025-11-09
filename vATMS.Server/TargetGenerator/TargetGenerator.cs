@@ -65,9 +65,7 @@ class TargetGenerator
     {
         Console.WriteLine($"rate {rate}");
         // rough derivation of spawn rate
-        int spawnInterval = (3600000 / rate) / (_navData.SectorList.Select(s => s.Value.IsUserControlled() == true).ToList().Count() / _navData.SectorList.Count());
-        spawnInterval = 30000;
-        // Console.WriteLine(spawnInterval);
+        int spawnInterval = (3600000 / rate) * SpawnPoints.Count();
 
         _timer.Period = TimeSpan.FromMilliseconds(spawnInterval);
     }
@@ -153,8 +151,6 @@ class TargetGenerator
 
     private int GetRandomRFL(int min, int max)
     {
-        Console.WriteLine(min);
-        Console.WriteLine(max);
         Random random = new();
         return random.Next(min / 1000, max / 1000) * 1000;
     }
