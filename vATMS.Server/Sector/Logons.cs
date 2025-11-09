@@ -3,15 +3,15 @@ using vATMS.NavData;
 
 public class LogonList
 {
-    public List<Logon> Logons { get; set; }
+    public required List<Logon> Logons { get; set; }
 }
 
 public class Logon
 {
-    public string Id { get; set; }
-    public string DisplayName { get; set; }
-    public string IfactsName { get; set; }
-    public List<string> SectorVolumes { get; set; }
+    public required string Id { get; set; }
+    public required string DisplayName { get; set; }
+    public required string IfactsName { get; set; }
+    public required List<string> SectorVolumes { get; set; }
 }
 
 public class LogonData

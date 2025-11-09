@@ -278,3 +278,39 @@
     font-size: 12px;
     color: #6c986b;
 }
+
+.lad {
+    height: 70%;
+    display: flex;
+    padding: 1em;
+}
+
+.lad-display {
+    background-color: #363e41;
+    width: 90%;
+    height: 100%;
+    position: relative;
+}
+
+.vertical-selection {
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    width: 10%;
+    float: right;
+    box-shadow: inset -2px -2px 0px #808080, inset 2px 2px 0px #C8C8C8;
+}
+
+.vertical-selection div {
+    width: 3em;
+    padding-top: 1em;
+}
+
+.vertical-selection div:hover {
+    background-color: #969696;
+}
+
+.selected-aircraft-window {
+    height: 20%;
+}

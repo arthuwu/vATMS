@@ -16,8 +16,9 @@ const SelectionWindow = () => {
 
     // const [sectorProps, setSectorProps] = useState<any>([]);
 
-    const [headingSelectList, setHeadingSelectList] = useState<string[]>(Array(9).fill(""));
+    const [headingSelectList, setHeadingSelectList] = useState<string[]>(Array(9).fill(""));;
     const [waypointSelectList, setWaypointSelectList] = useState<string[]>(Array(8).fill(""));
+    const [levelSelectList, setLevelSelectList] = useState<number[]>([]);
 
     const [speedToggle, setSpeedToggle] = useState<boolean>(false);
 
@@ -45,6 +46,15 @@ const SelectionWindow = () => {
                 setSelectedAircraftID(selectedAircraftId);
         })
     }, [signalRManager])
+
+    useEffect(() => {
+        const levels: number[] = [];
+        for (var i: number = 66000; i >= 19000; i -= 1000) {
+            levels.push(i);
+        }
+
+        setLevelSelectList(levels);
+    }, [])
 
     /*
     useEffect(() => {
@@ -107,23 +117,18 @@ const SelectionWindow = () => {
                     <div className='selected-aircraft-window'></div>
                     <div className='lad'>
                         <div className='lad-display'>
-                            <div>CFL: {getSelectedAircraft()?.flightPlan.flightPlanAssignedData.cfl}</div>
-                            <input
-                                type="text"
-                                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                                    if (e.key === "Enter") {
-                                        e.preventDefault();
-                                        handleSelectedAircraftAssignedDataChange(
-                                            selectedAircraftID,
-                                            "CFL",
-                                            e.currentTarget.value
-                                        );
-                                        e.currentTarget.value = ""; //temp reset anyways
-                                    }
-                                }}
-                            />
                         </div>
-                        <div className='vertical-selection'></div>
+                        <div className='vertical-selection'>
+                            {
+                                levelSelectList.map((e: number) => (
+                                    <div onClick={() => handleSelectedAircraftAssignedDataChange(
+                                        selectedAircraftID,
+                                        "CFL",
+                                        e.toString())
+                                    }>{e.toString().substring(0, 3)}</div>
+                                ))
+                            }
+                        </div>
                     </div>
                 </div>
                 <div className='right'>
@@ -148,7 +153,6 @@ const SelectionWindow = () => {
                                     e.preventDefault();
 
                                     if (e.currentTarget.value == "") {
-                                        console.log("here")
                                         handleSelectedAircraftAssignedDataChange(
                                             selectedAircraftID,
                                             "ASP",
