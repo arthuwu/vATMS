@@ -148,15 +148,8 @@ public class Aircraft
         _heading = (_heading + turnDir * step + 360) % 360;
     }
 
-    private bool IsDirectPossible(DecimalCoordinate coordinate)
-    {
-        return false;
-    }
-
     private void TurnViaDirect(DecimalCoordinate coordinate)
     {
-        // TODO: first check if direct is possible - DO THIS IN THE MENU
-
         //Console.WriteLine($"DEBUG: TURNING TO {coordinate.Lat}, {coordinate.Lon}");
 
 
@@ -228,24 +221,24 @@ public class Aircraft
         }
         else if (FlightPlan.Route.Count() == 1)
         {
-            TurnViaDirect(FlightPlan.Route.ElementAt(0).Coordinate); // holds at last waypoint
+            DecimalCoordinate curr = FlightPlan.Route.ElementAt(0).Coordinate;
+
+            double dist = NavTools.DistanceBetweenTwoPoints(Position, curr);
+
+            if (dist <= 0.2 || dist <= _indicatedAirspeed / 3600) // if it'll reach the waypoint within the next update-ish
+            {
+                FlightPlan.Route.Dequeue();
+                FlightPlan.flightPlanAssignedData.AHDG = Convert.ToInt32(_heading);
+                return;
+            }
+
+            TurnViaDirect(FlightPlan.Route.ElementAt(0).Coordinate);
         }
         else
         {
             FlightPlan.flightPlanAssignedData.AHDG = Convert.ToInt32(_heading);
         }
-
-
-        // must calculate first in case there is no straight segment
-        // then we decide whether we want to turn or not
-
         // TODO: track instead of heading
-
-        //if (_heading != nextBrng)
-        //{
-        //    TurnDirectToCoordinate(next);
-        //}
-
     }
 
     private void FlySpeed(double newSpeed)
