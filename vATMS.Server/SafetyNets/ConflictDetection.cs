@@ -50,20 +50,34 @@ public class ConflictDetection
 
             List<(AABB, AABB)> conflictAABBPairs = trajectoryTree.GetOverlappingPairs();
 
-            List<PredictedConflictPair> conflictPairs = new();
+            // we only want the first (earliest) conflict for a specific pair
+
+            Dictionary<string, PredictedConflictPair> conflictPairs = new();
 
             foreach ((AABB box1, AABB box2) in conflictAABBPairs)
             {
                 if (box1.Callsign == null || box2.Callsign == null) throw new Exception("AABB does not contain callsign, may be invalid");
 
+                string[] callsignPair = [box1.Callsign, box2.Callsign];
+                Array.Sort(callsignPair);
+                string callsignKey = string.Join("", callsignPair);
+
+                if (conflictPairs.ContainsKey(callsignKey))
+                {
+                    if (conflictPairs[callsignKey].StartTime < box1.GetStartTime()) // already newer
+                    {
+                        continue;
+                    }
+                }
+
                 double cpa = GetClosestPointOfApproach(box1, box2);
 
                 PredictedConflictPair pcp = new(box1.Callsign, box2.Callsign, cpa, box1.GetStartTime());
 
-                conflictPairs.Add(pcp);
+                conflictPairs[callsignKey] = pcp;
             }
 
-            return conflictPairs;
+            return conflictPairs.Values.ToList();
         }
 
         return new();

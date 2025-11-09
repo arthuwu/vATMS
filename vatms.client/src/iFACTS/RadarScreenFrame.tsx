@@ -2,6 +2,7 @@ import { useState } from 'react';
 import PopupWindow from './PopupWindow';
 import Clock from './Clock';
 import './ifacts.css'
+import SeparationMonitor from './SeparationMonitor';
 
 const RadarScreenFrame = ({ sectorId, children }: any) => {
     const [isVisible, setIsVisible] = useState<any>({});
@@ -42,7 +43,7 @@ const RadarScreenFrame = ({ sectorId, children }: any) => {
                     width={250}
                     height={230}
                 >
-                    <div>TEST</div>
+                    <SeparationMonitor></SeparationMonitor>
                 </PopupWindow>
             </div>
         </>
