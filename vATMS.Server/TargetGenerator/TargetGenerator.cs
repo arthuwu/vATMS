@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 class TargetGenerator
 {
-    public int Rate { get; set; } // aircraft per hour - will be variable (not exact)
+    public int Rate { get; set; }
     public int MinimumLevel { get; init; }
     public int MaximumLevel { get; init; }
     public DecimalCoordinate SimulationCentre { get; init; }
@@ -97,13 +97,13 @@ class TargetGenerator
                     flightrules: "I",
                     atyp: GetRandomAircraftType(),
                     wtc: "X",
-                    equipment: "SABDE2E3GHIJ1J2J3J4J5LM1OP2RVWXYZ/LB1D1G1",
+                    equipment: "SDGIJ1LRWXY/LB1", // not in use
                     dep: spawnPoint.ADEP[random.Next(spawnPoint.ADEP.Count())],
                     dest: spawnPoint.ADES[random.Next(spawnPoint.ADES.Count())],
-                    eobt: 0000,
-                    eet: 0000,
-                    altn: "ZZZZ",
-                    rmk: "",
+                    eobt: 0000, // not in use
+                    eet: 0000, // not in use
+                    altn: "ZZZZ", // not in use
+                    rmk: "", // not in use
                     rfl: 40000, //TODO: FIX
                     spd: GetRandomSpeed(),
                     route: _navData.ParseRoute(spawnPoint.FlownRoute),
@@ -121,10 +121,10 @@ class TargetGenerator
                         15),
                     track: NavTools.BearingBetweenTwoPoints(fp.Route.Peek().Coordinate, fp.Route.ElementAt(1).Coordinate),
                     pressureAltitude: spawnPoint.SpawnLevels[random.Next(spawnPoint.SpawnLevels.Count())],
-                    indicatedAirspeed: GetSpawnSpeed(),
                     finalApchSpeed: 120,
                     minimumCleanSpeed: 230,
-                    navigationData: _navData
+                    navigationData: _navData,
+                    aircraftPerformance: GetAircraftPerformanceForType(fp.ATYP)
                 ));
         }
     }
@@ -145,12 +145,10 @@ class TargetGenerator
             callsign += random.Next(0, 9999);
         }
 
-        return callsign;
-    }
+        if (_aircraft.ContainsKey(callsign)) //duplicate
+            GetRandomCallsign(ICAO, type);
 
-    private string GetRandomAircraftType()
-    {
-        return "A20N";
+        return callsign;
     }
 
     private int GetRandomRFL(int min, int max)
@@ -165,11 +163,6 @@ class TargetGenerator
         return random.Next(340, 550);
     }
 
-    private int GetSpawnSpeed()
-    {
-        return 300;
-    }
-
     public void DespawnIfOutsideRange()
     {
         foreach (Aircraft ac in _aircraft.Values.ToList())
@@ -180,6 +173,28 @@ class TargetGenerator
             {
                 _aircraft.TryRemove(ac.FlightPlan.Callsign, out _);
             }
+        }
+    }
+
+
+    // The two functions below should have data included and parsed from external files. However, due to time pressure, they have been hard-coded here for the rest of the program to work
+    private string GetRandomAircraftType()
+    {
+        Random random = new();
+        string[] types = ["A20N", "B77W"];
+
+        return types[random.Next(0, types.Length)];
+    }
+
+    private AircraftPerformance GetAircraftPerformanceForType(string atyp)
+    {
+        if (atyp == "A20N")
+        {
+            return new(290, 250, 250, 250, 290, 1500, 1000, 1000, 3000, 39000);
+        }
+        else
+        {
+            return new(300, 260, 260, 260, 300, 2000, 1500, 1000, 3000, 43000);
         }
     }
 }

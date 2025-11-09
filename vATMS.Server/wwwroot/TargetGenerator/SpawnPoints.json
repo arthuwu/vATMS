@@ -31,12 +31,11 @@
             "displayRoute": "L608 LOGAN",
             "flownRoute": "SUMUM LOGAN SABER BRASO WESUL LAM",
             "spawnLevels": [
-                30000,
-                32000,
-                34000
+                28000,
+                30000
             ],
             "minimumLevel": 30000,
-            "maximumLevel": 43000,
+            "maximumLevel": 38000,
             "standingAgreements": [
                 {
                     "point": "LOGAN",
@@ -78,7 +77,7 @@
                 40000
             ],
             "minimumLevel": 30000,
-            "maximumLevel": 40000,
+            "maximumLevel": 38000,
             "standingAgreements": [],
             "intentionCode": "M"
         },
@@ -104,7 +103,7 @@
                 22000
             ],
             "minimumLevel": 29000,
-            "maximumLevel": 41000,
+            "maximumLevel": 39000,
             "standingAgreements": [
                 {
                     "point": "",
@@ -136,7 +135,7 @@
                 23000
             ],
             "minimumLevel": 29000,
-            "maximumLevel": 41000,
+            "maximumLevel": 39000,
             "standingAgreements": [
                 {
                     "point": "",
@@ -172,7 +171,7 @@
                 34000
             ],
             "minimumLevel": 30000,
-            "maximumLevel": 43000,
+            "maximumLevel": 38000,
             "standingAgreements": [
                 {
                     "point": "ETVAX",

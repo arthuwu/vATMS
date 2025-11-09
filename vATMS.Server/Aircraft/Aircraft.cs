@@ -11,6 +11,7 @@ public class Aircraft
     public PredictedTrajectory Trajectory { get; set; }
 
     private NavigationData _navigationData;
+    private AircraftPerformance _aircraftPerformance;
 
     private double _heading;
     private double _indicatedAirspeed;
@@ -29,12 +30,13 @@ public class Aircraft
         DecimalCoordinate position,
         double track,
         int pressureAltitude,
-        int indicatedAirspeed,
         int finalApchSpeed,
         int minimumCleanSpeed,
-        NavigationData navigationData
+        NavigationData navigationData,
+        AircraftPerformance aircraftPerformance
         )
     {
+        _aircraftPerformance = aircraftPerformance;
         _navigationData = navigationData;
         // TODO: TESTING - force creation of radar target with no radar head
         RadarTarget = new RadarTarget();
@@ -43,7 +45,7 @@ public class Aircraft
         _heading = track;
         Track = track;
         PressureAltitude = pressureAltitude;
-        _indicatedAirspeed = indicatedAirspeed;
+        _indicatedAirspeed = _aircraftPerformance.GetNormalIndicatedAirspeed(pressureAltitude, true);
 
         FlightPlan.flightPlanAssignedData.CFL = pressureAltitude;
 
@@ -52,34 +54,20 @@ public class Aircraft
 
         Trajectory = new();
 
-        // TODO: TESTING - implement this properly
-        Groundspeed = _indicatedAirspeed;
+        Groundspeed = GetGroundspeed(_indicatedAirspeed, pressureAltitude);
     }
 
-    // Getting values
-    public double GetMaximumForwardSpeed()
+    private double GetGroundspeed(double indicatedAirspeed, double pressureAltitude)
     {
-        return 320.0d;
-    }
+        double metricAlt = pressureAltitude / 3.281;
 
-    public double GetMaximumMachNumber()
-    {
-        return 0.8d;
-    }
+        double pressure = 101325 * Math.Pow((1 - 0.0000225577 * metricAlt), 5.25588);
 
-    public double GetMachNumber()
-    {
-        return 0.0d;
-    }
+        double temperature = 288.15 - (0.00649 * metricAlt);
 
-    private double DetermineAppropriateSpeed()
-    {
-        return 220.0d;
-    }
+        double airDensity = pressure / (287.05 * temperature);
 
-    private double DetermineVerticalSpeed()
-    {
-        return (Groundspeed * 5) / 60;
+        return indicatedAirspeed * Math.Sqrt(1.225 / airDensity);
     }
 
     private void LateralMovement()
@@ -100,10 +88,10 @@ public class Aircraft
         }
         else
         {
-
+            FlySpeed(_aircraftPerformance.GetNormalIndicatedAirspeed(PressureAltitude, (PressureAltitude == FlightPlan.flightPlanAssignedData.CFL) ? true : false));
         }
 
-        if (FlightPlan.flightPlanAssignedData.AHDG != null) // isonownnav broken
+        if (FlightPlan.flightPlanAssignedData.AHDG != null)
         {
             if (_heading != FlightPlan.flightPlanAssignedData.AHDG)
                 TurnToHeading((double)FlightPlan.flightPlanAssignedData.AHDG!);
@@ -118,19 +106,15 @@ public class Aircraft
             }
             else
             {
-                TurnViaDirect(_navigationData.WpList[FlightPlan.flightPlanAssignedData.DirectToPoint!].Coordinate);
-                // this is for testing ONLY
-                // TODO: replace with resetting to null
+                FlightPlan.flightPlanAssignedData.DirectToPoint = null;
             }
         }
         else
         {
             TurnViaRoute();
         }
-        // user input limitations will prevent directing to unknown waypoints
 
-        // TEMP:
-        Groundspeed = _indicatedAirspeed;
+        Groundspeed = GetGroundspeed(_indicatedAirspeed, PressureAltitude);
 
         Position = NavTools.TranslatePoint(Position, _heading, Groundspeed / 3600);
 
@@ -160,7 +144,6 @@ public class Aircraft
         double brng = NavTools.BearingBetweenTwoPoints(Position, coordinate);
         //Console.WriteLine($"DEBUG: HEADING REQUIRED {brng}, ACTUAL {_heading}");
 
-        // TODO: track instead of heading
 
         TurnToHeading(brng);
 
@@ -242,7 +225,6 @@ public class Aircraft
         {
             FlightPlan.flightPlanAssignedData.AHDG = Convert.ToInt32(_heading);
         }
-        // TODO: track instead of heading
     }
 
     private void FlySpeed(double newSpeed)
@@ -250,33 +232,25 @@ public class Aircraft
         if (_indicatedAirspeed > newSpeed)
         {
             // decelerate
-            _indicatedAirspeed = Math.Max(_indicatedAirspeed - 2, newSpeed);
+            _indicatedAirspeed = Math.Max(_indicatedAirspeed - 2, _aircraftPerformance.GetNormalisedSpeed(PressureAltitude, newSpeed));
         }
         else if (_indicatedAirspeed < newSpeed)
         {
             // accelerate
-            _indicatedAirspeed = Math.Min(_indicatedAirspeed + 2, newSpeed);
+            _indicatedAirspeed = Math.Min(_indicatedAirspeed + 2, _aircraftPerformance.GetNormalisedSpeed(PressureAltitude, newSpeed));
         }
     }
 
     private void VerticalMovement()
     {
-        // TODO: Implement this properly
-        // This is TEMPORARY, UNREALISTIC code taken from a 2023 project. 
-        // This has been put here only so things can be tested
-
-        double climbRate = DetermineVerticalSpeed();
-
         if (PressureAltitude > FlightPlan.flightPlanAssignedData.CFL)
         {
-            PressureAltitude = Math.Max(PressureAltitude - climbRate, FlightPlan.flightPlanAssignedData.CFL);
+            PressureAltitude = Math.Max(PressureAltitude - _aircraftPerformance.GetRateOfDescent(PressureAltitude), FlightPlan.flightPlanAssignedData.CFL);
         }
         else if (PressureAltitude < FlightPlan.flightPlanAssignedData.CFL)
         {
-            PressureAltitude = Math.Min(PressureAltitude + climbRate, FlightPlan.flightPlanAssignedData.CFL);
+            PressureAltitude = Math.Min(PressureAltitude + _aircraftPerformance.GetRateOfClimb(PressureAltitude), FlightPlan.flightPlanAssignedData.CFL);
         }
-
-        //Console.WriteLine($"DEBUG: {PressureAltitude}, {FlightPlan.flightPlanAssignedData.CFL}, {climbRate}");
     }
 
     public void UpdatePosition()
@@ -300,8 +274,9 @@ public class Aircraft
 
         for (int t = 0; t < 30; t++)
         {
+            // Lateral
+
             double segmentDistance = Groundspeed * KNOT_TO_MS * 30 * M_TO_NM; // s = ut; t = 30 seconds; in nm
-            double simVerticalSpeed = (Groundspeed * 5) / 60;
 
             while (segmentDistance > 0)
             {
@@ -333,13 +308,15 @@ public class Aircraft
                 }
             }
 
+            // Vertical
+
             if (simAltitude > FlightPlan.flightPlanAssignedData.CFL)
             {
-                simAltitude = Math.Max(simAltitude - simVerticalSpeed, FlightPlan.flightPlanAssignedData.CFL);
+                simAltitude = Math.Max(simAltitude - _aircraftPerformance.GetRateOfDescent(simAltitude), FlightPlan.flightPlanAssignedData.CFL);
             }
             else if (simAltitude < FlightPlan.flightPlanAssignedData.CFL)
             {
-                simAltitude = Math.Min(simAltitude + simVerticalSpeed, FlightPlan.flightPlanAssignedData.CFL);
+                simAltitude = Math.Min(simAltitude + _aircraftPerformance.GetRateOfClimb(simAltitude), FlightPlan.flightPlanAssignedData.CFL);
             }
 
             Trajectory.PredictedPoints.Add(new TrajectoryPoint(DateTime.UtcNow.Add(new(0, 0, 30 * t)), simPosition, simAltitude));
