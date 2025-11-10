@@ -16,7 +16,6 @@ class SignalRManager {  // this is a SINGLETON class! becasue i don't want to ac
                 withCredentials: false
             })
             .withAutomaticReconnect()
-            .configureLogging(signalR.LogLevel.Trace)
             .build()
     }
 
