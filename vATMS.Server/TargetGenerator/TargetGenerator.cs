@@ -18,7 +18,7 @@ class TargetGenerator
     private readonly NavigationData _navData;
     private readonly PeriodicTimer _timer;
     private readonly CancellationTokenSource _cts;
-    private readonly Task _spawnAircraft;
+    private readonly Task _spawnAircraftLoop;
 
     public List<SpawnPoint> SpawnPoints { get; set; }
     private ConcurrentDictionary<string, Aircraft> _aircraft;
@@ -61,7 +61,7 @@ class TargetGenerator
         SetupTimer(rate);
 
         _cts = new CancellationTokenSource();
-        _spawnAircraft = Task.Run(() => SpawnAircraft(_cts.Token));
+        _spawnAircraftLoop = Task.Run(() => SpawnAircraftLoop(_cts.Token));
     }
 
     /// <summary>
@@ -80,56 +80,63 @@ class TargetGenerator
     /// <summary>
     /// Spawns a new aircraft
     /// </summary>
-    private async Task SpawnAircraft(CancellationToken token)
+    private async Task SpawnAircraftLoop(CancellationToken token)
     {
+        SpawnAircraft(); // initial spawn on load, before awaiting
+
         while (await _timer.WaitForNextTickAsync(token))
         {
-            Random random = new();
-
-            int weightedSpawn = random.Next(1, _weightedSpawnSum.LastOrDefault());
-
-            int requiredIndex = _weightedSpawnSum.BinarySearch(weightedSpawn);
-
-            if (requiredIndex < 0)
-            {
-                requiredIndex = ~requiredIndex; // BinarySearch returns the bitwise complement
-            }
-
-            SpawnPoint spawnPoint = SpawnPoints[requiredIndex];
-
-            FlightPlan fp = new FlightPlan(
-                    callsign: GetRandomCallsign(spawnPoint.Callsigns, spawnPoint.CallsignPattern),
-                    flightrules: "I",
-                    atyp: GetRandomAircraftType(),
-                    wtc: "X",
-                    equipment: "SDGIJ1LRWXY/LB1", // not in use
-                    dep: spawnPoint.ADEP[random.Next(spawnPoint.ADEP.Count())],
-                    dest: spawnPoint.ADES[random.Next(spawnPoint.ADES.Count())],
-                    eobt: 0000, // not in use
-                    eet: 0000, // not in use
-                    altn: "ZZZZ", // not in use
-                    rmk: "", // not in use
-                    rfl: GetRandomRFL(spawnPoint.MinimumLevel, spawnPoint.MaximumLevel),
-                    spd: GetRandomSpeed(),
-                    route: _navData.ParseRoute(spawnPoint.FlownRoute),
-                    displayRoute: spawnPoint.DisplayRoute,
-                    standingAgreements: spawnPoint.StandingAgreements,
-                    intentionCode: spawnPoint.IntentionCode
-                );
-
-
-            _aircraft.TryAdd(fp.Callsign, new Aircraft(
-                    flightPlan: fp,
-                    position: NavTools.TranslatePoint(
-                        fp.Route.Peek().Coordinate,
-                        NavTools.BearingBetweenTwoPoints(fp.Route.ElementAt(1).Coordinate, fp.Route.Peek().Coordinate),
-                        15),
-                    track: NavTools.BearingBetweenTwoPoints(fp.Route.Peek().Coordinate, fp.Route.ElementAt(1).Coordinate),
-                    pressureAltitude: spawnPoint.SpawnLevels[random.Next(spawnPoint.SpawnLevels.Count())],
-                    navigationData: _navData,
-                    aircraftPerformance: GetAircraftPerformanceForType(fp.ATYP)
-                ));
+            SpawnAircraft();
         }
+    }
+
+    private void SpawnAircraft()
+    {
+        Random random = new();
+
+        int weightedSpawn = random.Next(1, _weightedSpawnSum.LastOrDefault());
+
+        int requiredIndex = _weightedSpawnSum.BinarySearch(weightedSpawn);
+
+        if (requiredIndex < 0)
+        {
+            requiredIndex = ~requiredIndex; // BinarySearch returns the bitwise complement
+        }
+
+        SpawnPoint spawnPoint = SpawnPoints[requiredIndex];
+
+        FlightPlan fp = new FlightPlan(
+                callsign: GetRandomCallsign(spawnPoint.Callsigns, spawnPoint.CallsignPattern),
+                flightrules: "I",
+                atyp: GetRandomAircraftType(),
+                wtc: "X",
+                equipment: "SDGIJ1LRWXY/LB1", // not in use
+                dep: spawnPoint.ADEP[random.Next(spawnPoint.ADEP.Count())],
+                dest: spawnPoint.ADES[random.Next(spawnPoint.ADES.Count())],
+                eobt: 0000, // not in use
+                eet: 0000, // not in use
+                altn: "ZZZZ", // not in use
+                rmk: "", // not in use
+                rfl: GetRandomRFL(spawnPoint.MinimumLevel, spawnPoint.MaximumLevel),
+                spd: GetRandomSpeed(),
+                route: _navData.ParseRoute(spawnPoint.FlownRoute),
+                displayRoute: spawnPoint.DisplayRoute,
+                standingAgreements: spawnPoint.StandingAgreements,
+                intentionCode: spawnPoint.IntentionCode
+            );
+
+
+        _aircraft.TryAdd(fp.Callsign, new Aircraft(
+                flightPlan: fp,
+                position: NavTools.TranslatePoint(
+                    fp.Route.Peek().Coordinate,
+                    NavTools.BearingBetweenTwoPoints(fp.Route.ElementAt(1).Coordinate, fp.Route.Peek().Coordinate),
+                    15),
+                track: NavTools.BearingBetweenTwoPoints(fp.Route.Peek().Coordinate, fp.Route.ElementAt(1).Coordinate),
+                pressureAltitude: spawnPoint.SpawnLevels[random.Next(spawnPoint.SpawnLevels.Count())],
+                navigationData: _navData,
+                aircraftPerformance: GetAircraftPerformanceForType(fp.ATYP)
+            ));
     }
 
     private string GetRandomCallsign(List<string> ICAO, string type)
