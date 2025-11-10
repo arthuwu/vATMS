@@ -4,6 +4,9 @@ import type { MapPropsInterface } from './MapInterface';
 import './maps.css'
 import SignalRManager from '../SignalR/SignalRManager';
 
+/**
+ * Draws the base map (airspace maps) of a RadarScreen
+ */
 const BaseMapLayer = ({ projectionCenter, zoom, screenSize }: MapPropsInterface) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [baseMapJson, setBaseMapJson] = useState<any>(null);

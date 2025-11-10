@@ -2,7 +2,10 @@ type keyBind = {
     [onKeyDown: string]: string;
 }
 
-class KeyboardManager { // this is a SINGLETON class! becasue i don't want to useContext for stuff that don't involve jsx components
+/**
+ * Manages all keyboard inputs when subscribed to
+ */
+class KeyboardManager { // this is a SINGLETON class! because I don't want to useContext for stuff that don't involve jsx components
     private static instance: KeyboardManager;
     private keyState: Set<string> = new Set(); // keys currently being pressed
     private keyBinds: keyBind = {}; // the set of keybinds

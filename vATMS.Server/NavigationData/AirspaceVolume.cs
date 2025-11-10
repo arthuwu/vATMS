@@ -1,6 +1,8 @@
 namespace vATMS.NavData;
 
-
+/// <summary>
+/// Represents a physical 3D airspace object
+/// </summary>
 public class AirspaceVolume
 {
     public Guid Id { get; init; }

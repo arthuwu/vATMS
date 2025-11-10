@@ -14,6 +14,9 @@ interface TargetLayerMapProps extends MapPropsInterface {
     sectorVolumes: string[];
 }
 
+/**
+ * Draws the radar targets of a RadarScreen
+ */
 const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw, sectorId, sectorVolumes }: TargetLayerMapProps) => {
     const [targetList, setTargetList] = useState<any>();
     const [selectedAircraftID, setSelectedAircraftID] = useState<string>();

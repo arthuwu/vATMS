@@ -4,6 +4,9 @@ import SignalRManager from './SignalRManager';
 
 const SignalRContext = createContext<SignalRManager | null>(null);
 
+/**
+ * Provides context of the SignalRManager instance to react components
+ */
 const SignalRProvider = ({ children }: any) => {
     const [searchParams] = useSearchParams();
     const initialSector = useMemo(() => searchParams.get("sector") ?? "", [searchParams]);
@@ -18,7 +21,7 @@ const SignalRProvider = ({ children }: any) => {
         };
     }, [])
 
-    useEffect(() => {
+    useEffect(() => { // this can only be sent once the server Simulation instance itself is ready
         signalRManager.on("simulationReady", () => {
             if (searchParams.has("rate"))
                 signalRManager.send("setSimulationRate", searchParams.get("rate"))

@@ -8,9 +8,16 @@ interface RouteDrawMapProps extends MapPropsInterface {
     routeDraw: boolean,
 }
 
+/**
+ * Draws the route draw layers (toggled by pressing R) of a RadarScreen
+ */
 const RouteDrawLayer = ({ projectionCenter, zoom, screenSize, selectedAircraft, routeDraw }: RouteDrawMapProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
+    /**
+     * Converts a lat, lon coordinate into a left, top pixel coordinate
+     * @returns a new [left, top] tuple containing those coordinates
+     */
     const calculatePixelCoordinate = ([point_lat, point_lon]: [number, number]) => {
         let [left_coord, top_coord]: [number, number] = getProjection([point_lat, point_lon], projectionCenter, zoom);
         left_coord += screenSize[0] / 2;

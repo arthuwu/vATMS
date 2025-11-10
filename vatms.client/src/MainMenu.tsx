@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import './App.css';
 
+/**
+ * Component representing the main menu of the program
+ */
 const MainMenu = () => {
     let navigate = useNavigate();
     const [sectorList, setSectorList] = useState<any>([]);

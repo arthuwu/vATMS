@@ -122,7 +122,12 @@ public class ConflictDetection
         return conflicts;
     }
 
-
+    /// <summary>
+    /// Calculates the distance between the midpoint of two AABBs
+    /// </summary>
+    /// <param name="box1"></param>
+    /// <param name="box2"></param>
+    /// <returns>the great circle distance</returns>
     private double GetClosestPointOfApproach(AABB box1, AABB box2)
     {
         // As a rough estimate, we will use the centre of the AABBs, since the AABB doesn't store the data for the actual trajectory

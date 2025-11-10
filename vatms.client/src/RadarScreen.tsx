@@ -21,6 +21,9 @@ const keybinds = {
 
 KeyboardManager.getInstance().loadKeybinds(keybinds);
 
+/**
+ * Component for a RadarScreen
+ */
 const RadarScreen = () => {
     const [projectionCenter, setProjectionCenter] = useState<[number, number]>([51.4775, -0.461389]);
     const [zoomLevel, setZoomLevel] = useState<number>(60);

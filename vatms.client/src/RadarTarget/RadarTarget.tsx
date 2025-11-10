@@ -17,6 +17,10 @@ const RadarTarget = ({ flightPlan, aircraft, lat, lon, zoom, projectionCenter, s
     const [datablockOffset, setDatablockOffset] = useState<[x: number, y: number]>([0, 0]);
     const [radarTrail, setRadarTrail] = useState<[lat: number | null, lon: number | null][]>([[null, null]]);
 
+    /**
+     * Converts a lat, lon coordinate into a left, top pixel coordinate
+     * @returns a new [left, top] tuple containing those coordinates
+     */
     const calculatePixelCoordinate = ([point_lat, point_lon]: [number, number]) => {
         let [left_coord, top_coord]: [number, number] = getProjection([point_lat, point_lon], projectionCenter, zoom);
         left_coord += screenSize[0] / 2;
