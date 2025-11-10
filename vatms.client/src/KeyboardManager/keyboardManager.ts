@@ -15,6 +15,10 @@ class KeyboardManager { // this is a SINGLETON class! becasue i don't want to us
         window.addEventListener("keyup", this.handleKeyUp);
     }
 
+    /**
+     * Gets the KeyboardManager instance if it exists, if not then create a new instance
+     * @returns the KeyboardManager instance
+     */
     public static getInstance(): KeyboardManager {
         if (!KeyboardManager.instance) {
             KeyboardManager.instance = new KeyboardManager();
@@ -22,6 +26,10 @@ class KeyboardManager { // this is a SINGLETON class! becasue i don't want to us
         return KeyboardManager.instance;
     }
 
+    /**
+     * Loads a keybind dictionary into the Manager
+     * @param bindings 
+     */
     public loadKeybinds(bindings: keyBind) {
         this.keyBinds = bindings;
     }

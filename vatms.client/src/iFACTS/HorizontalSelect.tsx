@@ -6,6 +6,10 @@ interface HorizontalSelectInterface {
     length: number;
     onElementSelect: (value: string) => {}
 }
+
+/*
+Component to select heading and direct waypoint
+*/
 const HorizontalSelect = ({ elementList, elementWidth, length, onElementSelect }: HorizontalSelectInterface) => {
     const [offsetList, setOffsetList] = useState<string[]>(Array(length).fill(""));
 

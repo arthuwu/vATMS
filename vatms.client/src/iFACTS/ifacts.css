@@ -305,7 +305,7 @@
 
 .lad-display {
     background-color: #363e41;
-    width: 90%;
+    width: 80%;
     height: 100%;
     position: relative;
 }
@@ -315,7 +315,7 @@
     flex-direction: column;
     overflow-y: scroll;
     overflow-x: hidden;
-    width: 10%;
+    width: 20%;
     float: right;
     box-shadow: inset -2px -2px 0px #808080, inset 2px 2px 0px #C8C8C8;
 }

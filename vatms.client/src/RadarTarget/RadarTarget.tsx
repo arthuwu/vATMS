@@ -29,7 +29,6 @@ const RadarTarget = ({ flightPlan, aircraft, lat, lon, zoom, projectionCenter, s
 
     // this only rerenders every time the aircraft moves, or the screen is moved
     // so we need to check if the last saved position is the current position before adding to the trail
-    // TODO: parameter for radar trail length
 
     if (radarTrail.length > 0) {
         //console.log(`lat: ${lat}, ${radarTrail[radarTrail.length - 1][0]} and lon: ${lon}, ${radarTrail[radarTrail.length - 1][1]}`)

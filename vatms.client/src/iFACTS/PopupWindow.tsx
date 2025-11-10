@@ -2,6 +2,9 @@ import './ifacts.css'
 import { useRef } from 'react';
 import Draggable from 'react-draggable';
 
+/*
+Component to provide draggability (using a library) to pseudo-windows
+*/
 const PopupWindow = ({ windowTitle, isVisible, handleClose, width, height, children }: any) => {
     const nodeRef = useRef(null); // workaround for draggable (findDOMNode deprecated)
 

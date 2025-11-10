@@ -4,7 +4,7 @@ import SignalRManager from './SignalRManager';
 
 const SignalRContext = createContext<SignalRManager | null>(null);
 
-const SignalRProvider = ({ children }: any) => { // exporting this allows us to be very sure we are using the same SignalR connection throughout
+const SignalRProvider = ({ children }: any) => {
     const [searchParams] = useSearchParams();
     const initialSector = useMemo(() => searchParams.get("sector") ?? "", [searchParams]);
     const [sector] = useState(initialSector);

@@ -6,9 +6,13 @@ import SeparationMonitor from './SeparationMonitor';
 import SignalRManager from '../SignalR/SignalRManager';
 import type { PredictedConflictPair } from "../Types";
 
+/*
+Component for the frame surrounding an iFACTS radar screen
+Also contains the container for all popup windows
+*/
 const RadarScreenFrame = ({ sectorId, children }: any) => {
     const [conflictList, setConflictList] = useState<PredictedConflictPair[]>([]);
-    const [isVisible, setIsVisible] = useState<any>({});
+    const [isVisible, setIsVisible] = useState<any>({}); // stores a dictionary of {string, bool} where string is the name of the window defined below
 
     function toggleVisibility(window: string) {
         let newVisibleState: any = { ...isVisible };

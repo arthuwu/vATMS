@@ -1,7 +1,10 @@
 import "./ifacts.css";
 import { useState } from "react";
 
-export default function Clock(this: any) {
+/*
+Component to display the current UTC time
+*/
+const Clock = () => {
     const [time, setTime] = useState<string>("");
     const [seconds, setSeconds] = useState<string>("");
 
@@ -25,3 +28,5 @@ export default function Clock(this: any) {
         <span style={{ fontSize: "13px" }}>{seconds}</span>
     </div>
 }
+
+export default Clock

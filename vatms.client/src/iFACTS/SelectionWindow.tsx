@@ -5,6 +5,9 @@ import SignalRManager from '../SignalR/SignalRManager';
 import { useEffect, useState } from 'react';
 import HorizontalSelect from './HorizontalSelect';
 
+/*
+Component representing the iFACTS selection window
+*/
 const SelectionWindow = () => {
     const [targetList, setTargetList] = useState<any>([]);
     const [selectedAircraftID, setSelectedAircraftID] = useState<any>();
@@ -54,7 +57,7 @@ const SelectionWindow = () => {
         })
     }, [signalRManager])
 
-    useEffect(() => {
+    useEffect(() => { // generates levels from FL190 to FL430 
         const levels: number[] = [];
         for (var i: number = 43000; i >= 19000; i -= 1000) {
             levels.push(i);
@@ -98,7 +101,7 @@ const SelectionWindow = () => {
         }
     }, [targetList, selectedAircraftID])
 
-    useEffect(() => {
+    useEffect(() => { // generates headings which "wrap around" the present heading of the aircraft
         if (getSelectedAircraft()) {
             let presentHeading: number = Math.round(getSelectedAircraft().track / 5) * 5;
 

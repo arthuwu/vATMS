@@ -40,7 +40,7 @@ const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw, sectorId, 
 
     useEffect(() => {
         if (selectedAircraftID)
-            signalRManager.send("SetSectorSelectedAircraftID", sectorId, selectedAircraftID); // TODO: replace sector with the actual sector string once sectorisation logic is in place
+            signalRManager.send("SetSectorSelectedAircraftID", sectorId, selectedAircraftID);
     }, [selectedAircraftID])
 
     useEffect(() => {
@@ -115,42 +115,3 @@ const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw, sectorId, 
 }
 
 export default TargetLayer
-
-/*
-[
-    {
-        "radarTarget": {
-            "id": "eec16941-9abe-440c-8934-fd0152e22e65",
-            "correlatedFlightPlan": null
-        },
-        "flightPlan": {
-            "callsign": "CPA253",
-            "flightRules": "I",
-            "atyp": "A35K",
-            "wtc": "H",
-            "equipment": "SABDE2E3GHIJ1J2J3J4J5LM1OP2RVWXYZ/LB1D1G1",
-            "dep": "VHHH",
-            "dest": "EGLL",
-            "eobt": 655,
-            "eet": 1245,
-            "altn": "EHAM",
-            "rmk": "",
-            "flightPlanAssignedData": {
-                "cfl": 0,
-                "asp": 0,
-                "ahdg": 0,
-                "avs": null
-            },
-            "testingValue": 0
-        },
-        "position": {
-            "lat": 51.4775,
-            "lon": -0.461389
-        },
-        "heading": 270,
-        "pressureAltitude": 130,
-        "indicatedAirspeed": 260,
-        "verticalSpeed": 0
-    }
-]
-*/

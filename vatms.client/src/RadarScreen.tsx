@@ -13,13 +13,13 @@ const keybinds = {
     "PAN_LEFT": "ArrowLeft",
     "PAN_UP": "ArrowUp",
     "PAN_DOWN": "ArrowDown",
-    "DECR_RANGE": "Equal", // TOOD: Change this to numpad add/subtract; for my testing purposes this is INCORRECT because i use a 60% 
+    "DECR_RANGE": "Equal",
     "INCR_RANGE": "Minus",
     "ROUTE_DRAW": "KeyR",
 }
 
 
-KeyboardManager.getInstance().loadKeybinds(keybinds); // TODO: move this to somewhere appropriate
+KeyboardManager.getInstance().loadKeybinds(keybinds);
 
 const RadarScreen = () => {
     const [projectionCenter, setProjectionCenter] = useState<[number, number]>([51.4775, -0.461389]);
@@ -77,8 +77,7 @@ const RadarScreen = () => {
         };
     }, [])
 
-    useEffect(() => {
-        // TODO: move this to iFACTS
+    useEffect(() => { // once the server's SignalR Hub is ready, the selectionwindow method can be called
         const openSelectionWindow = (sectorId: string) => {
             signalRManager.onReady(() => {
                 signalRManager.send("OpenSelectionWindow", sectorId);
