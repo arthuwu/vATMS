@@ -1,4 +1,4 @@
-// TODO: TYPES
+// These classes are used for JSON deserialisation
 
 public class StandingAgreement
 {

@@ -1,5 +1,8 @@
 namespace vATMS.NavData;
 
+/// <summary>
+/// This is an ASP.NET singleton class responsible for all navigation data used in the simulation
+/// </summary>
 public class NavigationData
 {
     private readonly IWebHostEnvironment _webEnv;
@@ -19,6 +22,11 @@ public class NavigationData
         WpList = AIPParser.ParseDesignatedPoints(webEnv);
     }
 
+    /// <summary>
+    /// Parses a route string separated bu spaces
+    /// </summary>
+    /// <param name="route">the route string</param>
+    /// <returns>a queue of waypoints</returns>
     public Queue<Waypoint> ParseRoute(string route)
     {
         Queue<Waypoint> parsedRoute = new();

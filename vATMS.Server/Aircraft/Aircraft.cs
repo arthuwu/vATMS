@@ -2,6 +2,10 @@ using vATMS.NavData;
 
 namespace vATMS.Aircraft;
 
+/// <summary>
+/// Each Aircraft instance represents an aircraft that has been spawned in to the simulation.
+/// This is where all operations regarding the movement of an aircraft take place
+/// </summary>
 public class Aircraft
 {
     public RadarTarget? RadarTarget { get; set; }
@@ -22,16 +26,20 @@ public class Aircraft
     public double Groundspeed { get; private set; }
     public int VerticalSpeed { get; private set; }
 
-    public double FinalApchSpeed { get; init; }
-    public double MinimumCleanSpeed { get; init; }
-
+    /// <summary>
+    /// Constructor for the Aircraft class
+    /// </summary>
+    /// <param name="flightPlan">the FlightPlan instance associated with the Aircraft</param>
+    /// <param name="position">the initial position of the aircraft</param>
+    /// <param name="track">the initial track of the aircraft</param>
+    /// <param name="pressureAltitude">the initial pressure altitude of the aircraft</param>
+    /// <param name="navigationData">the simulation NavigationData</param>
+    /// <param name="aircraftPerformance">the AircraftPerformance instance associated with the Aircraft</param>
     public Aircraft(
         FlightPlan flightPlan,
         DecimalCoordinate position,
         double track,
         int pressureAltitude,
-        int finalApchSpeed,
-        int minimumCleanSpeed,
         NavigationData navigationData,
         AircraftPerformance aircraftPerformance
         )
@@ -49,14 +57,17 @@ public class Aircraft
 
         FlightPlan.flightPlanAssignedData.CFL = pressureAltitude;
 
-        FinalApchSpeed = finalApchSpeed;
-        MinimumCleanSpeed = minimumCleanSpeed;
-
         Trajectory = new();
 
         Groundspeed = GetGroundspeed(_indicatedAirspeed, pressureAltitude);
     }
 
+    /// <summary>
+    /// Converts an indicated airspeed into a true airspeed (Groundspeed without wind)
+    /// </summary>
+    /// <param name="indicatedAirspeed"></param>
+    /// <param name="pressureAltitude"></param>
+    /// <returns>the required groundspeed</returns>
     private double GetGroundspeed(double indicatedAirspeed, double pressureAltitude)
     {
         double metricAlt = pressureAltitude / 3.281;
@@ -70,14 +81,11 @@ public class Aircraft
         return indicatedAirspeed * Math.Sqrt(1.225 / airDensity);
     }
 
+    /// <summary>
+    /// Provides logic for the lateral movement of aircraft
+    /// </summary>
     private void LateralMovement()
     {
-        // TODO: Implement this properly
-        // This is TEMPORARY, UNREALISTIC code taken from a 2023 project. 
-        // This has been put here only so things can be tested
-
-        // Speed changes
-        // acceleration/deceleration always 2kt s^-1
 
         if (FlightPlan.flightPlanAssignedData.ASP != null)
         {
@@ -120,12 +128,16 @@ public class Aircraft
 
     }
 
+    /// <summary>
+    /// Turns the aircraft in increments to the required heading
+    /// </summary>
+    /// <param name="newHeading">(magnetic) heading to turn to</param>
     private void TurnToHeading(double newHeading)
     {
         const double G = 9.81;
         const double KNOT_TO_MS = 0.514444;
 
-        int bankAngle = _indicatedAirspeed > 300 ? 20 : 25; // TODO: make this not instantaneous, and compensate with margin
+        int bankAngle = _indicatedAirspeed > 300 ? 20 : 25;
         double turnRate = G * Math.Tan(bankAngle * Math.PI / 180) / (_indicatedAirspeed * KNOT_TO_MS);
         turnRate = turnRate * 180 / Math.PI;
 
@@ -136,6 +148,10 @@ public class Aircraft
         _heading = (_heading + turnDir * step + 360) % 360;
     }
 
+    /// <summary>
+    /// Turns the aircraft in increments direct to a particular coordinate
+    /// </summary>
+    /// <param name="coordinate">coordinate to turn to</param>
     private void TurnViaDirect(DecimalCoordinate coordinate)
     {
         //Console.WriteLine($"DEBUG: TURNING TO {coordinate.Lat}, {coordinate.Lon}");
@@ -153,6 +169,9 @@ public class Aircraft
         }
     }
 
+    /// <summary>
+    /// Turns the aircraft in increments via its flight planned route
+    /// </summary>
     private void TurnViaRoute()
     {
         if (FlightPlan.Route.Count() > 1)
@@ -227,6 +246,11 @@ public class Aircraft
         }
     }
 
+    /// <summary>
+    /// Accelerates/decelerates an aircraft in increments to a specific indicated airspeed
+    /// The speed may be resolved if outside the capabilities of the aircraft
+    /// </summary>
+    /// <param name="newSpeed">indicated airspeed to fly</param>
     private void FlySpeed(double newSpeed)
     {
         if (_indicatedAirspeed > newSpeed)
@@ -241,6 +265,9 @@ public class Aircraft
         }
     }
 
+    /// <summary>
+    /// Provides logic for the vertical movement of aircraft
+    /// </summary>
     private void VerticalMovement()
     {
         if (PressureAltitude > FlightPlan.flightPlanAssignedData.CFL)
@@ -253,18 +280,23 @@ public class Aircraft
         }
     }
 
+    /// <summary>
+    /// Updates position of an Aircraft instance
+    /// </summary>
     public void UpdatePosition()
     {
         LateralMovement();
         VerticalMovement();
     }
 
+    /// <summary>
+    /// Predicts the future trajectory of the aircraft within 15 minutes
+    /// </summary>
     public void PredictTrajectory()
     {
         const double M_TO_NM = 0.000539957;
         const double KNOT_TO_MS = 0.514444;
 
-        // TODO: perhaps get some sort of energy profile in. But it's not important, as it doesn't really affect the actual CD
         DecimalCoordinate simPosition = Position;
         Queue<Waypoint> simRoute = new(FlightPlan.Route);
         double simHeading = _heading;
@@ -348,6 +380,11 @@ public class Aircraft
         }
     }
 
+    /// <summary>
+    /// Checks if the aircraft's current position satisfies the given standing agreement
+    /// </summary>
+    /// <param name="sa">the required standing agreement</param>
+    /// <returns>true if the standing agreement has been satisfied</returns>
     public bool SatisfiedStandingAgreement(StandingAgreement sa)
     {
         if (PressureAltitude > sa.Level - 500 && PressureAltitude < sa.Level + 500) // this is less computationally intensive, so we check this first

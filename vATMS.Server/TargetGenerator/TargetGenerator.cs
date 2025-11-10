@@ -3,6 +3,9 @@ using vATMS.Aircraft;
 using vATMS.NavData;
 using Newtonsoft.Json;
 
+/// <summary>
+/// Responsible for the spawning of all aircraft within a Simulation instance
+/// </summary>
 class TargetGenerator
 {
     public int Rate { get; set; }
@@ -46,7 +49,7 @@ class TargetGenerator
             fs.Close();
         }
 
-        foreach (SpawnPoint sp in SpawnPoints)
+        foreach (SpawnPoint sp in SpawnPoints) // cumulative distribution function
         {
             _weightedSpawnSum.Add(_weightedSpawnSum.LastOrDefault() + sp.Chance);
         }
@@ -61,20 +64,26 @@ class TargetGenerator
         _spawnAircraft = Task.Run(() => SpawnAircraft(_cts.Token));
     }
 
+    /// <summary>
+    /// Changes the spawn rate 
+    /// </summary>
+    /// <param name="rate">the required rate</param>
     public void SetupTimer(int rate)
     {
         Console.WriteLine($"rate {rate}");
         // rough derivation of spawn rate
-        int spawnInterval = (3600000 / rate) * SpawnPoints.Count();
+        int spawnInterval = 60 / rate * (SpawnPoints.Count() / 4);
 
-        _timer.Period = TimeSpan.FromMilliseconds(spawnInterval);
+        _timer.Period = TimeSpan.FromMinutes(spawnInterval);
     }
 
+    /// <summary>
+    /// Spawns a new aircraft
+    /// </summary>
     private async Task SpawnAircraft(CancellationToken token)
     {
         while (await _timer.WaitForNextTickAsync(token))
         {
-            Console.WriteLine("spawning");
             Random random = new();
 
             int weightedSpawn = random.Next(1, _weightedSpawnSum.LastOrDefault());
@@ -83,10 +92,8 @@ class TargetGenerator
 
             if (requiredIndex < 0)
             {
-                requiredIndex = ~requiredIndex;
+                requiredIndex = ~requiredIndex; // BinarySearch returns the bitwise complement
             }
-
-            Console.WriteLine(requiredIndex);
 
             SpawnPoint spawnPoint = SpawnPoints[requiredIndex];
 
@@ -119,8 +126,6 @@ class TargetGenerator
                         15),
                     track: NavTools.BearingBetweenTwoPoints(fp.Route.Peek().Coordinate, fp.Route.ElementAt(1).Coordinate),
                     pressureAltitude: spawnPoint.SpawnLevels[random.Next(spawnPoint.SpawnLevels.Count())],
-                    finalApchSpeed: 120,
-                    minimumCleanSpeed: 230,
                     navigationData: _navData,
                     aircraftPerformance: GetAircraftPerformanceForType(fp.ATYP)
                 ));
@@ -161,6 +166,9 @@ class TargetGenerator
         return random.Next(340, 550);
     }
 
+    /// <summary>
+    /// Despawns aircraft if they are outside the range defined in the JSON file
+    /// </summary>
     public void DespawnIfOutsideRange()
     {
         foreach (Aircraft ac in _aircraft.Values.ToList())

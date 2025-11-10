@@ -1,5 +1,5 @@
-using System.Drawing;
 namespace vATMS.NavData;
+
 
 public class AirspaceVolume
 {
@@ -26,8 +26,13 @@ public class AirspaceVolume
         Id = Guid.NewGuid();
     }
 
-    // TODO: make this an interface, and have children "ControlledAirspace" and "SectorAirspace"
 
+    /// <summary>
+    /// Determines if a coordinate at a particular level is inside the volume
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="level"></param>
+    /// <returns>true if it is inside</returns>
     public bool IsInside(DecimalCoordinate position, double level)
     {
         int count = 0;

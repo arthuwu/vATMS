@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using vATMS.NavData;
 
+// LogonList, Logon, and LogonData are classes used for JSON deserialisation
 public class LogonList
 {
     public required List<Logon> Logons { get; set; }
@@ -14,6 +15,9 @@ public class Logon
     public required List<string> SectorVolumes { get; set; }
 }
 
+/// <summary>
+/// Provides data required for the selection and management of user controlled sectors
+/// </summary>
 public class LogonData
 {
     public LogonList Logons { get; set; }
@@ -35,6 +39,11 @@ public class LogonData
         }
     }
 
+    /// <summary>
+    /// Labels a specific sector as being controlled by a particular user
+    /// </summary>
+    /// <param name="SectorId">the sector to be labelled</param>
+    /// <param name="sc">the user controller</param>
     public void SetSectorUserController(string SectorId, UserSectorController sc)
     {
         List<string> sectorVolumes = Logons.Logons.FirstOrDefault(l => l.Id == SectorId)!.SectorVolumes;
@@ -44,7 +53,7 @@ public class LogonData
         foreach (string sectorVolume in sectorVolumes)
         {
             _navigationData.SectorList[sectorVolume].SetSectorUserController(sc);
-            Console.WriteLine($"Sector volume {sectorVolume} controlled by {sc.SectorId}");
+            Console.WriteLine($"Sector volume {sectorVolume} controlled by {sc.LogonId}");
         }
     }
 }

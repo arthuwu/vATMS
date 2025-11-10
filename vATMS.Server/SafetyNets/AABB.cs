@@ -1,3 +1,6 @@
+/// <summary>
+/// Implementation of an AABB (Axis-aligned bounding box)
+/// </summary>
 internal class AABB
 {
     private (double, double)[] _bounds;
@@ -75,6 +78,11 @@ internal class AABB
         return newAABB;
     }
 
+    /// <summary>
+    /// Gets the geometric centre of an AABB
+    /// The AABB is expected to have lat and lon stored in its first two indices ([0], [1]) respectively
+    /// </summary>
+    /// <returns>the centre coordinates</returns>
     public DecimalCoordinate GetCentre()
     {
         if (_bounds.Length < 2) throw new ArgumentOutOfRangeException("AABB size is smaller than expected, may be invalid");
@@ -85,6 +93,11 @@ internal class AABB
         return new(lat, lon);
     }
 
+    /// <summary>
+    /// Gets starting time bounds of an AABB
+    /// The AABB is expected to have times stored in its fourth index ([3])
+    /// </summary>
+    /// <returns>the start time</returns>
     public DateTime GetStartTime()
     {
         if (_bounds.Length < 4) throw new ArgumentOutOfRangeException("AABB size is smaller than expected, may be invalid");
@@ -93,6 +106,10 @@ internal class AABB
     }
 }
 
+
+/// <summary>
+/// Implementation of an AABB tree
+/// </summary>
 internal class AABBTree
 {
     AABB _node;
@@ -115,6 +132,12 @@ internal class AABBTree
         return (_left == null && _right == null) ? true : false;
     }
 
+    /// <summary>
+    /// Adds a node to the AABB tree
+    /// The cost of adding the node is based on the total bounding and overlap volume of the AABBS
+    /// see https://github.com/kip-hart/AABBTree/blob/master/aabbtree.py
+    /// </summary>
+    /// <param name="box"></param>
     public void AddNode(AABB box)
     {
         if (IsLeaf())
@@ -256,6 +279,12 @@ internal class AABBTree
         return overlappingAABB;
     }
 
+    /// <summary>
+    /// Get unique AABB pairs which overlap, from a list of AABB pairs which overlap
+    /// Note that this is not a filter of callsign pairs, only AABB pairs
+    /// </summary>
+    /// <param name="pairs"></param>
+    /// <returns>the required list of AABBs</returns>
     private List<(AABB, AABB)> GetUniquePairs(List<(AABB, AABB)> pairs)
     {
         List<(AABB, AABB)> unique = new();

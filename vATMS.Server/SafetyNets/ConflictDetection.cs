@@ -1,6 +1,10 @@
 using vATMS.Aircraft;
 using vATMS.NavData;
 
+
+/// <summary>
+/// A conflict between two aircraft's predicted trajectory
+/// </summary>
 public struct PredictedConflictPair
 {
     public string Callsign1 { get; init; }
@@ -17,6 +21,9 @@ public struct PredictedConflictPair
     }
 }
 
+/// <summary>
+/// This is an ASP.NET singleton class responsible for detecting conflicts between predicted trajectories
+/// </summary>
 public class ConflictDetection
 {
     private readonly SimulationManager _simulationManager;
@@ -27,6 +34,11 @@ public class ConflictDetection
         _simulationManager = simulationManager;
     }
 
+    /// <summary>
+    /// Uses AABB trees to detect medium term conflicts between predicted trajectory of aircraft
+    /// </summary>
+    /// <param name="aircraft">List of all aircraft in the simulation</param>
+    /// <returns>The list of conflicting pairs</returns>
     public List<PredictedConflictPair> GetBroadphaseConflicts(List<Aircraft> aircraft)
     {
         if (_simulationManager.IsSimulationStarted())
@@ -62,7 +74,7 @@ public class ConflictDetection
 
                 string[] callsignPair = [box1.Callsign, box2.Callsign];
                 Array.Sort(callsignPair);
-                string callsignKey = string.Join("", callsignPair);
+                string callsignKey = string.Join("", callsignPair); // unique key to use the dictionary as a set
 
                 if (conflictPairs.ContainsKey(callsignKey))
                 {
@@ -86,6 +98,11 @@ public class ConflictDetection
         return new();
     }
 
+    /// <summary>
+    /// Uses the data derived from broadphase conflict detction to determine if a pair of aircraft do not have sufficient separation
+    /// </summary>
+    /// <param name="aircraft">dictonary of all aircraft in the simulation</param>
+    /// <returns>list of callsigns</returns>
     public List<string> GetShortTermConflicts(Dictionary<string, Aircraft> aircraft)
     {
         List<string> conflicts = new();

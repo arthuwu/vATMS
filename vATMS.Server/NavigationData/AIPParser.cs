@@ -1,13 +1,18 @@
 namespace vATMS.NavData;
 
-using System.Xml;
 using System.Linq;
-using System.Xml.Serialization;
 using System.Xml.Linq;
-using Microsoft.AspNetCore.Mvc;
 
+/// <summary>
+/// This is a static class containing all parsing of navigation data required by the simulation
+/// </summary>
 public static class AIPParser
 {
+    /// <summary>
+    /// Parses all designated points and navaids from the AIP XML
+    /// </summary>
+    /// <param name="webEnv">IWebHostEnvironment</param>
+    /// <returns>A dictionary with key: waypoint identifier, value: Waypoint instance</returns>
     public static Dictionary<string, Waypoint> ParseDesignatedPoints(IWebHostEnvironment webEnv)
     {
         XDocument doc = XDocument.Load(Path.Combine(webEnv.WebRootPath, "NavigationData\\EG_AIP_DS_FULL.xml"));
@@ -47,7 +52,7 @@ public static class AIPParser
 
         var naDict = naData.DistinctBy(item => item.Name).ToDictionary(item => item.Name, item => item);
 
-        foreach (KeyValuePair<string, Waypoint> point in naDict)
+        foreach (KeyValuePair<string, Waypoint> point in naDict) // some DPs are also in the Navaid section
         {
             if (dpDict.ContainsKey(point.Key))
             {
@@ -62,7 +67,12 @@ public static class AIPParser
         return dpDict;
     }
 
-    public static DecimalCoordinate parseSingleCoordinate(XElement location)
+    /// <summary>
+    /// Parses a single coordinate into DecimalCoordinate format
+    /// </summary>
+    /// <param name="location">the location element to be parsed</param>
+    /// <returns>the required coordinate</returns>
+    private static DecimalCoordinate parseSingleCoordinate(XElement location)
     {
         XNamespace gml = "http://www.opengis.net/gml/3.2";
 
@@ -79,6 +89,12 @@ public static class AIPParser
         }
     }
 
+    /// <summary>
+    /// Parses all airspace volumes from the AIP XML
+    /// This is NOT USED, as its intended use case was never implemented
+    /// </summary>
+    /// <param name="webEnv">IWebHostEnvironment</param>
+    /// <returns>A list of airspace volumes</returns>
     public static List<AirspaceVolume> ParseAIPAirspace(IWebHostEnvironment webEnv)
     {
         XDocument doc = XDocument.Load(Path.Combine(webEnv.WebRootPath, "NavigationData\\EG_AIP_DS_FULL.xml"));
@@ -117,6 +133,12 @@ public static class AIPParser
 
         return aipData.ToList();
     }
+
+    /// <summary>
+    /// Parses all sector volumes from the Sectors XML
+    /// </summary>
+    /// <param name="webEnv">IWebHostEnvironment</param>
+    /// <returns>A dictionary with key: sector identifier, value: Sector instance</returns>
     public static Dictionary<string, Sector> ParseSectors(IWebHostEnvironment webEnv)
     {
         XDocument doc = XDocument.Load(Path.Combine(webEnv.WebRootPath, "NavigationData\\EG_LAC_PC_SECTOR.xml"));
@@ -146,6 +168,11 @@ public static class AIPParser
         return sectorData.DistinctBy(item => item.Id).ToDictionary(item => item.Id, item => item);
     }
 
+    /// <summary>
+    /// Attempts to pare a DecimalCoordinate from a string
+    /// </summary>
+    /// <param name="val">string in the format "lat lon", where lat and lon are in decimal</param>
+    /// <returns>null if it cannot be parsed</returns>
     public static DecimalCoordinate? TryParseCoordinates(string val)
     {
         try
@@ -163,6 +190,11 @@ public static class AIPParser
         }
     }
 
+    /// <summary>
+    /// Parses a list of coordinates into DecimalCoordinate format
+    /// </summary>
+    /// <param name="horizontalProjection">The element containing the original coordinates</param>
+    /// <returns></returns>
     public static List<DecimalCoordinate> ParseXMLCoordinates(XElement horizontalProjection)
     {
         XNamespace gml = "http://www.opengis.net/gml/3.2";

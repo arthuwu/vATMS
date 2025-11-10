@@ -1,5 +1,8 @@
 namespace vATMS.NavData;
 
+/// <summary>
+/// Not used, as its intended use case was not implemented
+/// </summary>
 class Approach
 {
     public DecimalCoordinate Coordinate; //Use GP coordinate

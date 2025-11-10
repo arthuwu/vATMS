@@ -27,6 +27,10 @@ public class RadarScreen
         SetupMaps();
     }
 
+    /// <summary>
+    /// Sends maps to clients on inital setup
+    /// Pseudo-API endpoint
+    /// </summary>
     public async void SetupMaps()
     {
         using (var fs1 = new FileStream(Path.Combine(_webEnv.WebRootPath, "Maps\\EG_LAC_PC_SECTOR.geojson"), FileMode.Open, FileAccess.Read, FileShare.Read))

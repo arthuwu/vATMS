@@ -44,6 +44,9 @@ public class Simulation
         Console.WriteLine("DEBUG: new Simulation instance");
     }
 
+    /// <summary>
+    /// Iteration to update the position of all Aircraft
+    /// </summary>
     private async Task UpdatePositionLoop(CancellationToken token)
     {
         using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
@@ -81,9 +84,12 @@ public class Simulation
         }
     }
 
+    /// <summary>
+    /// Iteration to update the trajectory of all Aircraft, or other infrequent tasks
+    /// </summary>
     private async Task UpdateTrajectoryLoop(CancellationToken token)
     {
-        using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(15.1));
+        using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(15.1)); // to avoid coinciding with the other update loop
 
         while (await timer.WaitForNextTickAsync(token))
         {
@@ -102,16 +108,28 @@ public class Simulation
         }
     }
 
+    /// <summary>
+    /// Finds the aircraft instance referenced by its callsign
+    /// </summary>
+    /// <param name="selectedAircraftId">the required callsign</param>
+    /// <returns>the required aircraft</returns>
     public Aircraft? FindAircraft(string selectedAircraftId)
     {
         return Aircraft[selectedAircraftId];
     }
 
+    /// <summary>
+    /// Changes the spawn rate of the simulation's target generator
+    /// </summary>
+    /// <param name="rate">the new rate</param>
     public void UpdateSpawnRate(int rate)
     {
         _targetGenerator.SetupTimer(rate);
     }
 
+    /// <summary>
+    /// Ends the simulation
+    /// </summary>
     public void EndSimulation()
     {
         _cts.Cancel();

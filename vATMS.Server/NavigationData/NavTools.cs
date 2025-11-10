@@ -1,7 +1,16 @@
 namespace vATMS.NavData;
 
+/// <summary>
+/// This is a static class which provides methods for miscellaneous calulcations to do with coordinates
+/// </summary>
 public static class NavTools
 {
+    /// <summary>
+    /// Calcualtes the great circle bearing between two coordinates (from prev to next)
+    /// </summary>
+    /// <param name="prev"></param>
+    /// <param name="next"></param>
+    /// <returns>the required bearing</returns>
     public static double BearingBetweenTwoPoints(DecimalCoordinate prev, DecimalCoordinate next)
     {
         //haversine formula
@@ -20,9 +29,15 @@ public static class NavTools
         return brng;
     }
 
+    /// <summary>
+    /// Calcualtes the great circle distance between two coordinates
+    /// </summary>
+    /// <param name="prev"></param>
+    /// <param name="next"></param>
+    /// <returns>the required distance</returns>
     public static double DistanceBetweenTwoPoints(DecimalCoordinate prev, DecimalCoordinate next)
     {
-        //haversine formula, again
+        //haversine formula
         const double R = 6371e+003;
         const double M_TO_NM = 0.000539957;
 
@@ -39,6 +54,13 @@ public static class NavTools
         return R * c * M_TO_NM;
     }
 
+    /// <summary>
+    /// Translates a point by parameters
+    /// </summary>
+    /// <param name="position">the point to be translated</param>
+    /// <param name="direction">great circle beaing</param>
+    /// <param name="distance">great circle distance</param>
+    /// <returns>the new position</returns>
     public static DecimalCoordinate TranslatePoint(DecimalCoordinate position, double direction, double distance)
     {
         const double NM_TO_M = 1852;
