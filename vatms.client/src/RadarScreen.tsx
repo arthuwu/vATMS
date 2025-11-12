@@ -5,6 +5,7 @@ import TargetLayer from './MapLayers/TargetLayer';
 import SectorMapLayer from './MapLayers/SectorMapLayer';
 import KeyboardManager from '././KeyboardManager/keyboardManager';
 import RadarScreenFrame from './iFACTS/RadarScreenFrame';
+import RangeBearingLayer from './MapLayers/RangeBearingLayer';
 import SignalRManager from './SignalR/SignalRManager';
 import './App.css';
 
@@ -103,6 +104,7 @@ const RadarScreen = () => {
     return (
         <RadarScreenFrame sectorId={sectorProps.ifactsName}>
             <div className='radar-screen-container' ref={containerRef}>
+                <RangeBearingLayer projectionCenter={projectionCenter} zoom={zoomLevel} screenSize={[screenSize.width, screenSize.height]}></RangeBearingLayer>
                 <TargetLayer
                     projectionCenter={projectionCenter}
                     zoom={zoomLevel}

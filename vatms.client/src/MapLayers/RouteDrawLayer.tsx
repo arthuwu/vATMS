@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react'
-import { getProjection } from './mappingUtils';
+import { getProjection, getOffsetProjection } from './mappingUtils';
 import type { MapPropsInterface } from './MapInterface';
 import './maps.css'
 
@@ -13,18 +13,6 @@ interface RouteDrawMapProps extends MapPropsInterface {
  */
 const RouteDrawLayer = ({ projectionCenter, zoom, screenSize, selectedAircraft, routeDraw }: RouteDrawMapProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-
-    /**
-     * Converts a lat, lon coordinate into a left, top pixel coordinate
-     * @returns a new [left, top] tuple containing those coordinates
-     */
-    const calculatePixelCoordinate = ([point_lat, point_lon]: [number, number]) => {
-        let [left_coord, top_coord]: [number, number] = getProjection([point_lat, point_lon], projectionCenter, zoom);
-        left_coord += screenSize[0] / 2;
-        top_coord += screenSize[1] / 2;
-
-        return [left_coord, top_coord];
-    }
 
     const DrawMap = async () => {
         if (!selectedAircraft)
@@ -91,7 +79,11 @@ const RouteDrawLayer = ({ projectionCenter, zoom, screenSize, selectedAircraft, 
                 <canvas className="route-draw-layer" ref={canvasRef} />
                 <div className="route-draw-text-layer">
                     {selectedAircraft && selectedAircraft.flightPlan.route.map((point: any) => (
-                        <div style={{ position: "absolute", top: calculatePixelCoordinate([point.coordinate.lat, point.coordinate.lon])[1], left: calculatePixelCoordinate([point.coordinate.lat, point.coordinate.lon])[0] }}>
+                        <div style={{
+                            position: "absolute",
+                            top: getOffsetProjection([point.coordinate.lat, point.coordinate.lon], projectionCenter, zoom, screenSize)[1],
+                            left: getOffsetProjection([point.coordinate.lat, point.coordinate.lon], projectionCenter, zoom, screenSize)[0]
+                        }}>
                             {point.name}
                         </div>
                     )
@@ -99,7 +91,11 @@ const RouteDrawLayer = ({ projectionCenter, zoom, screenSize, selectedAircraft, 
                 </div>
                 <div className="route-draw-time-layer">
                     {selectedAircraft && selectedAircraft.trajectory.predictedPoints.map((point: any) => (
-                        <div style={{ position: "absolute", top: calculatePixelCoordinate([point.position.lat, point.position.lon])[1], left: calculatePixelCoordinate([point.position.lat, point.position.lon])[0] }}>
+                        <div style={{
+                            position: "absolute",
+                            top: getOffsetProjection([point.position.lat, point.position.lon], projectionCenter, zoom, screenSize)[1],
+                            left: getOffsetProjection([point.position.lat, point.position.lon], projectionCenter, zoom, screenSize)[0]
+                        }}>
                             {formatDateTime(new Date(point.time))}
                         </div>
                     )
