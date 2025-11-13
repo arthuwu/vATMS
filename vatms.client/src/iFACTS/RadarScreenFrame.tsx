@@ -10,7 +10,7 @@ import type { PredictedConflictPair } from "../Types";
 Component for the frame surrounding an iFACTS radar screen
 Also contains the container for all popup windows
 */
-const RadarScreenFrame = ({ sectorId, children }: any) => {
+const RadarScreenFrame = ({ sectorId, children, setRblDraw }: any) => {
     const [conflictList, setConflictList] = useState<PredictedConflictPair[]>([]);
     const [isVisible, setIsVisible] = useState<any>({}); // stores a dictionary of {string, bool} where string is the name of the window defined below
 
@@ -43,6 +43,7 @@ const RadarScreenFrame = ({ sectorId, children }: any) => {
                 </div>
                 <div className='ifacts-right-bar'>
                     <div></div>
+                    <div className='ifacts-button' onClick={() => setRblDraw()}>Range and Bearing</div>
                 </div>
                 <div className='inner-container ifacts-components'>{children}</div>
             </div>

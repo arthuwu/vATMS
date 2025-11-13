@@ -30,6 +30,7 @@ const RadarScreen = () => {
     const [zoomLevel, setZoomLevel] = useState<number>(60);
     const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
     const [routeDraw, setRouteDraw] = useState<boolean>(false);
+    const [rblDraw, setRblDraw] = useState<boolean>(false);
 
     const [searchParams] = useSearchParams();
     const sectorId = useMemo(() => searchParams.get("sector") ?? "", [searchParams]);
@@ -40,6 +41,10 @@ const RadarScreen = () => {
     const containerRef = useRef<HTMLDivElement>(null);
 
     const signalRManager: SignalRManager = SignalRManager.getInstance();
+
+    const toggleRblDraw = () => {
+        setRblDraw((prev: any) => !prev);
+    }
 
     useEffect(() => {
         const handleInput = () => {
@@ -102,9 +107,9 @@ const RadarScreen = () => {
     }, [sectorId])
 
     return (
-        <RadarScreenFrame sectorId={sectorProps.ifactsName}>
+        <RadarScreenFrame sectorId={sectorProps.ifactsName} setRblDraw={toggleRblDraw}>
             <div className='radar-screen-container' ref={containerRef}>
-                <RangeBearingLayer projectionCenter={projectionCenter} zoom={zoomLevel} screenSize={[screenSize.width, screenSize.height]}></RangeBearingLayer>
+                <RangeBearingLayer projectionCenter={projectionCenter} zoom={zoomLevel} screenSize={[screenSize.width, screenSize.height]} rblDraw={rblDraw}></RangeBearingLayer>
                 <TargetLayer
                     projectionCenter={projectionCenter}
                     zoom={zoomLevel}
