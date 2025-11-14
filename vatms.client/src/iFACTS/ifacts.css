@@ -267,6 +267,8 @@
     width: 100%;
     height: 100%;
     padding: 10px;
+    margin-left: 20px;
+    position: relative;
 }
 
 .separation-monitor-background {
@@ -274,6 +276,24 @@
     background-color: #7f7f7f;
     width: 200px;
     height: 160px;
+}
+
+.separation-monitor-container .left-scale {
+    width: fit-content;
+    height: fit-content;
+    font-size: 10px;
+}
+
+.separation-monitor-container .bottom-scale {
+    font-size: 10px;
+}
+
+.separation-monitor-container .left-scale div {
+    transform: translate(calc(-50% - 15px), 5px);
+}
+
+.separation-monitor-container .bottom-scale div {
+    transform: translate(5px, 5px);
 }
 
 .ifacts-popup-content {
