@@ -67,7 +67,18 @@ body {
     border-radius: 0.5em;
     font-size: 0.8em;
     padding: 0.3em;
+    padding-left: 0.5em;
     width: 20em;
+}
+
+.main-menu input::-webkit-outer-spin-button,
+.main-menu input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.main-menu input::placeholder {
+    color: #a0a0a0;
 }
 
 .main-menu button {

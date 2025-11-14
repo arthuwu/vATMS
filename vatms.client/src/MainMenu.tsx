@@ -37,7 +37,7 @@ const MainMenu = () => {
                     (<option value={sector.id}>{sector.displayName}</option>)
                 )}
             </select>
-            <input type="text" pattern="[0-9]*" value={spawnRate} placeholder="spawn rate (5 - 50 inclusive)" onChange={e => setSpawnRate(e.target.value as unknown as number)}></input>
+            <input type="number" value={spawnRate} placeholder="spawn rate (5 - 50 inclusive)" onChange={e => setSpawnRate(e.target.value as unknown as number)}></input>
             <button onClick={startSimulation}>Start!</button>
         </div>
     )
