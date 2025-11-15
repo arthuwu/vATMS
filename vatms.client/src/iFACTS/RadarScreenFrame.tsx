@@ -54,7 +54,7 @@ const RadarScreenFrame = ({ sectorId, children, setRblDraw }: any) => {
                 <div className='ifacts-right-bar'>
                     <div></div>
                     <div className='ifacts-button' onClick={() => setRblDraw()}>Range and Bearing</div>
-                    <div className='ifacts-button' onClick={() => toggleVisibility("sim-info")}>Sim Info</div>
+                    <div className='ifacts-button' onClick={() => toggleVisibility("sim-info")}>Simul Info</div>
                 </div>
                 <div className='inner-container ifacts-components'>{children}</div>
             </div>

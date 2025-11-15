@@ -28,6 +28,9 @@ public class ConflictDetection
 {
     private readonly SimulationManager _simulationManager;
     private List<PredictedConflictPair> _conflictList = new();
+    private HashSet<string> _prevStca = new();
+
+    public int LossesOfSeparation { get; private set; }
 
     public ConflictDetection(SimulationManager simulationManager)
     {
@@ -106,6 +109,7 @@ public class ConflictDetection
     public List<string> GetShortTermConflicts(Dictionary<string, Aircraft> aircraft)
     {
         List<string> conflicts = new();
+        HashSet<string> internalConflicts = new();
 
         foreach (PredictedConflictPair pcp in _conflictList)
         {
@@ -118,9 +122,25 @@ public class ConflictDetection
             {
                 conflicts.Add(pcp.Callsign1);
                 conflicts.Add(pcp.Callsign2);
+
+                string[] callsignPair = [ac1.FlightPlan.Callsign, ac2.FlightPlan.Callsign];
+                Array.Sort(callsignPair);
+
+                string callsignKey = string.Join("", callsignPair);
+                internalConflicts.Add(callsignKey); // unique key for HashSet
+
+                if (!_prevStca.Contains(callsignKey))
+                {
+                    if ((ac1.Trajectory.CurrentSector != null && ac1.Trajectory.CurrentSector.IsUserControlled()) ||
+                    (ac2.Trajectory.CurrentSector != null && ac2.Trajectory.CurrentSector.IsUserControlled()))
+                    {
+                        LossesOfSeparation++;
+                    }
+                }
             }
         }
 
+        _prevStca = internalConflicts;
         return conflicts;
     }
 

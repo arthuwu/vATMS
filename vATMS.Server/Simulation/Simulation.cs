@@ -93,7 +93,7 @@ public class Simulation
     /// </summary>
     private async Task UpdateTrajectoryLoop(CancellationToken token)
     {
-        using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(15.1)); // to avoid coinciding with the other update loop
+        using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(15.1)); // to avoid coinciding with the other update loop as often
 
         while (await timer.WaitForNextTickAsync(token))
         {
@@ -110,7 +110,7 @@ public class Simulation
                 await _radarScreenUpdater.UpdateConflictPairs(conflictList);
             }
 
-            await _radarScreenUpdater.UpdateSimulationInfo(_targetGenerator.GetSpawnRate(), 0, _missedStandingAgreements);
+            await _radarScreenUpdater.UpdateSimulationInfo(_targetGenerator.GetSpawnRate(), _conflictDetection.LossesOfSeparation, _missedStandingAgreements);
         }
     }
 
