@@ -1,6 +1,6 @@
 import { createContext, useEffect, useContext, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import SignalRManager from './SignalRManager';
+import SignalRManager from './signalRManager';
 
 const SignalRContext = createContext<SignalRManager | null>(null);
 

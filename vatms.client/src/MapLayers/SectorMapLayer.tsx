@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from 'react'
 import { getProjection } from './mappingUtils';
 import type { MapPropsInterface } from './MapInterface';
 import './maps.css'
-import SignalRManager from '../SignalR/SignalRManager';
+import SignalRManager from '../SignalR/signalRManager';
 
 /**
  * Draws the sector maps of a RadarScreen

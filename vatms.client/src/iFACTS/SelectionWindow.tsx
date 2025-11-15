@@ -1,7 +1,7 @@
 //import type { FlightPlanAssignedData } from '../RadarTarget/Types';
 import { useMemo } from 'react';
 import { useSearchParams } from "react-router-dom";
-import SignalRManager from '../SignalR/SignalRManager';
+import SignalRManager from '../SignalR/signalRManager';
 import { useEffect, useState } from 'react';
 import HorizontalSelect from './HorizontalSelect';
 

@@ -1,7 +1,7 @@
 /* This is a fake canvas - it is a div that overlays the canvas with the exact same dimensions, so we can put some absolute divs on it */
 
 import './maps.css';
-import SignalRManager from '../SignalR/SignalRManager';
+import SignalRManager from '../SignalR/signalRManager';
 import { useEffect, useState } from 'react';
 import RadarTarget from '../RadarTarget/RadarTarget';
 import type { MapPropsInterface } from './MapInterface';

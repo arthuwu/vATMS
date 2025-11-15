@@ -3,7 +3,7 @@ import PopupWindow from './PopupWindow';
 import Clock from './Clock';
 import './ifacts.css'
 import SeparationMonitor from './SeparationMonitor';
-import SignalRManager from '../SignalR/SignalRManager';
+import SignalRManager from '../SignalR/signalRManager';
 import type { PredictedConflictPair } from "../Types";
 import SimulationInfo from './SimulationInfo';
 

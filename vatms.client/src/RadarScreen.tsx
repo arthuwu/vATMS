@@ -6,8 +6,8 @@ import SectorMapLayer from './MapLayers/SectorMapLayer';
 import KeyboardManager from '././KeyboardManager/keyboardManager';
 import RadarScreenFrame from './iFACTS/RadarScreenFrame';
 import RangeBearingLayer from './MapLayers/RangeBearingLayer';
-import SignalRManager from './SignalR/SignalRManager';
-import './App.css';
+import SignalRManager from './SignalR/signalRManager';
+import './app.css';
 
 const keybinds = {
     "PAN_RIGHT": "ArrowRight",
