@@ -1,4 +1,3 @@
-//import type { FlightPlanAssignedData } from '../RadarTarget/Types';
 import { useMemo } from 'react';
 import { useSearchParams } from "react-router-dom";
 import SignalRManager from '../SignalR/signalRManager';
@@ -155,7 +154,7 @@ const SelectionWindow = () => {
                         <div>{getSelectedAircraft()?.flightPlan.flightPlanAssignedData.ahdg?.toString().padStart(3, "0")}</div>
                         <div>{getSelectedAircraft()?.flightPlan.flightPlanAssignedData.directToPoint}</div>
                         {speedToggle ? <input
-                            type="text"
+                            type="number"
                             onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                                 if (e.key === "Enter") {
                                     e.preventDefault();

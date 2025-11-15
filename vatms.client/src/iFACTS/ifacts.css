@@ -357,3 +357,9 @@
     margin: 10px;
     font-size: 14px;
 }
+
+.selected-aircraft-data input::-webkit-outer-spin-button,
+.selected-aircraft-data input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

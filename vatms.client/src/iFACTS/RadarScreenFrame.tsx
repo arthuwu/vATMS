@@ -16,7 +16,6 @@ const RadarScreenFrame = ({ sectorId, children, setRblDraw }: any) => {
     const [simulationInfo, setSimulationInfo] = useState<{ rate: number, lossesOfSeperation: number, missedStandingAgreements: number }>();
 
     const [isVisible, setIsVisible] = useState<any>({}); // stores a dictionary of {string, bool} where string is the name of the window defined below
-    //const [spawnRate, setSpawnRate] = useState<number>();
 
     function toggleVisibility(window: string) {
         let newVisibleState: any = { ...isVisible };
