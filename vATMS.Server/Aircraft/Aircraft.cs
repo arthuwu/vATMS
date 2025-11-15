@@ -356,14 +356,14 @@ public class Aircraft
 
         // Predict next sector
 
-        Trajectory.CurrentSector = "";
-        Trajectory.NextSector = "";
+        Trajectory.CurrentSector = null;
+        Trajectory.NextSector = null;
 
         foreach (Sector av in _navigationData.SectorList.Select(s => s.Value))
         {
             if (av.SectorVolume.IsInside(Position, PressureAltitude))
             {
-                Trajectory.CurrentSector = av.Id;
+                Trajectory.CurrentSector = av;
             }
         }
 
@@ -371,9 +371,9 @@ public class Aircraft
         {
             foreach (Sector av in _navigationData.SectorList.Select(s => s.Value))
             {
-                if (av.SectorVolume.IsInside(tp.Position, tp.Altitude) && av.Id != Trajectory.CurrentSector)
+                if (av.SectorVolume.IsInside(tp.Position, tp.Altitude) && av != Trajectory.CurrentSector)
                 {
-                    Trajectory.NextSector = av.Id;
+                    Trajectory.NextSector = av;
                     return; //return early once next sector found
                 }
             }

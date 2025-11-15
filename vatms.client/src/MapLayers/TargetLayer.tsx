@@ -30,7 +30,7 @@ const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw, sectorId, 
         const AircraftPositionUpdateHandler = (ac: any) => {
             setTargetList(ac);
             ac.forEach((e: any) => {
-                if (sectorVolumes.includes(e.trajectory.currentSector))
+                if (sectorVolumes.includes(e.trajectory.currentSector?.id))
                     setAircraftThroughSector((prev: any) => [...prev, e.flightPlan.callsign])
             });
         }
@@ -79,11 +79,11 @@ const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw, sectorId, 
             datablockStatus.push("predicted-conflict");
         }
 
-        if (sectorVolumes.includes(target.trajectory.currentSector)) {
+        if (sectorVolumes.includes(target.trajectory.currentSector?.id)) {
             datablockStatus.push("assumed");
-        } else if (sectorVolumes.includes(target.trajectory.nextSector)) {
+        } else if (sectorVolumes.includes(target.trajectory.nextSector?.id)) {
             datablockStatus.push("concerned");
-        } else if (aircraftThroughSector.includes(target.callsign) && !sectorVolumes.includes(target.trajectory.currentSector)) {
+        } else if (aircraftThroughSector.includes(target.callsign) && !sectorVolumes.includes(target.trajectory.currentSector?.id)) {
             datablockStatus.push("redundant");
         } else {
             datablockStatus.push("unconcerned")

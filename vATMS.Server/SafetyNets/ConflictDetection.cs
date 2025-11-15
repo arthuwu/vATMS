@@ -109,8 +109,10 @@ public class ConflictDetection
 
         foreach (PredictedConflictPair pcp in _conflictList)
         {
-            DecimalCoordinate pos1 = aircraft[pcp.Callsign1].Position;
-            DecimalCoordinate pos2 = aircraft[pcp.Callsign2].Position;
+            Aircraft ac1 = aircraft[pcp.Callsign1];
+            Aircraft ac2 = aircraft[pcp.Callsign2];
+            DecimalCoordinate pos1 = ac1.Position;
+            DecimalCoordinate pos2 = ac2.Position;
 
             if (NavTools.DistanceBetweenTwoPoints(pos1, pos2) < 5)
             {

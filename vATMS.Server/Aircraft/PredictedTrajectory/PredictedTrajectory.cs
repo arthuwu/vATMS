@@ -5,14 +5,14 @@
 public class PredictedTrajectory
 {
     public List<TrajectoryPoint> PredictedPoints { get; set; } // generate and render this
-    public string CurrentSector { get; set; }
-    public string NextSector { get; set; }
+    public Sector? CurrentSector { get; set; }
+    public Sector? NextSector { get; set; }
 
     public PredictedTrajectory()
     {
         PredictedPoints = new();
-        CurrentSector = "";
-        NextSector = "";
+        CurrentSector = null;
+        NextSector = null;
     }
 
     /// <summary>

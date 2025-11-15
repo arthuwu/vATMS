@@ -35,8 +35,8 @@ const SelectionWindow = () => {
             setTargetList(ac);
 
             //console.log(ac.filter((e: any) => sectorProps.sectorVolumes?.includes(e.trajectory.currentSector)))
-            setIncommList(ac.filter((e: any) => sectorProps.sectorVolumes?.includes(e.trajectory.currentSector)))
-            setPendingList(ac.filter((e: any) => sectorProps.sectorVolumes?.includes(e.trajectory.nextSector)))
+            setIncommList(ac.filter((e: any) => sectorProps.sectorVolumes?.includes(e.trajectory.currentSector?.id)))
+            setPendingList(ac.filter((e: any) => sectorProps.sectorVolumes?.includes(e.trajectory.nextSector?.id)))
 
         }
         signalRManager.on("AircraftPositionUpdate", AircraftPositionUpdateHandler)
@@ -77,13 +77,12 @@ const SelectionWindow = () => {
     }, [sectorId])
 
     const getSelectedAircraft: any = () => {
-        console.log(targetList?.find((target: any) => target.flightPlan.callsign === selectedAircraftID));
         return targetList?.find((target: any) => target.flightPlan.callsign === selectedAircraftID);
     }
 
     const handleSelectedAircraftAssignedDataChange: any = (aircraftId: string, data: string, value: string) => {
         if (aircraftId && value) {
-            if (sectorProps.sectorVolumes.includes(getSelectedAircraft()?.trajectory.currentSector)) // only allow assumed aircraft to be controlled
+            if (sectorProps.sectorVolumes.includes(getSelectedAircraft()?.trajectory.currentSector?.id)) // only allow assumed aircraft to be controlled
                 signalRManager.send("SetSelectedAircraftAssignedData", aircraftId, data, value)
         }
     }
