@@ -28,6 +28,34 @@ To build and package the program for Windows, run the following command in the b
 ```bash
 electronize build /target win
 ```
-> Builds for othe platforms have not been tested
+> Builds for other platforms have not been tested
 
-## Tutorial
+## The simulator
+### Keybinds
+
+| Key | Action |
+| --- | --- |
+| <kbd>→</kbd> | Pan right
+| <kbd>←</kbd> | Pan left
+| <kbd>↑</kbd> | Pan up
+| <kbd>↓</kbd> | Pan down
+| <kbd>=</kbd> | Decrease range (zoom in)
+| <kbd>-</kbd> | Increase range (zoom out)
+| <kbd>R</kbd> | Toggle route draw
+
+### Datablocks
+
+![assumed tag](/docs/assumed-tag.png)
+
+![concerned tag](/docs/concerned-tag.png)
+
+![unconcerned tag](/docs/unconcerned-tag.png)
+
+![selected tag](/docs/selected-tag.png)
+
+![conflict-alert tag](/docs/conflict-alert.png)
+
+### iFACTS HMI
+
+
+### Objectives
