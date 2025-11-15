@@ -34,4 +34,9 @@ public class RadarScreenUpdater
     {
         await _hubContext.Clients.All.SendAsync("ShortTermConflictPairsUpdate", conflictList);
     }
+
+    public async Task UpdateSimulationInfo(int rate, int lossesOfSeperation, int missedStandingAgreements)
+    {
+        await _hubContext.Clients.All.SendAsync("SimulationInfoUpdate", rate, lossesOfSeperation, missedStandingAgreements);
+    }
 }

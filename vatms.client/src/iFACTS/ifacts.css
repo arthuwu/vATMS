@@ -352,3 +352,8 @@
 .selected-aircraft-window {
     height: 20%;
 }
+
+.simulation-info-container {
+    margin: 10px;
+    font-size: 14px;
+}

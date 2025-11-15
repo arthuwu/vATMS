@@ -62,7 +62,6 @@ const RadarScreen = () => {
                 setZoomLevel((zl) => zl - 1)
             } else if (keyboardManager.isActionPressed("ROUTE_DRAW")) {
                 setRouteDraw(prev => !prev);
-                console.log(routeDraw);
             }
         };
 

@@ -85,7 +85,7 @@ public class FlightPlan
 
         Route = route;
         DisplayRoute = displayRoute;
-        flightPlanAssignedData = new(standingAgreements);
+        flightPlanAssignedData = new(standingAgreements.ToList()); // use a new copy, otherwise strange things happen
 
         IntentionCode = intentionCode ?? "";
     }

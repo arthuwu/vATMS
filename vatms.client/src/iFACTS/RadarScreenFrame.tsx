@@ -5,6 +5,7 @@ import './ifacts.css'
 import SeparationMonitor from './SeparationMonitor';
 import SignalRManager from '../SignalR/SignalRManager';
 import type { PredictedConflictPair } from "../Types";
+import SimulationInfo from './SimulationInfo';
 
 /*
 Component for the frame surrounding an iFACTS radar screen
@@ -12,7 +13,10 @@ Also contains the container for all popup windows
 */
 const RadarScreenFrame = ({ sectorId, children, setRblDraw }: any) => {
     const [conflictList, setConflictList] = useState<PredictedConflictPair[]>([]);
+    const [simulationInfo, setSimulationInfo] = useState<{ rate: number, lossesOfSeperation: number, missedStandingAgreements: number }>();
+
     const [isVisible, setIsVisible] = useState<any>({}); // stores a dictionary of {string, bool} where string is the name of the window defined below
+    //const [spawnRate, setSpawnRate] = useState<number>();
 
     function toggleVisibility(window: string) {
         let newVisibleState: any = { ...isVisible };
@@ -25,6 +29,12 @@ const RadarScreenFrame = ({ sectorId, children, setRblDraw }: any) => {
     useEffect(() => {
         signalRManager.on("conflictPairsUpdate", (pairs: PredictedConflictPair[]) => {
             setConflictList(pairs);
+        })
+    }, [signalRManager])
+
+    useEffect(() => {
+        signalRManager.on("simulationInfoUpdate", (rate: number, lossesOfSeperation: number, missedStandingAgreements: number) => {
+            setSimulationInfo({ rate, lossesOfSeperation, missedStandingAgreements });
         })
     }, [signalRManager])
 
@@ -44,6 +54,7 @@ const RadarScreenFrame = ({ sectorId, children, setRblDraw }: any) => {
                 <div className='ifacts-right-bar'>
                     <div></div>
                     <div className='ifacts-button' onClick={() => setRblDraw()}>Range and Bearing</div>
+                    <div className='ifacts-button' onClick={() => toggleVisibility("sim-info")}>Sim Info</div>
                 </div>
                 <div className='inner-container ifacts-components'>{children}</div>
             </div>
@@ -56,6 +67,19 @@ const RadarScreenFrame = ({ sectorId, children, setRblDraw }: any) => {
                     height={230}
                 >
                     <SeparationMonitor conflictList={conflictList}></SeparationMonitor>
+                </PopupWindow>
+                <PopupWindow
+                    windowTitle="Simulation Info"
+                    isVisible={isVisible["sim-info"]}
+                    handleClose={() => toggleVisibility("sim-info")}
+                    width={250}
+                    height={230}
+                >
+                    <SimulationInfo
+                        spawnRate={simulationInfo?.rate}
+                        lossesOfSeperation={simulationInfo?.lossesOfSeperation}
+                        missedStandingAgreements={simulationInfo?.missedStandingAgreements}
+                    ></SimulationInfo>
                 </PopupWindow>
             </div>
         </>

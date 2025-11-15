@@ -17,10 +17,6 @@ const HorizontalSelect = ({ elementList, elementWidth, length, onElementSelect }
         setOffsetList(elementList);
     }, [elementList])
 
-    useEffect(() => {
-        console.log(offsetList)
-    }, [offsetList])
-
     const handleShiftLeft = () => {
         if (offsetList)
             setOffsetList((prev: string[]) => prev.slice(-1).concat(prev.slice(0, -1)));

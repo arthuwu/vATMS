@@ -34,7 +34,7 @@ const SelectionWindow = () => {
             //console.log(ac);
             setTargetList(ac);
 
-            console.log(ac.filter((e: any) => sectorProps.sectorVolumes?.includes(e.trajectory.currentSector)))
+            //console.log(ac.filter((e: any) => sectorProps.sectorVolumes?.includes(e.trajectory.currentSector)))
             setIncommList(ac.filter((e: any) => sectorProps.sectorVolumes?.includes(e.trajectory.currentSector)))
             setPendingList(ac.filter((e: any) => sectorProps.sectorVolumes?.includes(e.trajectory.nextSector)))
 
@@ -77,6 +77,7 @@ const SelectionWindow = () => {
     }, [sectorId])
 
     const getSelectedAircraft: any = () => {
+        console.log(targetList?.find((target: any) => target.flightPlan.callsign === selectedAircraftID));
         return targetList?.find((target: any) => target.flightPlan.callsign === selectedAircraftID);
     }
 

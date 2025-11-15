@@ -8,7 +8,6 @@ using Newtonsoft.Json;
 /// </summary>
 class TargetGenerator
 {
-    public int Rate { get; set; }
     public int MinimumLevel { get; init; }
     public int MaximumLevel { get; init; }
     public DecimalCoordinate SimulationCentre { get; init; }
@@ -25,9 +24,8 @@ class TargetGenerator
 
     private List<int> _weightedSpawnSum = new();
 
-    public TargetGenerator(IWebHostEnvironment webEnv, int rate, ConcurrentDictionary<string, Aircraft> aircraft, NavigationData navData)
+    public TargetGenerator(IWebHostEnvironment webEnv, ConcurrentDictionary<string, Aircraft> aircraft, NavigationData navData)
     {
-        Rate = rate;
         _webEnv = webEnv;
         _navData = navData;
         _aircraft = aircraft;
@@ -58,7 +56,7 @@ class TargetGenerator
 
         _timer = new PeriodicTimer(TimeSpan.FromSeconds(10)); // initialise "paused" timer
 
-        SetupTimer(rate);
+        SetupTimer(25); // The default spawn rate is 25. This value will be (re)set once loading has complete - the user is able to change the spawn rate during their session
 
         _cts = new CancellationTokenSource();
         _spawnAircraftLoop = Task.Run(() => SpawnAircraftLoop(_cts.Token));
@@ -88,6 +86,15 @@ class TargetGenerator
         {
             SpawnAircraft();
         }
+    }
+
+    /// <summary>
+    /// Gets the spawn rate of the TargetGenerator's timer
+    /// </summary>
+    /// <returns>The required spawn rate</returns>
+    public int GetSpawnRate()
+    {
+        return Convert.ToInt32(_timer.Period.TotalSeconds);
     }
 
     private void SpawnAircraft()

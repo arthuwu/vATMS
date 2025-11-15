@@ -400,6 +400,10 @@ public class Aircraft
                 return true;
             }
         }
+        else if (sa.Point == "") // don't penalise RFL agreements
+        {
+            return true;
+        }
 
         return false;
     }

@@ -19,6 +19,7 @@ public class Simulation
     private readonly Task _positionLoop;
     private readonly Task _trajectoryLoop;
 
+    private int _missedStandingAgreements;
 
     public ConcurrentDictionary<string, Aircraft> Aircraft;
 
@@ -34,7 +35,7 @@ public class Simulation
         _navigationData = navigationData;
         _conflictDetection = conflictDetection;
 
-        _targetGenerator = new TargetGenerator(webEnv, 25, Aircraft, _navigationData); // The default spawn rate is 25. This value will be (re)set once loading has complete - the user is able to change the spawn rate during their session
+        _targetGenerator = new TargetGenerator(webEnv, Aircraft, _navigationData);
         _radarScreenUpdater = radarScreenUpdater;
 
         _cts = new CancellationTokenSource();
@@ -69,7 +70,10 @@ public class Simulation
                             ac.FlightPlan.flightPlanAssignedData.CFL = sa.NextLevel;
                         }
                         // Console.WriteLine("DEBUG: satisfied standing agreement");
-                        // TODO: scoring logic
+                    }
+                    else
+                    {
+                        _missedStandingAgreements += 1;
                     }
                 }
 
@@ -105,6 +109,8 @@ public class Simulation
 
                 await _radarScreenUpdater.UpdateConflictPairs(conflictList);
             }
+
+            await _radarScreenUpdater.UpdateSimulationInfo(_targetGenerator.GetSpawnRate(), 0, _missedStandingAgreements);
         }
     }
 
