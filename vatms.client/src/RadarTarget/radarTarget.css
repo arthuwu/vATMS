@@ -32,6 +32,7 @@
     font-size: 10px;
     line-height: 12px;
     user-select: none;
+    white-space: pre
 }
 
 .target-data-block * {
@@ -68,4 +69,8 @@
 
 .unconcerned .radar-trail {
     color: #575757;
+}
+
+.rfl-highlight {
+    color: #8c6621;
 }

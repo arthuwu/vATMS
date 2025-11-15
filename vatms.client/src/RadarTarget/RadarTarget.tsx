@@ -56,7 +56,7 @@ const RadarTarget = ({ flightPlan, aircraft, lat, lon, zoom, projectionCenter, s
 
     const getVerticalClearanceItem = (): string => {
         if (aircraft.pressureAltitude == flightPlan.flightPlanAssignedData.cfl) {
-            return "";
+            return "   ";
         }
 
         return flightPlan.flightPlanAssignedData.cfl.toString().padStart(5, "0").substring(0, 3);
@@ -112,11 +112,11 @@ const RadarTarget = ({ flightPlan, aircraft, lat, lon, zoom, projectionCenter, s
                     <div>
                         <span>{Math.trunc(aircraft.pressureAltitude).toString().padStart(5, "0").substring(0, 3)}</span>
                         &nbsp;
-                        <span>{Math.trunc(flightPlan.flightPlanAssignedData.xfl).toString().padStart(5, "0").substring(0, 2)}</span>
+                        <span className={aircraft.pressureAltitude != flightPlan.flightPlanAssignedData.xfl ? "rfl-highlight" : ""}>{Math.trunc(flightPlan.flightPlanAssignedData.xfl).toString().padStart(5, "0").substring(0, 2)}</span>
                     </div>
                     <div>{flightPlan.intentionCode.padEnd(3, " ")}&nbsp;G{Math.trunc(aircraft.groundspeed).toString().padStart(3, "0").substring(0, 3)}</div>
                     <div>
-                        <span>{getVerticalClearanceItem().padEnd(3, " ")}</span>
+                        <span>{getVerticalClearanceItem()}</span>
                         &nbsp;
                         <span>{getLateralClearanceItem()}</span>
                     </div>
