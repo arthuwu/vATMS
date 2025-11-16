@@ -8,7 +8,7 @@
     "spawnRadius": 150,
     "spawnPoints": [
         {
-            "chance": 1,
+            "chance": 2,
             "callsigns": [
                 "BAW",
                 "CPA",
@@ -32,6 +32,7 @@
             "flownRoute": "SUMUM LOGAN SABER BRASO WESUL LAM",
             "spawnLevels": [
                 26000,
+                27000,
                 28000
             ],
             "minimumLevel": 30000,
@@ -83,7 +84,7 @@
             "intentionCode": "M"
         },
         {
-            "chance": 1,
+            "chance": 2,
             "callsigns": [
                 "WZZ",
                 "WUK",
@@ -169,9 +170,8 @@
             "displayRoute": "ALESO T420 HEMEL",
             "flownRoute": "ALESO ROTNO ETVAX TIGER BIG ULTIB HEMEL BUZAD WELIN",
             "spawnLevels": [
-                30000,
-                32000,
-                34000
+                28000,
+                30000
             ],
             "minimumLevel": 30000,
             "maximumLevel": 38000,
@@ -185,7 +185,7 @@
                 {
                     "point": "HEMEL",
                     "level": 22000,
-                    "nextLevel": 0,
+                    "nextLevel": 9000,
                     "fromSector": "ACS26P01"
                 }
             ],

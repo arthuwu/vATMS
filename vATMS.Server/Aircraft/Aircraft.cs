@@ -273,6 +273,38 @@ public class Aircraft
     /// </summary>
     private void VerticalMovement()
     {
+        // automatic adherence to standing agreements if current sector is not controlled
+        if (PressureAltitude == FlightPlan.flightPlanAssignedData.CFL)
+        {
+            if (Trajectory.CurrentSector != null && !Trajectory.CurrentSector.IsUserControlled())
+            {
+                if (FlightPlan.flightPlanAssignedData.StandingAgreements.Count() > 0)
+                {
+                    Queue<Waypoint> routeCopy = new(FlightPlan.Route);
+                    StandingAgreement sa = FlightPlan.flightPlanAssignedData.StandingAgreements[0];
+
+                    if (!string.IsNullOrEmpty(sa.Point) && routeCopy.Contains(_navigationData.WpList[sa.Point]))
+                    { // the queue should always containg the standing agreement point, but just in case
+                        double distanceToRun = NavTools.DistanceBetweenTwoPoints(Position, FlightPlan.Route.Peek().Coordinate);
+
+                        while (routeCopy.Peek().Name != sa.Point)
+                        {
+                            DecimalCoordinate prev = routeCopy.Dequeue().Coordinate;
+                            distanceToRun += NavTools.DistanceBetweenTwoPoints(prev, routeCopy.Peek().Coordinate);
+                        }
+
+                        // we checked for current level = cfl earlier, so in case of mismatch between this "estimate" and the real "simulation", the path shouldn't jump around, and is more efficient
+                        double requiredDistance = (PressureAltitude - FlightPlan.flightPlanAssignedData.StandingAgreements[0].Level) / 1000 * (Groundspeed / 60);
+
+                        if (distanceToRun < requiredDistance)
+                        {
+                            FlightPlan.flightPlanAssignedData.CFL = FlightPlan.flightPlanAssignedData.StandingAgreements[0].Level;
+                        }
+                    }
+                }
+            }
+        }
+
         if (PressureAltitude > FlightPlan.flightPlanAssignedData.CFL)
         {
             PressureAltitude = Math.Max(PressureAltitude - _aircraftPerformance.GetRateOfDescent(PressureAltitude), FlightPlan.flightPlanAssignedData.CFL);

@@ -83,7 +83,7 @@ public class Simulation
                     }
                     // Console.WriteLine("DEBUG: satisfied standing agreement");
                 }
-                else
+                else if (_navigationData.SectorList[sa.FromSector].IsUserControlled())
                 {
                     _missedStandingAgreements += 1;
                 }

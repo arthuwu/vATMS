@@ -1,5 +1,7 @@
 namespace vATMS.NavData;
 
+using System.Collections.Concurrent;
+
 /// <summary>
 /// This is an ASP.NET singleton class responsible for all navigation data used in the simulation
 /// </summary>
