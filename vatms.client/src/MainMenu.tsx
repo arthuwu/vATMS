@@ -13,7 +13,7 @@ const MainMenu = () => {
 
     const startSimulation = () => {
         if (selectedSector && spawnRate) {
-            if (spawnRate >= 5 && spawnRate <= 50)
+            if (spawnRate >= 5 && spawnRate <= 80)
                 navigate(`/radar-screen?sector=${selectedSector}&rate=${spawnRate}`)
         }
     }
@@ -37,7 +37,7 @@ const MainMenu = () => {
                     (<option value={sector.id}>{sector.displayName}</option>)
                 )}
             </select>
-            <input type="number" value={spawnRate} placeholder="spawn rate (5 - 50 inclusive)" onChange={e => setSpawnRate(e.target.value as unknown as number)}></input>
+            <input type="number" value={spawnRate} placeholder="spawn rate (5 - 80 inclusive)" onChange={e => setSpawnRate(e.target.value as unknown as number)}></input>
             <button onClick={startSimulation}>Start!</button>
         </div>
     )

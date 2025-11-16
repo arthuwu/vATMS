@@ -84,9 +84,7 @@ class TargetGenerator
     /// <param name="rate">the required rate</param>
     public void SetupTimer(int rate)
     {
-        Console.WriteLine($"rate {rate}");
-        // rough derivation of spawn rate
-        int spawnInterval = 60 / rate * (SpawnPoints.Count() / 4);
+        double spawnInterval = (double)60 / rate;
 
         _timer.Period = TimeSpan.FromMinutes(spawnInterval);
     }
@@ -110,7 +108,7 @@ class TargetGenerator
     /// <returns>The required spawn rate</returns>
     public int GetSpawnRate()
     {
-        return Convert.ToInt32(_timer.Period.TotalSeconds);
+        return Convert.ToInt32(60 / _timer.Period.TotalMinutes);
     }
 
     private void SpawnAircraft()
