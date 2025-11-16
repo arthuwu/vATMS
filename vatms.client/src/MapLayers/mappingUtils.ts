@@ -98,6 +98,14 @@ export function getProjection(coord: [lat: number, lon: number], projectionCente
     return [x, y];
 }
 
+/**
+ * Applies the required stereographic projection, then offsets it to the middle of the canvas to correspond with how the HTML canvas is drawn
+ * @param coord an array of 2 numbers: [lat, lon] decimal degree coordinates
+ * @param projectionCenter an array of 2 numbers: [lat, lon] decimal degree coordinates
+ * @param zoom a scalar zoom level
+ * @param screenSize the size of the screen: [height, width]
+ * @returns an array of 2 numbers: [x, y] screen coordinates
+ */
 export function getOffsetProjection(coord: [lat: number, lon: number], projectionCenter: [lat: number, lon: number], zoom: number, screenSize: [number, number]): [number, number] {
     let [left_coord, top_coord]: [number, number] = getProjection(coord, projectionCenter, zoom);
     left_coord += screenSize[0] / 2;
@@ -106,6 +114,13 @@ export function getOffsetProjection(coord: [lat: number, lon: number], projectio
     return [left_coord, top_coord];
 }
 
+/**
+ * Converts cartesian coordinates to decimal degrees
+ * @param x x-coordinate
+ * @param y y-coordinate
+ * @param z z-coordinate
+ * @returns the required decimal degrees coordinate
+ */
 function convertCartesianToDD(x: number, y: number, z: number): [number, number] {
     // convert to radians
     var lat = Math.asin(z);
@@ -117,6 +132,13 @@ function convertCartesianToDD(x: number, y: number, z: number): [number, number]
     return [lat, lon];
 }
 
+/**
+ * Rotates the cartesian coordinates by the viewpoint centre, in reverse
+ * @param lat latitude of the viewpoint centre, in decimal degrees
+ * @param lon longitude of the viewpoint centre, in decimal degrees
+ * @param cartesianCoords an array of 3 numbers: [x, y, z] coordinates in cartesian space
+ * @returns an array of 3 numbers: [x, y, z] coordinates in cartesian space
+ */
 function rotateCartesianByCenterReverse(lat: number, lon: number, cartesianCoords: [number, number, number]): [number, number, number] {
     // convert to radians
     lat = lat * (Math.PI / 180);
@@ -145,6 +167,13 @@ function rotateCartesianByCenterReverse(lat: number, lon: number, cartesianCoord
     return [x_rot, y_rot, z_rot];
 }
 
+/**
+ * Un-zooms the pixel coordinates by a scalar value
+ * @param x screen x-coordinate
+ * @param y screen y-coordinate
+ * @param zoom scalar zoom level
+ * @returns an array of 2 numbers: [x, y] screen coordinates
+ */
 function applyZoomToProjectedReverse(x: number, y: number, zoom: number): [number, number] {
     const SCALE_FACTOR = 1000;
     x = (x / zoom / SCALE_FACTOR);
@@ -153,6 +182,12 @@ function applyZoomToProjectedReverse(x: number, y: number, zoom: number): [numbe
     return [x, y];
 }
 
+/**
+ * Applies the inverse stereographic projection algorithm
+ * @param x screen x-coordinate
+ * @param y screen y-coordinate
+ * @returns an array of 2 numbers: [x, y, z] cartesian coordinates
+ */
 function inverseStereographicProjection(x: number, y: number): [number, number, number] {
     const original_x = 2 * -y / (1 + Math.pow(-y, 2) + Math.pow(x, 2));
     const original_y = 2 * x / (1 + Math.pow(-y, 2) + Math.pow(x, 2));
@@ -161,6 +196,13 @@ function inverseStereographicProjection(x: number, y: number): [number, number, 
     return [original_x, original_y, original_z]
 }
 
+/**
+ * Applies the required inverse stereographic projection
+ * @param coord an array of 2 numbers:[x, y] screen coordinates
+ * @param projectionCenter an array of 2 numbers: [lat, lon] decimal degree coordinates
+ * @param zoom scalar zoom level
+ * @returns an array of 2 numbers: [lat, lon] decimal degree coordinates
+ */
 export function getInverseProjection(coord: [x: number, y: number], projectionCenter: [lat: number, lon: number], zoom: number): [lat: number, lon: number] {
     var [x, y] = applyZoomToProjectedReverse(coord[0], coord[1], zoom);
     var [x, y, z] = inverseStereographicProjection(x, y);
@@ -170,6 +212,14 @@ export function getInverseProjection(coord: [x: number, y: number], projectionCe
     return [lat, lon];
 }
 
+/**
+ * Offsets screen coordinates by the middle of the canvas to correspond with how the HTML canvas is drawn, then applies the required inverse stereographic projection
+ * @param coord an array of 2 numbers: [x, y] screen coordinates
+ * @param projectionCenter an array of 2 numbers: [lat, lon] decimal degree coordinates
+ * @param zoom a scalar zoom level
+ * @param screenSize the size of the screen: [height, width]
+ * @returns an array of 2 numbers: [lat, lon] decimal degree coordinates
+ */
 export function getInverseOffsetProjection(coord: [x: number, y: number], projectionCenter: [lat: number, lon: number], zoom: number, screenSize: [number, number]): [lat: number, lon: number] {
     let [left_coord, top_coord] = coord;
     left_coord -= screenSize[0] / 2;
@@ -177,10 +227,3 @@ export function getInverseOffsetProjection(coord: [x: number, y: number], projec
 
     return getInverseProjection([left_coord, top_coord], projectionCenter, zoom);
 }
-
-/*
-let [x, y, z] = convertDDToCartesian(coord[0], coord[1]);
-    [x, y, z] = rotateCartesianByCenter(projectionCenter[0], projectionCenter[1], [x, y, z]);
-    [x, y] = stereographicProjection(x, y, z);
-    [x, y] = applyZoomToProjected(x, y, zoom);
-*/
