@@ -117,7 +117,7 @@ class TargetGenerator
     {
         Random random = new();
 
-        int weightedSpawn = random.Next(1, _weightedSpawnSum.LastOrDefault());
+        int weightedSpawn = random.Next(1, _weightedSpawnSum.LastOrDefault() + 1);
 
         int requiredIndex = _weightedSpawnSum.BinarySearch(weightedSpawn);
 
