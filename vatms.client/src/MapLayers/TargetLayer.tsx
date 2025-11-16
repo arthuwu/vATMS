@@ -27,14 +27,9 @@ const TargetLayer = ({ projectionCenter, zoom, screenSize, routeDraw, sectorId, 
     const signalRManager: SignalRManager = SignalRManager.getInstance();
 
     useEffect(() => {
-        const AircraftPositionUpdateHandler = (ac: any) => {
+        signalRManager.on("AircraftPositionUpdate", (ac: any) => {
             setTargetList(ac);
-        }
-        signalRManager.on("AircraftPositionUpdate", AircraftPositionUpdateHandler)
-
-        return () => {
-            signalRManager.off("AircraftPositionUpdate", AircraftPositionUpdateHandler)
-        }
+        })
     }, [signalRManager])
 
     useEffect(() => {

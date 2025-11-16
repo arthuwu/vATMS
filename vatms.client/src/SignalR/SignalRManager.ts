@@ -85,16 +85,6 @@ class SignalRManager {  // this is a SINGLETON class! becasue i don't want to ac
     }
 
     /**
-     * Called when a new SignalR message is recieved
-     * Removes the handler
-     * @param eventName name of the function
-     * @param callback parameters of the function
-     */
-    public off(eventName: string, callback: (...params: any[]) => void) {
-        this.connection.off(eventName, callback);
-    }
-
-    /**
      * Sends a new message to the SignalR server
      * @param methodName name of the function
      * @param data parameters of the function

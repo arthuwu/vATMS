@@ -71,14 +71,9 @@ const SectorMapLayer = ({ projectionCenter, zoom, screenSize }: MapPropsInterfac
     };
 
     useEffect(() => {
-        const SetupMapHandler = (map: string) => {
+        signalRManager.on("SetupSectorMap", (map: string) => {
             setSectorJson(JSON.parse(map));
-        }
-        signalRManager.on("SetupSectorMap", SetupMapHandler)
-
-        return () => {
-            signalRManager.off("SetupSectorMap", SetupMapHandler)
-        }
+        })
     }, [signalRManager])
 
     useEffect(() => {

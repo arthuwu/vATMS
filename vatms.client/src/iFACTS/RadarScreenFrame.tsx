@@ -26,15 +26,10 @@ const RadarScreenFrame = ({ sectorName, setRblDraw, sectorVolumes, children }: a
     const signalRManager: SignalRManager = SignalRManager.getInstance();
 
     useEffect(() => {
-        const conflictPairsUpdateHandler = (pairs: PredictedConflictPair[]) => {
+        signalRManager.on("conflictPairsUpdate", (pairs: PredictedConflictPair[]) => {
             let filteredPairs = pairs.filter((pcp: PredictedConflictPair) => pcp.sectorsInvolved.some((sector: string) => sectorVolumes.includes(sector)));
             setConflictList(filteredPairs);
-        }
-        signalRManager.on("conflictPairsUpdate", conflictPairsUpdateHandler);
-
-        return () => {
-            signalRManager.off("conflictPairsUpdate", conflictPairsUpdateHandler);
-        }
+        });
     }, [signalRManager, sectorVolumes])
 
     useEffect(() => {

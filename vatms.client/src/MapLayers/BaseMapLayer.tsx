@@ -75,14 +75,9 @@ const BaseMapLayer = ({ projectionCenter, zoom, screenSize }: MapPropsInterface)
     };
 
     useEffect(() => {
-        const SetupMapHandler = (map: string) => {
+        signalRManager.on("SetupBaseMap", (map: string) => {
             setBaseMapJson(JSON.parse(map));
-        }
-        signalRManager.on("SetupBaseMap", SetupMapHandler)
-
-        return () => {
-            signalRManager.off("SetupBaseMap", SetupMapHandler)
-        }
+        })
     }, [signalRManager])
 
     useEffect(() => {
