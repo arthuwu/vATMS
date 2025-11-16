@@ -99,6 +99,10 @@ public class RadarScreenHub : Hub
 
     }
 
+    /// <summary>
+    /// Sets the spawn rate of the simulation's targetGenerator
+    /// </summary>
+    /// <param name="rate">the new rate</param>
     public async Task SetSimulationRate(string rate)
     {
         if (_simulationManager.IsSimulationStarted())

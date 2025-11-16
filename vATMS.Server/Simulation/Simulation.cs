@@ -50,43 +50,53 @@ public class Simulation
     /// </summary>
     private async Task UpdatePositionLoop(CancellationToken token)
     {
+        UpdatePosition();
+
         using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
 
         while (await timer.WaitForNextTickAsync(token))
         {
-            foreach (Aircraft ac in Aircraft.Values)
+            UpdatePosition();
+        }
+    }
+
+    /// <summary>
+    /// The body of the UpdatePositionLoop, so we can make it run once directly after initialisation
+    /// </summary>
+    private async void UpdatePosition()
+    {
+        foreach (Aircraft ac in Aircraft.Values)
+        {
+            // Console.WriteLine($"DEBUG: UpdateOnTimerElapsed, {ac.FlightPlan.Callsign} at {ac.Position.Lat}, {ac.Position.Lon}");
+            ac.UpdatePosition();
+
+            StandingAgreement? sa = ac.FlightPlan.ResolveStandingAgreements();
+
+            if (sa != null)
             {
-                // Console.WriteLine($"DEBUG: UpdateOnTimerElapsed, {ac.FlightPlan.Callsign} at {ac.Position.Lat}, {ac.Position.Lon}");
-                ac.UpdatePosition();
-
-                StandingAgreement? sa = ac.FlightPlan.ResolveStandingAgreements();
-
-                if (sa != null)
+                if (ac.SatisfiedStandingAgreement(sa))
                 {
-                    if (ac.SatisfiedStandingAgreement(sa))
+                    if (sa.NextLevel != 0)
                     {
-                        if (sa.NextLevel != 0)
-                        {
-                            ac.FlightPlan.flightPlanAssignedData.CFL = sa.NextLevel;
-                            await _radarScreenUpdater.UpdateRedundantAircraft(ac.FlightPlan.Callsign, sa.FromSector);
-                        }
-                        // Console.WriteLine("DEBUG: satisfied standing agreement");
+                        ac.FlightPlan.flightPlanAssignedData.CFL = sa.NextLevel;
+                        await _radarScreenUpdater.UpdateRedundantAircraft(ac.FlightPlan.Callsign, sa.FromSector);
                     }
-                    else
-                    {
-                        _missedStandingAgreements += 1;
-                    }
+                    // Console.WriteLine("DEBUG: satisfied standing agreement");
                 }
-
-                ac.FlightPlan.DetermineXFL();
+                else
+                {
+                    _missedStandingAgreements += 1;
+                }
             }
 
-            await _radarScreenUpdater.UpdateAircraftPosition(Aircraft.Values.ToList());
-
-            List<string> stcaList = _conflictDetection.GetShortTermConflicts(new(Aircraft));
-
-            await _radarScreenUpdater.UpdateShortTermConflictPairs(stcaList);
+            ac.FlightPlan.DetermineXFL();
         }
+
+        await _radarScreenUpdater.UpdateAircraftPosition(Aircraft.Values.ToList());
+
+        List<string> stcaList = _conflictDetection.GetShortTermConflicts(new(Aircraft));
+
+        await _radarScreenUpdater.UpdateShortTermConflictPairs(stcaList);
     }
 
     /// <summary>
@@ -94,25 +104,37 @@ public class Simulation
     /// </summary>
     private async Task UpdateTrajectoryLoop(CancellationToken token)
     {
+        await Task.Delay(100); // wait for the other loop to finish first
+
+        UpdateTrajectory();
+
         using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(15.1)); // to avoid coinciding with the other update loop as often
 
         while (await timer.WaitForNextTickAsync(token))
         {
-            if (Aircraft.Values.Count() > 0)
+            UpdateTrajectory();
+        }
+    }
+
+    /// <summary>
+    /// The body of the UpdateTrajectoryLoop, so we can make it run once directly after initialisation
+    /// </summary>
+    private async void UpdateTrajectory()
+    {
+        if (Aircraft.Values.Count() > 0)
+        {
+            foreach (Aircraft ac in Aircraft.Values) // use a copy of the list to prevent rewriting
             {
-                foreach (Aircraft ac in Aircraft.Values) // use a copy of the list to prevent rewriting
-                {
-                    _targetGenerator.DespawnIfOutsideRange(); // despawning isn't urgent, so we put it here for performance
-                    ac.PredictTrajectory();
-                }
-
-                List<PredictedConflictPair> conflictList = _conflictDetection.GetBroadphaseConflicts(Aircraft.Values.ToList());
-
-                await _radarScreenUpdater.UpdateConflictPairs(conflictList);
+                _targetGenerator.DespawnIfOutsideRange(); // despawning isn't urgent, so we put it here for performance
+                ac.PredictTrajectory();
             }
 
-            await _radarScreenUpdater.UpdateSimulationInfo(_targetGenerator.GetSpawnRate(), _conflictDetection.LossesOfSeparation, _missedStandingAgreements);
+            List<PredictedConflictPair> conflictList = _conflictDetection.GetBroadphaseConflicts(Aircraft.Values.ToList());
+
+            await _radarScreenUpdater.UpdateConflictPairs(conflictList);
         }
+
+        await _radarScreenUpdater.UpdateSimulationInfo(_targetGenerator.GetSpawnRate(), _conflictDetection.LossesOfSeparation, _missedStandingAgreements);
     }
 
     /// <summary>
