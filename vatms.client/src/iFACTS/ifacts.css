@@ -85,6 +85,7 @@
     box-shadow: inset -2px -2px 0px #808080, inset 2px 2px 0px #C8C8C8;
     z-index: 10;
     pointer-events: auto;
+    position: absolute;
 }
 
 .ifacts-popup-handle {
