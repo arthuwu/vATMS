@@ -46,14 +46,13 @@ public class Aircraft
     {
         _aircraftPerformance = aircraftPerformance;
         _navigationData = navigationData;
-        // TODO: TESTING - force creation of radar target with no radar head
-        RadarTarget = new RadarTarget();
+        RadarTarget = new RadarTarget(); // Not in use
         FlightPlan = flightPlan;
         Position = position;
         _heading = track;
         Track = track;
         PressureAltitude = pressureAltitude;
-        _indicatedAirspeed = _aircraftPerformance.GetNormalIndicatedAirspeed(pressureAltitude, true);
+        _indicatedAirspeed = _aircraftPerformance.GetNormalIndicatedAirspeed(pressureAltitude, pressureAltitude);
 
         FlightPlan.flightPlanAssignedData.CFL = pressureAltitude;
 
@@ -89,14 +88,18 @@ public class Aircraft
 
         if (FlightPlan.flightPlanAssignedData.ASP != null)
         {
-            if (_indicatedAirspeed != FlightPlan.flightPlanAssignedData.ASP)
+            if (FlightPlan.flightPlanAssignedData.ASP < 1) // is mach number
             {
-                FlySpeed((double)FlightPlan.flightPlanAssignedData.ASP);
+                FlySpeed(_aircraftPerformance.GetIndicatedAirspeedFromMach(PressureAltitude, _aircraftPerformance.GetNormalisedMachNumber((double)FlightPlan.flightPlanAssignedData.ASP)));
+            }
+            else
+            {
+                FlySpeed(_aircraftPerformance.GetNormalisedSpeed(PressureAltitude, (double)FlightPlan.flightPlanAssignedData.ASP));
             }
         }
         else
         {
-            FlySpeed(_aircraftPerformance.GetNormalIndicatedAirspeed(PressureAltitude, (PressureAltitude == FlightPlan.flightPlanAssignedData.CFL) ? true : false));
+            FlySpeed(_aircraftPerformance.GetNormalIndicatedAirspeed(PressureAltitude, FlightPlan.flightPlanAssignedData.CFL));
         }
 
         if (FlightPlan.flightPlanAssignedData.AHDG != null)
@@ -122,10 +125,7 @@ public class Aircraft
             TurnViaRoute();
         }
 
-        Groundspeed = GetGroundspeed(_indicatedAirspeed, PressureAltitude);
-
         Position = NavTools.TranslatePoint(Position, _heading, Groundspeed / 3600);
-
     }
 
     /// <summary>
@@ -231,7 +231,7 @@ public class Aircraft
 
             double dist = NavTools.DistanceBetweenTwoPoints(Position, curr);
 
-            if (dist <= 0.2 || dist <= _indicatedAirspeed / 3600) // if it'll reach the waypoint within the next update-ish
+            if (dist <= 0.2 || dist <= Groundspeed / 3600) // if it'll reach the waypoint within the next update-ish
             {
                 FlightPlan.Route.Dequeue();
                 FlightPlan.flightPlanAssignedData.AHDG = Convert.ToInt32(_heading);
@@ -249,6 +249,7 @@ public class Aircraft
     /// <summary>
     /// Accelerates/decelerates an aircraft in increments to a specific indicated airspeed
     /// The speed may be resolved if outside the capabilities of the aircraft
+    /// Assumes a constant acceleration/deceleration of 1 knot s^-2
     /// </summary>
     /// <param name="newSpeed">indicated airspeed to fly</param>
     private void FlySpeed(double newSpeed)
@@ -256,13 +257,15 @@ public class Aircraft
         if (_indicatedAirspeed > newSpeed)
         {
             // decelerate
-            _indicatedAirspeed = Math.Max(_indicatedAirspeed - 2, _aircraftPerformance.GetNormalisedSpeed(PressureAltitude, newSpeed));
+            _indicatedAirspeed = Math.Max(_indicatedAirspeed - 1, _aircraftPerformance.GetNormalisedSpeed(PressureAltitude, newSpeed));
         }
         else if (_indicatedAirspeed < newSpeed)
         {
             // accelerate
-            _indicatedAirspeed = Math.Min(_indicatedAirspeed + 2, _aircraftPerformance.GetNormalisedSpeed(PressureAltitude, newSpeed));
+            _indicatedAirspeed = Math.Min(_indicatedAirspeed + 1, _aircraftPerformance.GetNormalisedSpeed(PressureAltitude, newSpeed));
         }
+
+        Groundspeed = GetGroundspeed(_indicatedAirspeed, PressureAltitude);
     }
 
     /// <summary>

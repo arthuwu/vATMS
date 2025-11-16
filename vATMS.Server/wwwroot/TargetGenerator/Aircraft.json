@@ -1,10 +1,68 @@
-earlyClimbSpeed;
-machClimbSpeed;
-cruiseSpeed;
-machDescentSpeed;
-lateDescentSpeed;
-earlyRateOfClimb;
-machRateOfClimb;
-machRateOfDescent;
-lateRateOfDescent;
-cruiseCeiling;
+{
+    "aircraftTypes": [
+        {
+            "type": "A20N",
+            "wtc": "M",
+            "aircraftPerformance": {
+                "earlyClimbSpeed": 290,
+                "machClimbSpeed": 0.78,
+                "cruiseSpeed": 0.78,
+                "machDescentSpeed": 0.78,
+                "lateDescentSpeed": 290,
+                "earlyRateOfClimb": 1500,
+                "machRateOfClimb": 1000,
+                "machRateOfDescent": 1000,
+                "lateRateOfDescent": 3000,
+                "cruiseCeiling": 39000
+            }
+        },
+        {
+            "type": "B38M",
+            "wtc": "M",
+            "aircraftPerformance": {
+                "earlyClimbSpeed": 290,
+                "machClimbSpeed": 0.78,
+                "cruiseSpeed": 0.79,
+                "machDescentSpeed": 0.78,
+                "lateDescentSpeed": 290,
+                "earlyRateOfClimb": 2000,
+                "machRateOfClimb": 1500,
+                "machRateOfDescent": 1000,
+                "lateRateOfDescent": 3500,
+                "cruiseCeiling": 41000
+            }
+        },
+        {
+            "type": "B77W",
+            "wtc": "H",
+            "aircraftPerformance": {
+                "earlyClimbSpeed": 300,
+                "machClimbSpeed": 0.83,
+                "cruiseSpeed": 0.84,
+                "machDescentSpeed": 0.84,
+                "lateDescentSpeed": 300,
+                "earlyRateOfClimb": 2000,
+                "machRateOfClimb": 1500,
+                "machRateOfDescent": 1000,
+                "lateRateOfDescent": 3000,
+                "cruiseCeiling": 43000
+            }
+        },
+        {
+            "type": "A359",
+            "wtc": "H",
+            "aircraftPerformance": {
+                "earlyClimbSpeed": 300,
+                "machClimbSpeed": 0.82,
+                "cruiseSpeed": 0.85,
+                "machDescentSpeed": 0.85,
+                "lateDescentSpeed": 250,
+                "earlyRateOfClimb": 1600,
+                "machRateOfClimb": 1400,
+                "machRateOfDescent": 1500,
+                "lateRateOfDescent": 3000,
+                "cruiseCeiling": 43000
+            }
+        }
+    ]
+}

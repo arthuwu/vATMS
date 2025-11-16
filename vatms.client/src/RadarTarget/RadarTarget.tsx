@@ -44,12 +44,12 @@ const RadarTarget = ({ flightPlan, aircraft, lat, lon, zoom, projectionCenter, s
     const getLateralClearanceItem = (): string => {
         if (flightPlan.flightPlanAssignedData.ahdg == 0) {
             return "h360"
-        } else if (flightPlan.flightPlanAssignedData.ahdg) {
+        } else if (flightPlan.flightPlanAssignedData.ahdg != null) {
             return "h" + flightPlan.flightPlanAssignedData.ahdg.toString().padStart(3, "0");
         }
 
-        if (flightPlan.flightPlanAssignedData.directtopoint)
-            return flightPlan.flightPlanAssignedData.directtopoint;
+        if (flightPlan.flightPlanAssignedData.directToPoint)
+            return flightPlan.flightPlanAssignedData.directToPoint;
 
         return "";
     }

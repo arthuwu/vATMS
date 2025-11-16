@@ -19,6 +19,8 @@ class TargetGenerator
     private readonly CancellationTokenSource _cts;
     private readonly Task _spawnAircraftLoop;
 
+    private List<AircraftType> _aircraftTypes;
+
     public List<SpawnPoint> SpawnPoints { get; set; }
     private ConcurrentDictionary<string, Aircraft> _aircraft;
 
@@ -30,10 +32,10 @@ class TargetGenerator
         _navData = navData;
         _aircraft = aircraft;
 
-        using (var fs = new FileStream(Path.Combine(_webEnv.WebRootPath, "TargetGenerator\\SpawnPoints.json"), FileMode.Open, FileAccess.Read, FileShare.Read))
-        using (var sr = new StreamReader(fs))
+        using (var fs1 = new FileStream(Path.Combine(_webEnv.WebRootPath, "TargetGenerator\\SpawnPoints.json"), FileMode.Open, FileAccess.Read, FileShare.Read))
+        using (var sr1 = new StreamReader(fs1))
         {
-            string targetJson = sr.ReadToEnd();
+            string targetJson = sr1.ReadToEnd();
             TargetGeneratorJson file = JsonConvert.DeserializeObject<TargetGeneratorJson>(targetJson)!;
 
             MinimumLevel = file.MinimumLevel;
@@ -43,8 +45,22 @@ class TargetGenerator
 
             SpawnPoints = file.SpawnPoints;
 
-            sr.Close();
-            fs.Close();
+            sr1.Close();
+            fs1.Close();
+        }
+
+        using (var fs2 = new FileStream(Path.Combine(_webEnv.WebRootPath, "TargetGenerator\\Aircraft.json"), FileMode.Open, FileAccess.Read, FileShare.Read))
+        using (var sr2 = new StreamReader(fs2))
+        {
+            string aircraftJson = sr2.ReadToEnd();
+            _aircraftTypes = JsonConvert.DeserializeObject<AircraftJson>(aircraftJson)!.AircraftTypes;
+
+            foreach (AircraftType ac in _aircraftTypes)
+            {
+                Console.WriteLine(ac.Type);
+            }
+            sr2.Close();
+            fs2.Close();
         }
 
         foreach (SpawnPoint sp in SpawnPoints) // cumulative distribution function
@@ -112,11 +128,13 @@ class TargetGenerator
 
         SpawnPoint spawnPoint = SpawnPoints[requiredIndex];
 
+        AircraftType aircraftType = _aircraftTypes[random.Next(0, _aircraftTypes.Count())];
+
         FlightPlan fp = new FlightPlan(
                 callsign: GetRandomCallsign(spawnPoint.Callsigns, spawnPoint.CallsignPattern),
                 flightrules: "I",
-                atyp: GetRandomAircraftType(),
-                wtc: "X",
+                atyp: aircraftType.Type,
+                wtc: aircraftType.WTC, // not in use
                 equipment: "SDGIJ1LRWXY/LB1", // not in use
                 dep: spawnPoint.ADEP[random.Next(spawnPoint.ADEP.Count())],
                 dest: spawnPoint.ADES[random.Next(spawnPoint.ADES.Count())],
@@ -142,7 +160,7 @@ class TargetGenerator
                 track: NavTools.BearingBetweenTwoPoints(fp.Route.Peek().Coordinate, fp.Route.ElementAt(1).Coordinate),
                 pressureAltitude: spawnPoint.SpawnLevels[random.Next(spawnPoint.SpawnLevels.Count())],
                 navigationData: _navData,
-                aircraftPerformance: GetAircraftPerformanceForType(fp.ATYP)
+                aircraftPerformance: aircraftType.AircraftPerformance
             ));
     }
 
@@ -193,28 +211,6 @@ class TargetGenerator
             {
                 _aircraft.TryRemove(ac.FlightPlan.Callsign, out _);
             }
-        }
-    }
-
-
-    // The two functions below should have data included and parsed from external files. However, due to time pressure, they have been hard-coded here for the rest of the program to work
-    private string GetRandomAircraftType()
-    {
-        Random random = new();
-        string[] types = ["A20N", "B77W"];
-
-        return types[random.Next(0, types.Length)];
-    }
-
-    private AircraftPerformance GetAircraftPerformanceForType(string atyp)
-    {
-        if (atyp == "A20N")
-        {
-            return new(290, 250, 250, 250, 290, 1500, 1000, 1000, 3000, 39000);
-        }
-        else
-        {
-            return new(300, 260, 260, 260, 300, 2000, 1500, 1000, 3000, 43000);
         }
     }
 }

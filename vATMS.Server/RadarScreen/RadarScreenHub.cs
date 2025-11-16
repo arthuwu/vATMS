@@ -87,10 +87,14 @@ public class RadarScreenHub : Hub
             Aircraft.Aircraft? aircraft = simulation.FindAircraft(selectedAircraftId);
             if (aircraft == null) return;  // and return early if no match
 
-            if (value.All(char.IsDigit))
-                aircraft.FlightPlan.flightPlanAssignedData.GetType().GetProperty(data)?.SetValue(aircraft.FlightPlan.flightPlanAssignedData, Convert.ToInt32(value));
+            if (double.TryParse(value, out double doubleValue))
+            {
+                aircraft.FlightPlan.flightPlanAssignedData.GetType().GetProperty(data)?.SetValue(aircraft.FlightPlan.flightPlanAssignedData, doubleValue);
+            }
             else
+            {
                 aircraft.FlightPlan.flightPlanAssignedData.GetType().GetProperty(data)?.SetValue(aircraft.FlightPlan.flightPlanAssignedData, value);
+            }
         }
 
     }

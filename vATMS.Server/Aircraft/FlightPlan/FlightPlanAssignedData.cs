@@ -6,24 +6,22 @@ namespace vATMS.Aircraft;
 /// </summary>
 public class FlightPlanAssignedData
 {
-    public int CFL { get; set; }
-    public int? _asp;
-    public int? AVS { get; set; }
-
+    private int _cfl;
+    private double? _asp;
     private int? _ahdg;
     private string? _directToPoint;
 
     public List<StandingAgreement> StandingAgreements { get; init; }
     public int XFL { get; set; }
 
-    // AHDG and DirectToPoint have explicit getters and setters as the other value has to be changed when one value is set
+    // AHDG, DirectToPoint and ASP have explicit getters and setters as the other value has to be changed when one value is set
 
-    public int? AHDG
+    public double? AHDG
     {
         get => _ahdg;
         set
         {
-            _ahdg = value;
+            _ahdg = value != null ? Convert.ToInt32(value) : null;
             _directToPoint = null;
         }
     }
@@ -38,7 +36,7 @@ public class FlightPlanAssignedData
         }
     }
 
-    public int? ASP
+    public double? ASP
     {
         get => _asp;
         set
@@ -47,10 +45,23 @@ public class FlightPlanAssignedData
             {
                 _asp = null;
             }
-            else
+            else if (value < 1) // mach number
             {
                 _asp = value;
             }
+            else if (value > 220 && value < 350)
+            {
+                _asp = value;
+            }
+        }
+    }
+
+    public double CFL
+    {
+        get => _cfl;
+        set
+        {
+            _cfl = Convert.ToInt32(value);
         }
     }
 
