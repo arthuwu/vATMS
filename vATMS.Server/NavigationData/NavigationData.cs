@@ -8,6 +8,7 @@ using System.Collections.Concurrent;
 public class NavigationData
 {
     private readonly IWebHostEnvironment _webEnv;
+    private readonly AIPParser _aipParser;
     public Dictionary<string, Sector> SectorList { get; set; }
     public List<AirspaceVolume> AIPAirspaceList { get; set; }
     public Dictionary<string, Waypoint> WpList { get; set; }
@@ -16,12 +17,13 @@ public class NavigationData
     public NavigationData(IWebHostEnvironment webEnv)
     {
         _webEnv = webEnv;
+        _aipParser = new();
 
-        SectorList = AIPParser.ParseSectors(webEnv);
+        SectorList = _aipParser.ParseSectors(webEnv);
 
-        AIPAirspaceList = AIPParser.ParseAIPAirspace(webEnv);
+        AIPAirspaceList = _aipParser.ParseAIPAirspace(webEnv);
 
-        WpList = AIPParser.ParseDesignatedPoints(webEnv);
+        WpList = _aipParser.ParseDesignatedPoints(webEnv);
     }
 
     /// <summary>
