@@ -40,7 +40,8 @@
                 {
                     "point": "LOGAN",
                     "level": 25000,
-                    "nextLevel": 16000
+                    "nextLevel": 16000,
+                    "fromSector": "ACS13P01"
                 }
             ],
             "intentionCode": "LL"
@@ -108,7 +109,8 @@
                 {
                     "point": "",
                     "level": 22000,
-                    "nextLevel": 0
+                    "nextLevel": 0,
+                    "fromSector": ""
                 }
             ],
             "intentionCode": "C"
@@ -140,7 +142,8 @@
                 {
                     "point": "",
                     "level": 23000,
-                    "nextLevel": 0
+                    "nextLevel": 0,
+                    "fromSector": ""
                 }
             ],
             "intentionCode": "C"
@@ -176,12 +179,14 @@
                 {
                     "point": "ETVAX",
                     "level": 26000,
-                    "nextLevel": 0
+                    "nextLevel": 0,
+                    "fromSector": "ACS17P01"
                 },
                 {
                     "point": "HEMEL",
                     "level": 22000,
-                    "nextLevel": 0
+                    "nextLevel": 0,
+                    "fromSector": "ACS26P01"
                 }
             ],
             "intentionCode": "BB"

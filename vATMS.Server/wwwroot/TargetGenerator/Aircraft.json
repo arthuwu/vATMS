@@ -1,0 +1,10 @@
+earlyClimbSpeed;
+machClimbSpeed;
+cruiseSpeed;
+machDescentSpeed;
+lateDescentSpeed;
+earlyRateOfClimb;
+machRateOfClimb;
+machRateOfDescent;
+lateRateOfDescent;
+cruiseCeiling;

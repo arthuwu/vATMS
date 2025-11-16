@@ -39,4 +39,9 @@ public class RadarScreenUpdater
     {
         await _hubContext.Clients.All.SendAsync("SimulationInfoUpdate", rate, lossesOfSeperation, missedStandingAgreements);
     }
+
+    public async Task UpdateRedundantAircraft(string callsign, string sectorId)
+    {
+        await _hubContext.Clients.All.SendAsync("RedundantAircraftUpdate", callsign, sectorId);
+    }
 }

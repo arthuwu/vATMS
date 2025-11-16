@@ -68,6 +68,7 @@ public class Simulation
                         if (sa.NextLevel != 0)
                         {
                             ac.FlightPlan.flightPlanAssignedData.CFL = sa.NextLevel;
+                            await _radarScreenUpdater.UpdateRedundantAircraft(ac.FlightPlan.Callsign, sa.FromSector);
                         }
                         // Console.WriteLine("DEBUG: satisfied standing agreement");
                     }

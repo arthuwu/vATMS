@@ -10,6 +10,7 @@ Component representing the iFACTS selection window
 const SelectionWindow = () => {
     const [targetList, setTargetList] = useState<any>([]);
     const [selectedAircraftID, setSelectedAircraftID] = useState<any>();
+    const [redundantAircraftList, setRedundantAircraftList] = useState<string[]>([]);
 
     const [searchParams] = useSearchParams();
     const initialSector = useMemo(() => searchParams.get("sector") ?? "", [searchParams]);
@@ -56,6 +57,13 @@ const SelectionWindow = () => {
         })
     }, [signalRManager])
 
+    useEffect(() => {
+        signalRManager.on("redundantAircraftUpdate", (callsign: string, sectorId: string) => {
+            if (sectorProps.sectorVolumes.includes(sectorId))
+                setRedundantAircraftList(prev => [...prev, callsign]);
+        })
+    }, [signalRManager, sectorProps])
+
     useEffect(() => { // generates levels from FL190 to FL430 
         const levels: number[] = [];
         for (var i: number = 43000; i >= 19000; i -= 1000) {
@@ -81,7 +89,7 @@ const SelectionWindow = () => {
 
     const handleSelectedAircraftAssignedDataChange: any = (aircraftId: string, data: string, value: string) => {
         if (aircraftId && value) {
-            if (sectorProps.sectorVolumes.includes(getSelectedAircraft()?.trajectory.currentSector?.id)) // only allow assumed aircraft to be controlled
+            if (sectorProps.sectorVolumes.includes(getSelectedAircraft()?.trajectory.currentSector?.id) && !redundantAircraftList.includes(aircraftId)) // only allow assumed aircraft to be controlled
                 signalRManager.send("SetSelectedAircraftAssignedData", aircraftId, data, value)
         }
     }
