@@ -112,7 +112,10 @@ public class RadarScreenHub : Hub
 
             if (newRate >= 5 && newRate <= 80)
                 _simulationManager.CurrentSimulation!.UpdateSpawnRate(newRate);
+
+            await _simulationManager.CurrentSimulation!.UpdateSimulationInfo();
         }
+
     }
 
     /// <summary>

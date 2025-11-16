@@ -134,6 +134,15 @@ public class Simulation
             await _radarScreenUpdater.UpdateConflictPairs(conflictList);
         }
 
+        await UpdateSimulationInfo();
+    }
+
+    /// <summary>
+    /// Updates data related to the simulation info popup window
+    /// It is separated from the other loop in order to expose it to the RadarScreenHub
+    /// </summary>
+    public async Task UpdateSimulationInfo()
+    {
         await _radarScreenUpdater.UpdateSimulationInfo(_targetGenerator.GetSpawnRate(), _conflictDetection.LossesOfSeparation, _missedStandingAgreements);
     }
 

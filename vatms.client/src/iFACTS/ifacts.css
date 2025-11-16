@@ -359,7 +359,17 @@
 }
 
 .selected-aircraft-data input::-webkit-outer-spin-button,
-.selected-aircraft-data input::-webkit-inner-spin-button {
+.selected-aircraft-data input::-webkit-inner-spin-button,
+.simulation-info-container input::-webkit-outer-spin-button,
+.simulation-info-container input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+
+.simulation-info-container input {
+    border: none;
+    box-shadow: inset -2px -2px 0px #808080, inset 2px 2px 0px #c8c8c8;
+    padding: 0.5em;
+    margin-top: 1em;
+    width: 100%;
 }
