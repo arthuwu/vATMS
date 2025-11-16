@@ -11,7 +11,7 @@ import SimulationInfo from './SimulationInfo';
 Component for the frame surrounding an iFACTS radar screen
 Also contains the container for all popup windows
 */
-const RadarScreenFrame = ({ sectorId, children, setRblDraw }: any) => {
+const RadarScreenFrame = ({ sectorName, setRblDraw, sectorVolumes, children }: any) => {
     const [conflictList, setConflictList] = useState<PredictedConflictPair[]>([]);
     const [simulationInfo, setSimulationInfo] = useState<{ rate: number, lossesOfSeperation: number, missedStandingAgreements: number }>();
 
@@ -26,10 +26,16 @@ const RadarScreenFrame = ({ sectorId, children, setRblDraw }: any) => {
     const signalRManager: SignalRManager = SignalRManager.getInstance();
 
     useEffect(() => {
-        signalRManager.on("conflictPairsUpdate", (pairs: PredictedConflictPair[]) => {
-            setConflictList(pairs);
-        })
-    }, [signalRManager])
+        const conflictPairsUpdateHandler = (pairs: PredictedConflictPair[]) => {
+            let filteredPairs = pairs.filter((pcp: PredictedConflictPair) => pcp.sectorsInvolved.some((sector: string) => sectorVolumes.includes(sector)));
+            setConflictList(filteredPairs);
+        }
+        signalRManager.on("conflictPairsUpdate", conflictPairsUpdateHandler);
+
+        return () => {
+            signalRManager.off("conflictPairsUpdate", conflictPairsUpdateHandler);
+        }
+    }, [signalRManager, sectorVolumes])
 
     useEffect(() => {
         signalRManager.on("simulationInfoUpdate", (rate: number, lossesOfSeperation: number, missedStandingAgreements: number) => {
@@ -44,7 +50,7 @@ const RadarScreenFrame = ({ sectorId, children, setRblDraw }: any) => {
                     <div></div>
                     <Clock></Clock>
                     <div></div>
-                    <div className='ifacts-sector-display'>{sectorId}</div>
+                    <div className='ifacts-sector-display'>{sectorName}</div>
                 </div>
                 <div className='ifacts-left-bar'>
                     <div></div>

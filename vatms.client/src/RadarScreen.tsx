@@ -106,7 +106,7 @@ const RadarScreen = () => {
     }, [sectorId])
 
     return (
-        <RadarScreenFrame sectorId={sectorProps.ifactsName} setRblDraw={toggleRblDraw}>
+        <RadarScreenFrame sectorName={sectorProps.ifactsName} setRblDraw={toggleRblDraw} sectorVolumes={sectorProps.sectorVolumes}>
             <div className='radar-screen-container' ref={containerRef}>
                 <RangeBearingLayer projectionCenter={projectionCenter} zoom={zoomLevel} screenSize={[screenSize.width, screenSize.height]} rblDraw={rblDraw}></RangeBearingLayer>
                 <TargetLayer

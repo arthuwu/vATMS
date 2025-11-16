@@ -11,13 +11,15 @@ public struct PredictedConflictPair
     public string Callsign2 { get; init; }
     public double ClosestPointOfApproach { get; init; }
     public DateTime StartTime { get; init; }
+    public List<string> SectorsInvolved { get; init; }
 
-    public PredictedConflictPair(string callsign1, string callsign2, double cpa, DateTime startTime)
+    public PredictedConflictPair(string callsign1, string callsign2, double cpa, DateTime startTime, List<string> sectorsInvolved)
     {
         Callsign1 = callsign1;
         Callsign2 = callsign2;
         ClosestPointOfApproach = cpa;
         StartTime = startTime;
+        SectorsInvolved = sectorsInvolved;
     }
 }
 
@@ -89,7 +91,27 @@ public class ConflictDetection
 
                 double cpa = GetClosestPointOfApproach(box1, box2);
 
-                PredictedConflictPair pcp = new(box1.Callsign, box2.Callsign, cpa, box1.GetStartTime());
+                HashSet<string> involvedSectors = new();
+
+                Aircraft? ac1 = _simulationManager.CurrentSimulation!.FindAircraft(box1.Callsign);
+                Aircraft? ac2 = _simulationManager.CurrentSimulation!.FindAircraft(box1.Callsign);
+
+                if (ac1 != null && ac2 != null) // we need to use the current simulation list here to ensure the conflicts are distributed to the correct sector
+                {
+                    string? sector1 = ac1.Trajectory.CurrentSector?.Id;
+                    if (sector1 != null) involvedSectors.Add(sector1);
+
+                    string? sector2 = ac1.Trajectory.NextSector?.Id;
+                    if (sector2 != null) involvedSectors.Add(sector2);
+
+                    string? sector3 = ac2.Trajectory.CurrentSector?.Id;
+                    if (sector3 != null) involvedSectors.Add(sector3);
+
+                    string? sector4 = ac2.Trajectory.NextSector?.Id;
+                    if (sector4 != null) involvedSectors.Add(sector4);
+                }
+
+                PredictedConflictPair pcp = new(box1.Callsign, box2.Callsign, cpa, box1.GetStartTime(), involvedSectors.ToList());
 
                 conflictPairs[callsignKey] = pcp;
             }
