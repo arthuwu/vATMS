@@ -31,13 +31,11 @@ const SelectionWindow = () => {
 
     useEffect(() => {
         const AircraftPositionUpdateHandler = (ac: any) => {
-            //console.log(ac);
             setTargetList(ac);
 
-            //console.log(ac.filter((e: any) => sectorProps.sectorVolumes?.includes(e.trajectory.currentSector)))
             setIncommList(ac.filter((e: any) => sectorProps.sectorVolumes?.includes(e.trajectory.currentSector?.id)))
-            setPendingList(ac.filter((e: any) => sectorProps.sectorVolumes?.includes(e.trajectory.nextSector?.id)))
-
+            setPendingList(ac.filter((e: any) => sectorProps.sectorVolumes?.includes(e.trajectory.nextSector?.id) && !sectorProps.sectorVolumes?.includes(e.trajectory.currentSector?.id)))
+            // we can't use IncommList directly here as useEffects are asynchronous
         }
         signalRManager.on("AircraftPositionUpdate", AircraftPositionUpdateHandler)
 
