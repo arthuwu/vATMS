@@ -147,7 +147,7 @@ To do this, the user may assign:
 If the aircraft is unable to follow the instrcution (e.g. climbing above their ceiling altitude), it will attempt to do the best it can and will stop once it is impossible to achieve.
 
 Once an aircraft has satisfied a standing agreement, it will attempt to leave the sector (e.g. by descending) into the next sector.
-> The only standing agreements currently implemented is FL250 level by SABER; FL260 level by EVTAX; FL220 level by HEMEL 
+> The only standing agreements currently implemented is FL250 level by LOGAN; FL260 level by EVTAX; FL220 level by HEMEL 
 
 Gameplay stats may be obtained by clicking the "Simul Info" button on the virtual frame of the radar screen. The spawn rate may also be adjusted in the same window.
 
