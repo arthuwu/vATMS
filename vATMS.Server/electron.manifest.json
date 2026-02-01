@@ -36,7 +36,13 @@
       "**/*"
     ],
     "win": {
-      "icon": "/wwwroot/icon/vATMS.ico"
+      "icon": "/wwwroot/icon/vATMS.ico",
+      "target": [
+        "portable"
+      ]
+    },
+    "portable": {
+      "artifactName": "vATMS_portable.exe"
     }
   }
 }
