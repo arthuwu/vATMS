@@ -123,9 +123,10 @@ public class Simulation
     {
         if (Aircraft.Values.Count() > 0)
         {
+            _targetGenerator.DespawnIfOutsideRange(); // despawning isn't urgent, so we put it here for performance
+
             foreach (Aircraft ac in Aircraft.Values) // use a copy of the list to prevent rewriting
             {
-                _targetGenerator.DespawnIfOutsideRange(); // despawning isn't urgent, so we put it here for performance
                 ac.PredictTrajectory();
             }
 

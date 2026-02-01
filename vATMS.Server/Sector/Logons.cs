@@ -16,6 +16,7 @@ public class Logon
 }
 
 /// <summary>
+/// This is an ASP.NET singleton
 /// Provides data required for the selection and management of user controlled sectors
 /// </summary>
 public class LogonData
