@@ -206,7 +206,7 @@ public class Aircraft
                 const double KNOT_TO_MS = 0.514444;
 
                 int bankAngle = _indicatedAirspeed > 300 ? 20 : 25;
-                double turnRadius = Math.Pow(_indicatedAirspeed * KNOT_TO_MS, 2) / (G * Math.Tan(bankAngle * Math.PI / 180));
+                double turnRadius = Math.Pow(Groundspeed * KNOT_TO_MS, 2) / (G * Math.Tan(bankAngle * Math.PI / 180));
 
                 double turnAngle = (Math.Abs(nextBrng - (currBrng + 180)) + 360) % 360;
                 if (turnAngle > 180)
@@ -379,11 +379,11 @@ public class Aircraft
 
             if (simAltitude > FlightPlan.flightPlanAssignedData.CFL)
             {
-                simAltitude = Math.Max(simAltitude - _aircraftPerformance.GetRateOfDescent(simAltitude), FlightPlan.flightPlanAssignedData.CFL);
+                simAltitude = Math.Max(simAltitude - _aircraftPerformance.GetRateOfDescent(simAltitude) * 15, FlightPlan.flightPlanAssignedData.CFL);
             }
             else if (simAltitude < FlightPlan.flightPlanAssignedData.CFL)
             {
-                simAltitude = Math.Min(simAltitude + _aircraftPerformance.GetRateOfClimb(simAltitude), FlightPlan.flightPlanAssignedData.CFL);
+                simAltitude = Math.Min(simAltitude + _aircraftPerformance.GetRateOfClimb(simAltitude) * 15, FlightPlan.flightPlanAssignedData.CFL);
             }
 
             Trajectory.PredictedPoints.Add(new TrajectoryPoint(DateTime.UtcNow.Add(new(0, 0, 30 * t)), simPosition, simAltitude));
