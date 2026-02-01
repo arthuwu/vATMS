@@ -250,12 +250,12 @@ internal class AABBTree
 
         if (curTree.IsLeaf())
         {
-            inBranches.Add(curTree);
+            treeBranches.Add(curTree);
         }
         else
         {
-            if (curTree._left != null) inBranches.Add(curTree._left);
-            if (curTree._right != null) inBranches.Add(curTree._right);
+            if (curTree._left != null) treeBranches.Add(curTree._left);
+            if (curTree._right != null) treeBranches.Add(curTree._right);
         }
 
         if (!inTree._node.IsOverlapping(curTree._node))
