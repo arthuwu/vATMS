@@ -138,7 +138,7 @@ public class Aircraft
         const double KNOT_TO_MS = 0.514444;
 
         int bankAngle = _indicatedAirspeed > 300 ? 20 : 25;
-        double turnRate = G * Math.Tan(bankAngle * Math.PI / 180) / (_indicatedAirspeed * KNOT_TO_MS);
+        double turnRate = G * Math.Tan(bankAngle * Math.PI / 180) / (Groundspeed * KNOT_TO_MS);
         turnRate = turnRate * 180 / Math.PI;
 
         double diff = (newHeading - _heading + 360) % 360;
@@ -216,7 +216,7 @@ public class Aircraft
 
                 double distanceRequired = turnRadius / Math.Tan(turnAngle * Math.PI / 180 / 2) * M_TO_NM;
 
-                // Console.WriteLine($"DEBUG: distanceRequired: {distanceRequired}, dist = {dist}, to turn from {_heading} to {nextBrng}");
+                //Console.WriteLine($"DEBUG: distanceRequired: {distanceRequired}, dist = {dist}, to turn from {_heading} to {nextBrng}");
 
                 if (dist <= distanceRequired)
                 {
